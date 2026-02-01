@@ -422,12 +422,24 @@
       }
       
       const result = await response.json();
+      console.log('Gini Ratio API Response:', result);
       
       // Validate response structure
       if (result.success && result.data) {
         const data = result.data;
+        console.log('Gini Ratio Data:', {
+          surabaya_data_count: Array.isArray(data.surabaya_data) ? data.surabaya_data.length : 0,
+          jatim_data_count: Array.isArray(data.jatim_data) ? data.jatim_data.length : 0,
+          surabaya_latest: data.surabaya_latest,
+          jatim_latest: data.jatim_latest,
+          surabaya_previous: data.surabaya_previous,
+          jatim_previous: data.jatim_previous,
+        });
         
         // Validate and sanitize data arrays
+        console.log('Processing surabaya_data:', data.surabaya_data);
+        console.log('Processing jatim_data:', data.jatim_data);
+        
         surabayaData = Array.isArray(data.surabaya_data) ? data.surabaya_data.map(item => ({
           year: sanitizeYear(item.year),
           value: sanitizeNumber(item.gini_ratio_value)
@@ -437,6 +449,9 @@
           year: sanitizeYear(item.year),
           value: sanitizeNumber(item.gini_ratio_value)
         })).filter(item => item.year !== null) : [];
+        
+        console.log('Processed surabayaData:', surabayaData);
+        console.log('Processed jatimData:', jatimData);
         
         // Validate and sanitize latest/previous data
         if (data.surabaya_latest) {
@@ -470,8 +485,18 @@
         // Validate and sanitize changes
         surabayaChange = sanitizeNumber(data.surabaya_change);
         jatimChange = sanitizeNumber(data.jatim_change);
+        
+        console.log('Final processed data:', {
+          surabayaData: surabayaData,
+          jatimData: jatimData,
+          surabayaLatest: surabayaLatest,
+          jatimLatest: jatimLatest,
+          surabayaChange: surabayaChange,
+          jatimChange: jatimChange
+        });
       } else {
         console.error('Failed to load gini ratio summary data:', result.message || 'Unknown error');
+        console.error('Full result:', result);
       }
     } catch (error) {
       console.error('Error loading gini ratio summary data:', error);
@@ -482,6 +507,10 @@
 
     // Function to update summary cards UI
     function updateSummaryCards() {
+      console.log('Updating summary cards:', {
+        surabayaLatest: surabayaLatest,
+        jatimLatest: jatimLatest
+      });
       // Update Surabaya card
       if (surabayaLatest && surabayaLatest.gini_ratio_value !== null && surabayaLatest.year !== null) {
         const value = sanitizeNumber(surabayaLatest.gini_ratio_value);
@@ -574,8 +603,22 @@
     const isMobile = window.innerWidth <= 767.98;
 
     // Initialize charts after data is loaded
-    createComparisonLineChart();
-    createComparisonBarChart();
+    console.log('Initializing charts with data:', {
+      surabayaDataLength: surabayaData.length,
+      jatimDataLength: jatimData.length,
+      allYears: allYears,
+      allYearsLength: allYears.length
+    });
+    
+    // Wait a bit to ensure DOM is ready and ECharts is loaded
+    if (typeof echarts === 'undefined') {
+      console.error('ECharts library not loaded!');
+    } else {
+      setTimeout(() => {
+        createComparisonLineChart();
+        createComparisonBarChart();
+      }, 100);
+    }
 
     // Create comparison line chart
     function createComparisonLineChart() {

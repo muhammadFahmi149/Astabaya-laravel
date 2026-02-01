@@ -247,41 +247,51 @@ class KetenagakerjaanController extends Controller
                     'total'
                 ])->orderBy('year', 'asc')->get();
                 
-                // Get latest TPT data (optimized query)
+                // Get latest TPT data - order by ID desc to get the most recent entry
                 $tpt_latest_data = KetenagakerjaanTPT::select([
                     'id',
                     'year',
                     'laki_laki',
                     'perempuan',
                     'total'
-                ])->orderBy('year', 'desc')->first();
+                ])->orderBy('id', 'desc')->first();
                 
-                // Get latest TPAK data (optimized query)
+                // Get latest TPAK data - order by ID desc to get the most recent entry
                 $tpak_latest_data = KetenagakerjaanTPAK::select([
                     'id',
                     'year',
                     'laki_laki',
                     'perempuan',
                     'total'
-                ])->orderBy('year', 'desc')->first();
+                ])->orderBy('id', 'desc')->first();
                 
-                // Get previous TPT data (second latest) - optimized query
+                // Get previous TPT data (second latest by ID) - optimized query
                 $tpt_previous_data = KetenagakerjaanTPT::select([
                     'id',
                     'year',
                     'laki_laki',
                     'perempuan',
                     'total'
-                ])->orderBy('year', 'desc')->skip(1)->first();
+                ])->orderBy('id', 'desc')->skip(1)->first();
                 
-                // Get previous TPAK data (second latest) - optimized query
+                // Get previous TPAK data (second latest by ID) - optimized query
                 $tpak_previous_data = KetenagakerjaanTPAK::select([
                     'id',
                     'year',
                     'laki_laki',
                     'perempuan',
                     'total'
-                ])->orderBy('year', 'desc')->skip(1)->first();
+                ])->orderBy('id', 'desc')->skip(1)->first();
+                
+                // Add detailed logging
+                Log::info('Ketenagakerjaan Data Details', [
+                    'tpt_latest_id' => $tpt_latest_data ? $tpt_latest_data->id : null,
+                    'tpt_latest_year' => $tpt_latest_data ? $tpt_latest_data->year : null,
+                    'tpak_latest_id' => $tpak_latest_data ? $tpak_latest_data->id : null,
+                    'tpak_latest_year' => $tpak_latest_data ? $tpak_latest_data->year : null,
+                    'tpt_data_count' => $tpt_data->count(),
+                    'tpak_data_count' => $tpak_data->count(),
+                ]);
                 
                 // Calculate changes for TPT
                 $tpt_total_change = null;

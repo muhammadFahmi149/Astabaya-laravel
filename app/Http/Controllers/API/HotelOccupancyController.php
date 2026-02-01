@@ -66,16 +66,23 @@ class HotelOccupancyController extends Controller
                 ->get();
                 
                 // Get all yearly data - optimized query
+                // Get the latest entry for each year (by ID desc) then sort by year
                 $yearlyData = HotelOccupancyYearly::select([
                     'id',
                     'year',
                     'tpk'
                 ])
-                ->whereNotNull('tpk')
-                ->orderBy('year', 'asc')
-                ->get();
+                ->orderBy('id', 'desc')
+                ->get()
+                ->groupBy('year')
+                ->map(function ($group) {
+                    // Get the first (latest by ID) entry for each year
+                    return $group->first();
+                })
+                ->sortBy('year')
+                ->values();
                 
-                // Get latest monthly data (optimized query)
+                // Get latest monthly data - order by ID desc to get the most recent entry
                 $latestMonthly = HotelOccupancyCombined::select([
                     'id',
                     'year',
@@ -85,11 +92,10 @@ class HotelOccupancyController extends Controller
                     'rlmtgab',
                     'gpr'
                 ])
-                ->orderBy('year', 'desc')
-                ->orderByRaw("FIELD(month, 'JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOPEMBER', 'DESEMBER') DESC")
+                ->orderBy('id', 'desc')
                 ->first();
                 
-                // Get previous monthly data (second latest) - optimized query
+                // Get previous monthly data (second latest by ID) - optimized query
                 $previousMonthly = HotelOccupancyCombined::select([
                     'id',
                     'year',
@@ -99,8 +105,7 @@ class HotelOccupancyController extends Controller
                     'rlmtgab',
                     'gpr'
                 ])
-                ->orderBy('year', 'desc')
-                ->orderByRaw("FIELD(month, 'JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOPEMBER', 'DESEMBER') DESC")
+                ->orderBy('id', 'desc')
                 ->skip(1)
                 ->first();
                 
@@ -137,6 +142,20 @@ class HotelOccupancyController extends Controller
                 // Get latest year
                 $latestYear = !empty($distinctYears) ? $distinctYears[0] : null;
                 
+                // Add detailed logging
+                Log::info('Hotel Occupancy Data Details', [
+                    'latest_monthly_id' => $latestMonthly ? $latestMonthly->id : null,
+                    'latest_monthly_year' => $latestMonthly ? $latestMonthly->year : null,
+                    'latest_monthly_month' => $latestMonthly ? $latestMonthly->month : null,
+                    'previous_monthly_id' => $previousMonthly ? $previousMonthly->id : null,
+                    'previous_monthly_year' => $previousMonthly ? $previousMonthly->year : null,
+                    'previous_monthly_month' => $previousMonthly ? $previousMonthly->month : null,
+                    'yearly_data_count' => $yearlyData->count(),
+                    'yearly_data_years' => $yearlyData->pluck('year')->toArray(),
+                    'yearly_data_ids' => $yearlyData->pluck('id')->toArray(),
+                    'combined_data_count' => $combinedData->count(),
+                ]);
+                
                 return [
                     'occupancy_data' => $combinedData,
                     'yearly_occupancy_data' => $yearlyData,
@@ -150,10 +169,22 @@ class HotelOccupancyController extends Controller
 
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);
             
-            // Log successful request
+            // Log successful request with detailed data
             Log::info('Hotel Occupancy Summary API request successful', [
                 'total_combined_records' => count($summary['occupancy_data']),
                 'total_yearly_records' => count($summary['yearly_occupancy_data']),
+                'latest_month_data' => $summary['latest_month_data'] ? [
+                    'id' => $summary['latest_month_data']->id,
+                    'year' => $summary['latest_month_data']->year,
+                    'month' => $summary['latest_month_data']->month,
+                ] : null,
+                'yearly_data_sample' => collect($summary['yearly_occupancy_data'])->take(5)->map(function($item) {
+                    return [
+                        'id' => $item->id ?? $item['id'] ?? null,
+                        'year' => $item->year ?? $item['year'] ?? null,
+                        'tpk' => $item->tpk ?? $item['tpk'] ?? null,
+                    ];
+                })->toArray(),
                 'execution_time_ms' => $executionTime,
                 'ip' => $request->ip(),
             ]);

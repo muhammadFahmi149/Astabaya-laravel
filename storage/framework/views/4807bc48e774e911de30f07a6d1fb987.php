@@ -1,17 +1,17 @@
-@extends('layouts.main')
 
-@section('title', 'Tingkat Hunian Hotel')
 
-@push('styles')
+<?php $__env->startSection('title', 'Tingkat Hunian Hotel'); ?>
+
+<?php $__env->startPush('styles'); ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="container py-4">
   <h3 class="font-weight-bold mb-4">Tingkat Hunian Hotel</h3>
   
@@ -418,7 +418,7 @@
       return;
     }
     
-    const API_BASE = '{{ url("/api") }}';
+    const API_BASE = '<?php echo e(url("/api")); ?>';
     
     // Initialize data variables
     let occupancyData = [];
@@ -435,7 +435,7 @@
     let selectedYear = null;
     
     // Check if user is authenticated (set from server side)
-    const isAuthenticated = @auth true @else false @endauth;
+    const isAuthenticated = <?php if(auth()->guard()->check()): ?> true <?php else: ?> false <?php endif; ?>;
 
     // Month order for sorting (chronological order) - using full names
     const monthOrder = ['JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 
@@ -1605,7 +1605,7 @@
             const modal = new bootstrap.Modal(loginModal);
             modal.show();
           } else {
-            window.location.href = '{{ route("login") }}';
+            window.location.href = '<?php echo e(route("login")); ?>';
           }
         }
         return false;
@@ -1720,4 +1720,5 @@
     });
   });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\astabaya\resources\views/dashboard/indikator/hotel_occupancy.blade.php ENDPATH**/ ?>

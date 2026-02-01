@@ -779,25 +779,113 @@
 
     // Load summary data from API
     try {
+      console.log('Fetching ketenagakerjaan data from:', `${API_BASE}/ketenagakerjaan-summary`);
       const response = await fetch(`${API_BASE}/ketenagakerjaan-summary`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const result = await response.json();
+      console.log('Ketenagakerjaan API Response:', result);
       
       if (result.success && result.data) {
         const data = result.data;
-        tptData = data.tpt_data || [];
-        tpakData = data.tpak_data || [];
-        tptLatestData = data.tpt_latest_data;
-        tpakLatestData = data.tpak_latest_data;
-        tptPreviousData = data.tpt_previous_data;
-        tpakPreviousData = data.tpak_previous_data;
-        tptTotalChange = data.tpt_total_change;
-        tpakTotalChange = data.tpak_total_change;
-        tptLakiLakiChange = data.tpt_laki_laki_change;
-        tpakLakiLakiChange = data.tpak_laki_laki_change;
-        tptPerempuanChange = data.tpt_perempuan_change;
-        tpakPerempuanChange = data.tpak_perempuan_change;
+        console.log('Ketenagakerjaan Data:', {
+          tpt_data_count: Array.isArray(data.tpt_data) ? data.tpt_data.length : 0,
+          tpak_data_count: Array.isArray(data.tpak_data) ? data.tpak_data.length : 0,
+          tpt_latest_data: data.tpt_latest_data,
+          tpak_latest_data: data.tpak_latest_data,
+          tpt_previous_data: data.tpt_previous_data,
+          tpak_previous_data: data.tpak_previous_data,
+        });
+        
+        // Helper function to convert string to number
+        const parseNumber = (value) => {
+          if (value === null || value === undefined) return null;
+          const num = typeof value === 'string' ? parseFloat(value) : Number(value);
+          return isNaN(num) ? null : num;
+        };
+        
+        // Process TPT data - convert strings to numbers
+        tptData = Array.isArray(data.tpt_data) ? data.tpt_data.map(item => ({
+          id: item.id,
+          year: parseInt(item.year),
+          laki_laki: parseNumber(item.laki_laki),
+          perempuan: parseNumber(item.perempuan),
+          total: parseNumber(item.total)
+        })) : [];
+        
+        // Process TPAK data - convert strings to numbers
+        tpakData = Array.isArray(data.tpak_data) ? data.tpak_data.map(item => ({
+          id: item.id,
+          year: parseInt(item.year),
+          laki_laki: parseNumber(item.laki_laki),
+          perempuan: parseNumber(item.perempuan),
+          total: parseNumber(item.total)
+        })) : [];
+        
+        // Process latest data - convert strings to numbers
+        if (data.tpt_latest_data) {
+          tptLatestData = {
+            id: data.tpt_latest_data.id,
+            year: parseInt(data.tpt_latest_data.year),
+            laki_laki: parseNumber(data.tpt_latest_data.laki_laki),
+            perempuan: parseNumber(data.tpt_latest_data.perempuan),
+            total: parseNumber(data.tpt_latest_data.total)
+          };
+        }
+        
+        if (data.tpak_latest_data) {
+          tpakLatestData = {
+            id: data.tpak_latest_data.id,
+            year: parseInt(data.tpak_latest_data.year),
+            laki_laki: parseNumber(data.tpak_latest_data.laki_laki),
+            perempuan: parseNumber(data.tpak_latest_data.perempuan),
+            total: parseNumber(data.tpak_latest_data.total)
+          };
+        }
+        
+        // Process previous data - convert strings to numbers
+        if (data.tpt_previous_data) {
+          tptPreviousData = {
+            id: data.tpt_previous_data.id,
+            year: parseInt(data.tpt_previous_data.year),
+            laki_laki: parseNumber(data.tpt_previous_data.laki_laki),
+            perempuan: parseNumber(data.tpt_previous_data.perempuan),
+            total: parseNumber(data.tpt_previous_data.total)
+          };
+        }
+        
+        if (data.tpak_previous_data) {
+          tpakPreviousData = {
+            id: data.tpak_previous_data.id,
+            year: parseInt(data.tpak_previous_data.year),
+            laki_laki: parseNumber(data.tpak_previous_data.laki_laki),
+            perempuan: parseNumber(data.tpak_previous_data.perempuan),
+            total: parseNumber(data.tpak_previous_data.total)
+          };
+        }
+        
+        // Process changes - already numbers but ensure they are
+        tptTotalChange = parseNumber(data.tpt_total_change);
+        tpakTotalChange = parseNumber(data.tpak_total_change);
+        tptLakiLakiChange = parseNumber(data.tpt_laki_laki_change);
+        tpakLakiLakiChange = parseNumber(data.tpak_laki_laki_change);
+        tptPerempuanChange = parseNumber(data.tpt_perempuan_change);
+        tpakPerempuanChange = parseNumber(data.tpak_perempuan_change);
+        
+        console.log('Processed ketenagakerjaan data:', {
+          tptDataLength: tptData.length,
+          tpakDataLength: tpakData.length,
+          tptLatestData: tptLatestData,
+          tpakLatestData: tpakLatestData,
+          tptLatestDataTotal: tptLatestData ? tptLatestData.total : null,
+          tpakLatestDataTotal: tpakLatestData ? tpakLatestData.total : null
+        });
       } else {
-        console.error('Failed to load ketenagakerjaan summary data:', result.message);
+        console.error('Failed to load ketenagakerjaan summary data:', result.message || 'Unknown error');
+        console.error('Full result:', result);
       }
     } catch (error) {
       console.error('Error loading ketenagakerjaan summary data:', error);
@@ -879,7 +967,7 @@
     const isMobile = window.innerWidth <= 767.98;
     
     // Adjust chart height for mobile
-    const comparisonChartDom = document.getElementById('comparisonChart');
+    let comparisonChartDom = document.getElementById('comparisonChart');
     if (isMobile && comparisonChartDom) {
       comparisonChartDom.style.height = '350px';
     }
@@ -984,9 +1072,24 @@
     // Filter TPT data starting from 2017
     const tptFilteredData = tptData.filter(d => d.year >= 2017);
     const tptYears = tptFilteredData.map(d => d.year.toString());
-    const tptTotalValues = tptFilteredData.map(d => d.total !== null ? d.total : null);
-    const tptLakiLakiValues = tptFilteredData.map(d => d.laki_laki !== null ? d.laki_laki : null);
-    const tptPerempuanValues = tptFilteredData.map(d => d.perempuan !== null ? d.perempuan : null);
+    const tptTotalValues = tptFilteredData.map(d => {
+      if (d.total !== null && d.total !== undefined) {
+        return typeof d.total === 'number' ? d.total : parseFloat(d.total);
+      }
+      return null;
+    });
+    const tptLakiLakiValues = tptFilteredData.map(d => {
+      if (d.laki_laki !== null && d.laki_laki !== undefined) {
+        return typeof d.laki_laki === 'number' ? d.laki_laki : parseFloat(d.laki_laki);
+      }
+      return null;
+    });
+    const tptPerempuanValues = tptFilteredData.map(d => {
+      if (d.perempuan !== null && d.perempuan !== undefined) {
+        return typeof d.perempuan === 'number' ? d.perempuan : parseFloat(d.perempuan);
+      }
+      return null;
+    });
 
     if (tptLineChart) {
     tptLineChart.setOption({
@@ -1100,17 +1203,27 @@
     const tpakPieData = [];
     
     if (tpakLatestDataForChart && tpakLatestDataForChart.laki_laki !== null) {
-      tpakPieData.push({
-        name: 'Laki-Laki',
-        value: tpakLatestDataForChart.laki_laki
-      });
+      const lakiValue = typeof tpakLatestDataForChart.laki_laki === 'number' 
+        ? tpakLatestDataForChart.laki_laki 
+        : parseFloat(tpakLatestDataForChart.laki_laki);
+      if (!isNaN(lakiValue)) {
+        tpakPieData.push({
+          name: 'Laki-Laki',
+          value: lakiValue
+        });
+      }
     }
     
     if (tpakLatestDataForChart && tpakLatestDataForChart.perempuan !== null) {
-      tpakPieData.push({
-        name: 'Perempuan',
-        value: tpakLatestDataForChart.perempuan
-      });
+      const perempuanValue = typeof tpakLatestDataForChart.perempuan === 'number' 
+        ? tpakLatestDataForChart.perempuan 
+        : parseFloat(tpakLatestDataForChart.perempuan);
+      if (!isNaN(perempuanValue)) {
+        tpakPieData.push({
+          name: 'Perempuan',
+          value: perempuanValue
+        });
+      }
     }
 
     if (tpakPieChart) {
@@ -1188,9 +1301,24 @@
     // Filter TPAK data starting from 2017
     const tpakFilteredData = tpakData.filter(d => d.year >= 2017);
     const tpakYears = tpakFilteredData.map(d => d.year.toString());
-    const tpakTotalValues = tpakFilteredData.map(d => d.total !== null ? d.total : null);
-    const tpakLakiLakiValues = tpakFilteredData.map(d => d.laki_laki !== null ? d.laki_laki : null);
-    const tpakPerempuanValues = tpakFilteredData.map(d => d.perempuan !== null ? d.perempuan : null);
+    const tpakTotalValues = tpakFilteredData.map(d => {
+      if (d.total !== null && d.total !== undefined) {
+        return typeof d.total === 'number' ? d.total : parseFloat(d.total);
+      }
+      return null;
+    });
+    const tpakLakiLakiValues = tpakFilteredData.map(d => {
+      if (d.laki_laki !== null && d.laki_laki !== undefined) {
+        return typeof d.laki_laki === 'number' ? d.laki_laki : parseFloat(d.laki_laki);
+      }
+      return null;
+    });
+    const tpakPerempuanValues = tpakFilteredData.map(d => {
+      if (d.perempuan !== null && d.perempuan !== undefined) {
+        return typeof d.perempuan === 'number' ? d.perempuan : parseFloat(d.perempuan);
+      }
+      return null;
+    });
 
     if (tpakLineChart) {
     tpakLineChart.setOption({
@@ -1293,10 +1421,17 @@
     }
 
     // Comparison Chart - TPT vs TPAK
-    const comparisonChartDom = document.getElementById('comparisonChart');
+    // comparisonChartDom already declared above, just initialize chart
     let comparisonChart = null;
     if (comparisonChartDom) {
-      comparisonChart = echarts.init(comparisonChartDom);
+      try {
+        comparisonChart = echarts.init(comparisonChartDom);
+        console.log('Comparison chart initialized');
+      } catch (e) {
+        console.error('Error initializing comparison chart:', e);
+      }
+    } else {
+      console.error('Comparison chart element not found');
     }
     
     // Get all unique years from both datasets
@@ -1310,13 +1445,19 @@
     // Get TPT total values for years from 2017
     const tptComparisonValues = filteredYears.map(year => {
       const data = tptData.find(d => d.year === year);
-      return data && data.total !== null ? data.total : null;
+      if (data && data.total !== null && data.total !== undefined) {
+        return typeof data.total === 'number' ? data.total : parseFloat(data.total);
+      }
+      return null;
     });
     
     // Get TPAK total values for years from 2017
     const tpakComparisonValues = filteredYears.map(year => {
       const data = tpakData.find(d => d.year === year);
-      return data && data.total !== null ? data.total : null;
+      if (data && data.total !== null && data.total !== undefined) {
+        return typeof data.total === 'number' ? data.total : parseFloat(data.total);
+      }
+      return null;
     });
 
     if (comparisonChart) {
@@ -1554,14 +1695,14 @@
 
     // Comparison Chart event handlers
     if (comparisonChartDom && comparisonChart) {
-    comparisonChartDom.addEventListener('mouseleave', function() {
-      resetLineChart(comparisonChart, comparisonChartDom);
-    });
-    comparisonChartDom.addEventListener('click', function(e) {
-      setTimeout(function() {
+      comparisonChartDom.addEventListener('mouseleave', function() {
         resetLineChart(comparisonChart, comparisonChartDom);
-      }, 200);
-    });
+      });
+      comparisonChartDom.addEventListener('click', function(e) {
+        setTimeout(function() {
+          resetLineChart(comparisonChart, comparisonChartDom);
+        }, 200);
+      });
     }
 
     // Resize all charts function

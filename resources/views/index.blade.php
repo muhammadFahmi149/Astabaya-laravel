@@ -90,7 +90,7 @@
             <div class="row">
                 <div class="col-lg-4">
                     <div class="left-image wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s">
-                        <img class="person-graphic" src="{{ asset('templatemo_562_space_dynamic/assets/images/about-left-astabaya.png') }}" alt="person graphic">
+                        <img class="person-graphic" src="{{ asset('templatemo_562_space_dynamic/assets/images/tab_kemiskinan.png') }}" alt="person graphic">
                     </div>
                 </div>
                 <div class="col-lg-8 align-self-center">

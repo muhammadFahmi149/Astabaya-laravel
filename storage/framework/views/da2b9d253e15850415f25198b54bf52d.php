@@ -115,7 +115,6 @@
 
               <!-- Action Buttons (Bottom) -->
               <div class="row g-2 publication-action-buttons">
-                <?php if(auth()->guard()->check()): ?>
                 <div class="col-3">
                   <button class="btn btn-light w-100 publication-action-btn d-flex flex-column align-items-center justify-content-center" data-pub-id="<?php echo e(e($publication->pub_id ?? '')); ?>" data-index="<?php echo e($index); ?>" onclick="showModal(this.dataset.pubId, this.dataset.index)">
                     <i class="bi bi-book publication-action-icon"></i>
@@ -147,33 +146,6 @@
                     <span class="publication-action-text">Bookmark</span>
                   </button>
                 </div>
-                <?php else: ?>
-                <div class="col-4">
-                  <button class="btn btn-light w-100 publication-action-btn d-flex flex-column align-items-center justify-content-center" data-pub-id="<?php echo e(e($publication->pub_id ?? '')); ?>" data-index="<?php echo e($index); ?>" onclick="showModal(this.dataset.pubId, this.dataset.index)">
-                    <i class="bi bi-book publication-action-icon"></i>
-                    <span class="publication-action-text">Baca</span>
-                  </button>
-                </div>
-                <div class="col-4">
-                  <a href="<?php echo e(route('download-publication', $publication->pub_id ?? $publication->id)); ?>" target="_blank" class="btn btn-light w-100 publication-action-btn download-publication-btn d-flex flex-column align-items-center justify-content-center" style="text-decoration: none" data-pub-id="<?php echo e($publication->pub_id ?? $publication->id); ?>" data-pub-title="<?php echo e(e($publication->title ?? '')); ?>">
-                    <i class="bi bi-download publication-action-icon"></i>
-                    <span class="publication-action-text">Unduhan</span>
-                  </a>
-                </div>
-                <div class="col-4">
-                  <?php echo $__env->make('components.share-button', [
-                      'title' => $publication->title ?? '',
-                      'url' => route('publications') . '?publication=' . $publication->id,
-                      'contentType' => 'publication',
-                      'size' => 'sm',
-                      'variant' => 'light',
-                      'showText' => true,
-                      'iconClass' => 'bi bi-share publication-action-icon',
-                      'textClass' => 'publication-action-text',
-                      'class' => 'w-100 publication-action-btn d-flex flex-column align-items-center justify-content-center'
-                  ], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
-                </div>
-                <?php endif; ?>
               </div>
             </div>
 
@@ -215,11 +187,9 @@
                 <div class="d-flex flex-column gap-2">
                   <button class="btn btn-outline-primary btn-sm" data-pub-id="<?php echo e(e($publication->pub_id ?? '')); ?>" data-index="<?php echo e($index); ?>" onclick="showModal(this.dataset.pubId, this.dataset.index)"><i class="bi bi-eye"></i> Detail</button>
                   <a href="<?php echo e(route('download-publication', $publication->pub_id ?? $publication->id)); ?>" target="_blank" class="btn btn-primary btn-sm download-publication-btn" data-pub-id="<?php echo e($publication->pub_id ?? $publication->id); ?>" data-pub-title="<?php echo e(e($publication->title ?? '')); ?>"> <i class="bi bi-download"></i> Download PDF </a>
-                  <?php if(auth()->guard()->check()): ?>
                   <button class="btn btn-outline-secondary btn-sm bookmark-btn" data-content-type="publication" data-object-id="<?php echo e($publication->id); ?>" data-bookmark-id="" onclick="handlePublicationBookmark(this)">
                     <i class="bi bi-bookmark"></i> <span>Bookmark</span>
                   </button>
-                  <?php endif; ?>
                 </div>
               </div>
             </div>
@@ -309,7 +279,6 @@
       </div>
       <div class="modal-footer">
         <div class="d-flex w-100 gap-2 flex-wrap modal-footer-buttons">
-          <?php if(auth()->guard()->check()): ?>
           <button
             id="modalBookmarkBtn"
             class="btn btn-outline-secondary btn-sm bookmark-btn modal-footer-btn-left"
@@ -321,7 +290,6 @@
             <i class="bi bi-bookmark"></i>
             <span class="modal-btn-text">Bookmark</span>
           </button>
-          <?php endif; ?>
           <?php echo $__env->make('components.share-button', [
               'title' => '',
               'url' => '',
@@ -947,6 +915,28 @@
       transition: all 0.2s ease;
     }
 
+    /* Bookmarked state styling */
+    .bookmark-btn.bookmarked {
+      background-color: #fff3cd !important;
+      border-color: #ffc107 !important;
+    }
+
+    .bookmark-btn.bookmarked .publication-action-icon,
+    .bookmark-btn.bookmarked i {
+      color: #ffc107 !important;
+    }
+
+    .bookmark-btn.bookmarked .publication-action-text,
+    .bookmark-btn.bookmarked span {
+      color: #856404 !important;
+      font-weight: 600 !important;
+    }
+
+    .bookmark-btn.bookmarked:hover {
+      background-color: #ffe69c !important;
+      border-color: #ffc107 !important;
+    }
+
     .publication-item .btn-light:hover {
       background-color: #f8f9fa !important;
     }
@@ -1072,6 +1062,40 @@
     white-space: nowrap;
   }
 
+  /* Bookmarked state styling for desktop */
+  .bookmark-btn.bookmarked {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+    color: #856404;
+  }
+
+  .bookmark-btn.bookmarked i {
+    color: #ffc107;
+  }
+
+  .bookmark-btn.bookmarked:hover {
+    background-color: #ffe69c;
+    border-color: #ffc107;
+    color: #856404;
+  }
+
+  /* Modal bookmark button styling */
+  #modalBookmarkBtn.bookmarked {
+    background-color: #fff3cd;
+    border-color: #ffc107;
+    color: #856404;
+  }
+
+  #modalBookmarkBtn.bookmarked i {
+    color: #ffc107;
+  }
+
+  #modalBookmarkBtn.bookmarked:hover {
+    background-color: #ffe69c;
+    border-color: #ffc107;
+    color: #856404;
+  }
+
   /* Better alignment for content area on desktop */
   @media (min-width: 768px) {
     .publication-item .col-md-6 {
@@ -1106,6 +1130,12 @@
   document.addEventListener("DOMContentLoaded", function () {
     // Initialize year filter dropdown
     initYearFilter();
+    
+    // Initialize bookmark states
+    <?php if(auth()->guard()->check()): ?>
+    initializeBookmarkStates();
+    <?php endif; ?>
+    
     const lazyImages = document.querySelectorAll("img.lazy-load");
 
     if ("IntersectionObserver" in window) {
@@ -1382,7 +1412,6 @@
     document.getElementById("modalPubId").textContent = pub.pubId;
     
     // Update bookmark button in modal
-    <?php if(auth()->guard()->check()): ?>
     const modalBookmarkBtn = document.getElementById("modalBookmarkBtn");
     if (modalBookmarkBtn) {
       // Find the publication in the list to get bookmark_id
@@ -1412,10 +1441,35 @@
             icon.classList.add('bi-bookmark');
             if (text) text.textContent = 'Bookmark';
           }
+        } else {
+          // If no list bookmark button found, just set the object ID
+          const publicationId = pub.id || '';
+          modalBookmarkBtn.dataset.objectId = String(publicationId);
+          modalBookmarkBtn.dataset.bookmarkId = '';
+          
+          const icon = modalBookmarkBtn.querySelector('i');
+          const text = modalBookmarkBtn.querySelector('span');
+          
+          modalBookmarkBtn.classList.remove('bookmarked');
+          icon.classList.remove('bi-bookmark-fill');
+          icon.classList.add('bi-bookmark');
+          if (text) text.textContent = 'Bookmark';
         }
+      } else {
+        // If no publication element found, just set the object ID
+        const publicationId = pub.id || '';
+        modalBookmarkBtn.dataset.objectId = String(publicationId);
+        modalBookmarkBtn.dataset.bookmarkId = '';
+        
+        const icon = modalBookmarkBtn.querySelector('i');
+        const text = modalBookmarkBtn.querySelector('span');
+        
+        modalBookmarkBtn.classList.remove('bookmarked');
+        icon.classList.remove('bi-bookmark-fill');
+        icon.classList.add('bi-bookmark');
+        if (text) text.textContent = 'Bookmark';
       }
     }
-    <?php endif; ?>
     
     // Clean abstract from special characters like \u000D\u000A (carriage return and line feed)
     let cleanAbstract = pub.abstract || '';
@@ -1869,19 +1923,142 @@
   });
   <?php endif; ?>
 
+  // Initialize bookmark states on page load
+  <?php if(auth()->guard()->check()): ?>
+  async function initializeBookmarkStates() {
+    try {
+      // Get CSRF token
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      
+      let csrftoken = getCookie("XSRF-TOKEN");
+      if (!csrftoken) {
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        if (metaTag) {
+          csrftoken = metaTag.getAttribute("content");
+        }
+      }
+      
+      if (!csrftoken) {
+        console.error("CSRF token not found for bookmark initialization");
+        return;
+      }
+      
+      // Fetch user's bookmarks
+      const response = await fetch('/api/bookmarks/', {
+        headers: { 
+          "X-CSRF-TOKEN": csrftoken,
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        credentials: "include",
+      });
+      
+      if (!response.ok) {
+        console.error("Failed to fetch bookmarks:", response.status);
+        return;
+      }
+      
+      const bookmarks = await response.json().catch(() => []);
+      
+      // Update bookmark buttons based on fetched bookmarks
+      const bookmarkButtons = document.querySelectorAll('.bookmark-btn[data-content-type="publication"]');
+      
+      bookmarks.forEach(bookmark => {
+        if (bookmark.content_type_model === 'publication') {
+          const objectId = String(bookmark.object_id);
+          
+          // Find all bookmark buttons for this publication
+          bookmarkButtons.forEach(btn => {
+            if (String(btn.dataset.objectId) === objectId) {
+              // Update button state
+              btn.classList.add('bookmarked');
+              btn.dataset.bookmarkId = String(bookmark.id);
+              
+              const icon = btn.querySelector('i');
+              const text = btn.querySelector('span');
+              
+              if (icon) {
+                icon.classList.remove('bi-bookmark');
+                icon.classList.add('bi-bookmark-fill');
+              }
+              
+              if (text) {
+                text.textContent = 'Tersimpan';
+              }
+            }
+          });
+        }
+      });
+      
+      console.log('Bookmark states initialized');
+    } catch (error) {
+      console.error('Error initializing bookmark states:', error);
+    }
+  }
+  <?php endif; ?>
+
   // Make functions available globally
   window.broadcastBookmarkChange = broadcastBookmarkChange;
   window.syncBookmarkButtons = syncBookmarkButtons;
 
-  // Share buttons are now handled by the global handler in main.blade.php
-  // No local handler needed - using event delegation on .share-btn class
+  // Initialize share buttons - using event delegation for dynamic content
   document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing share buttons for publications'); // Debug
+    // Use event delegation to handle all share buttons (including dynamically added ones)
+    document.addEventListener('click', async function(e) {
+      const shareBtn = e.target.closest('.share-publication-modal-btn') || e.target.closest('.share-publication-btn');
+      if (shareBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const title = shareBtn.dataset.pubTitle || 'Publikasi';
+        let url = shareBtn.dataset.pubUrl || window.location.href;
+        
+        // Ensure URL is complete (add origin if relative)
+        if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
+          url = window.location.origin + (url.startsWith('/') ? url : '/' + url);
+        }
+        
+        console.log('Share button clicked:', { title, url, button: shareBtn, dataset: shareBtn.dataset }); // Debug log
+        
+        // Try Web Share API first
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: title,
+              text: 'Lihat publikasi ini: ' + title,
+              url: url
+            });
+            console.log('Share successful');
+            return;
+          } catch (err) {
+            if (err.name !== 'AbortError') {
+              console.log('Error sharing or user cancelled:', err);
+              // Fallback to copy to clipboard
+              await copyToClipboardDirect(url, title, e);
+            }
+          }
+        } else {
+          // Fallback: copy to clipboard directly from event handler
+          await copyToClipboardDirect(url, title, e);
+        }
+      }
+    });
+  });
   
   // Copy to clipboard directly from event handler (maintains user interaction context)
-  // Share functionality is now handled by the global handler in main.blade.php
-  // All share buttons use the .share-btn class and are handled via event delegation
-  // Legacy function removed - using global handler instead
-  async function copyToClipboardDirect_LEGACY_DO_NOT_USE(text, title, event) {
+  async function copyToClipboardDirect(text, title, event) {
     text = String(text || '');
     
     if (!text) {

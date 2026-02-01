@@ -413,12 +413,12 @@
       }
       
       /* Share Modal Styles */
-      #shareModal .modal-body textarea {
+      #shareModal .modal-body input {
         cursor: text;
         user-select: all;
       }
       
-      #shareModal .modal-body textarea:focus {
+      #shareModal .modal-body input:focus {
         border-color: #86b7fe;
         outline: 0;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
@@ -430,6 +430,16 @@
       
       #shareModal .btn-primary {
         white-space: nowrap;
+      }
+      
+      #shareModal .alert-info {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+      }
+      
+      #shareModal .alert-info i {
+        margin-right: 0.5rem;
       }
       }
 
@@ -3890,6 +3900,43 @@
     
     
     <script>
+      // Function to show share modal (defined outside IIFE for early access)
+      // Make it available immediately on window object
+      window.showShareModal = function(title, url) {
+        console.log('showShareModal called:', { title, url }); // Debug
+        const modalTitle = document.getElementById('shareModalTitle');
+        const modalInput = document.getElementById('shareModalInput');
+        const shareModal = document.getElementById('shareModal');
+        
+        if (!shareModal) {
+          console.error('Share modal element not found!');
+          alert('Modal share tidak ditemukan. Pastikan modal HTML sudah dimuat.');
+          return;
+        }
+        
+        if (modalTitle) modalTitle.textContent = 'Bagikan: ' + title;
+        if (modalInput) modalInput.value = url;
+        
+        try {
+          const modal = new bootstrap.Modal(shareModal);
+          modal.show();
+          
+          // Select text in input when modal is shown
+          shareModal.addEventListener('shown.bs.modal', function() {
+            if (modalInput) {
+              modalInput.select();
+              modalInput.focus();
+            }
+          }, { once: true });
+        } catch (err) {
+          console.error('Error showing share modal:', err);
+          alert('Error saat membuka modal share: ' + err.message);
+        }
+      };
+      
+      // Also create a direct reference for convenience
+      var showShareModal = window.showShareModal;
+      
       // Global share functionality for all pages
       (function() {
         // Initialize share buttons - using event delegation for dynamic content
@@ -3898,9 +3945,32 @@
           
           // Use event delegation to handle all share buttons (including dynamically added ones)
           document.addEventListener('click', async function(e) {
+            console.log('Click event detected:', e.target, e.target.classList); // Debug
+            
+            // Check if clicked element or its parent is a share button
             const shareBtn = e.target.closest('.share-btn, .share-infographic-modal-btn, .share-infographic-btn, .share-publication-modal-btn, .share-publication-btn, .share-news-modal-btn, .share-news-btn');
             
-            if (shareBtn) {
+            // Also check if the clicked element itself is a share button
+            const isShareButton = e.target.classList.contains('share-btn') || 
+                                  e.target.classList.contains('share-infographic-modal-btn') ||
+                                  e.target.classList.contains('share-infographic-btn') ||
+                                  e.target.classList.contains('share-publication-modal-btn') ||
+                                  e.target.classList.contains('share-publication-btn') ||
+                                  e.target.classList.contains('share-news-modal-btn') ||
+                                  e.target.classList.contains('share-news-btn');
+            
+            // Check if parent is share button
+            const parentIsShareBtn = e.target.parentElement && (
+              e.target.parentElement.classList.contains('share-btn') ||
+              e.target.parentElement.classList.contains('share-news-modal-btn') ||
+              e.target.parentElement.classList.contains('share-infographic-modal-btn') ||
+              e.target.parentElement.classList.contains('share-publication-modal-btn')
+            );
+            
+            const targetBtn = shareBtn || (isShareButton ? e.target.closest('button') : null) || (parentIsShareBtn ? e.target.closest('button') : null);
+            
+            if (targetBtn) {
+              console.log('Share button detected:', targetBtn, 'Classes:', targetBtn.className); // Debug
               e.preventDefault();
               e.stopPropagation();
               
@@ -3909,22 +3979,24 @@
               let url = '';
               
               // Try different data attributes
-              if (shareBtn.dataset.infographicTitle) {
-                title = shareBtn.dataset.infographicTitle;
-                url = shareBtn.dataset.infographicUrl || window.location.href;
-              } else if (shareBtn.dataset.pubTitle) {
-                title = shareBtn.dataset.pubTitle;
-                url = shareBtn.dataset.pubUrl || window.location.href;
-              } else if (shareBtn.dataset.newsTitle) {
-                title = shareBtn.dataset.newsTitle;
-                url = shareBtn.dataset.newsUrl || window.location.href;
-              } else if (shareBtn.dataset.shareTitle) {
-                title = shareBtn.dataset.shareTitle;
-                url = shareBtn.dataset.shareUrl || window.location.href;
+              if (targetBtn.dataset.infographicTitle) {
+                title = targetBtn.dataset.infographicTitle;
+                url = targetBtn.dataset.infographicUrl || window.location.href;
+              } else if (targetBtn.dataset.pubTitle) {
+                title = targetBtn.dataset.pubTitle;
+                url = targetBtn.dataset.pubUrl || window.location.href;
+              } else if (targetBtn.dataset.newsTitle) {
+                title = targetBtn.dataset.newsTitle;
+                url = targetBtn.dataset.newsUrl || window.location.href;
+              } else if (targetBtn.dataset.shareTitle) {
+                title = targetBtn.dataset.shareTitle;
+                url = targetBtn.dataset.shareUrl || window.location.href;
               } else {
                 title = 'Konten';
                 url = window.location.href;
               }
+              
+              console.log('Share data extracted:', { title, url, dataset: targetBtn.dataset }); // Debug
               
               // Ensure URL is complete (add origin if relative)
               if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
@@ -3934,7 +4006,7 @@
               // Ensure URL is a string
               url = String(url);
               
-              console.log('Share button clicked:', { title, url, button: shareBtn }); // Debug log
+              console.log('Share button clicked:', { title, url, button: targetBtn }); // Debug log
               
               // Try Web Share API first (for mobile devices)
               if (navigator.share) {
@@ -3950,11 +4022,13 @@
                   if (err.name !== 'AbortError') {
                     console.log('Error sharing or user cancelled:', err);
                     // Fallback: show share modal
+                    console.log('Calling showShareModal:', { title, url });
                     showShareModal(title, url);
                   }
                 }
               } else {
                 // Show share modal with textarea for manual copy
+                    console.log('Web Share API not available, calling showShareModal:', { title, url });
                 showShareModal(title, url);
               }
             }
@@ -4215,46 +4289,27 @@
           }, 3000);
         }
         
-        // Function to show share modal
-        function showShareModal(title, url) {
-          const modalTitle = document.getElementById('shareModalTitle');
-          const modalTextarea = document.getElementById('shareModalTextarea');
-          const shareModal = document.getElementById('shareModal');
-          
-          if (modalTitle) modalTitle.textContent = 'Bagikan: ' + title;
-          if (modalTextarea) modalTextarea.value = url;
-          
-          if (shareModal) {
-            const modal = new bootstrap.Modal(shareModal);
-            modal.show();
-            
-            // Select text in textarea when modal is shown
-            shareModal.addEventListener('shown.bs.modal', function() {
-              if (modalTextarea) {
-                modalTextarea.select();
-                modalTextarea.focus();
-              }
-            }, { once: true });
-          }
-        }
-        
         // Simple copy function for share modal button
         function copyShareLink() {
-          const textarea = document.getElementById('shareModalTextarea');
-          const copyBtn = event?.target || document.querySelector('#shareModal .btn-primary');
+          const input = document.getElementById('shareModalInput');
+          const copyBtn = document.getElementById('shareModalCopyBtn');
+          const copyBtnText = document.getElementById('shareModalCopyBtnText');
           
-          if (!textarea) return;
+          if (!input) {
+            console.error('Share modal input not found!');
+            return;
+          }
           
-          const url = textarea.value;
+          const url = input.value;
           if (!url) {
             showShareToast('Tidak ada link untuk disalin');
             return;
           }
           
           // Select text first
-          textarea.select();
-          textarea.setSelectionRange(0, url.length);
-          textarea.focus();
+          input.select();
+          input.setSelectionRange(0, url.length);
+          input.focus();
           
           // Try Clipboard API first
           if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -4262,14 +4317,18 @@
               showShareToast('Link telah disalin ke clipboard!');
               
               // Visual feedback on button
-              if (copyBtn) {
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="bi bi-check"></i> Tersalin!';
+              if (copyBtn && copyBtnText) {
+                const originalText = copyBtnText.textContent;
+                const originalIcon = copyBtn.querySelector('i').className;
+                
+                copyBtn.querySelector('i').className = 'bi bi-check';
+                copyBtnText.textContent = 'Tersalin!';
                 copyBtn.classList.add('btn-success');
                 copyBtn.classList.remove('btn-primary');
                 
                 setTimeout(() => {
-                  copyBtn.innerHTML = originalText;
+                  copyBtn.querySelector('i').className = originalIcon;
+                  copyBtnText.textContent = originalText;
                   copyBtn.classList.remove('btn-success');
                   copyBtn.classList.add('btn-primary');
                 }, 2000);
@@ -4288,7 +4347,7 @@
         window.copyToClipboardGlobal = copyToClipboardGlobal;
         window.fallbackCopyToClipboardGlobal = fallbackCopyToClipboardGlobal;
         window.showShareToast = showShareToast;
-        window.showShareModal = showShareModal;
+        window.showShareModal = showShareModal; // Already defined globally above
         window.copyShareLink = copyShareLink;
       })();
     </script>
@@ -4305,26 +4364,27 @@
           </div>
           <div class="modal-body">
             <p class="mb-3">Salin link di bawah ini untuk membagikan:</p>
-            <div class="input-group">
-              <textarea 
+            <div class="input-group mb-3">
+              <input 
+                type="text" 
                 class="form-control" 
-                id="shareModalTextarea" 
-                rows="3" 
+                id="shareModalInput" 
                 readonly
-                style="resize: none; font-family: monospace; font-size: 0.9rem;"
-              ></textarea>
+                style="font-family: monospace; font-size: 0.9rem;"
+              >
               <button 
                 class="btn btn-primary" 
                 type="button" 
+                id="shareModalCopyBtn"
                 onclick="copyShareLink()"
-                style="border-top-left-radius: 0; border-bottom-left-radius: 0;"
+                style="border-top-left-radius: 0; border-bottom-left-radius: 0; white-space: nowrap;"
               >
-                <i class="bi bi-clipboard"></i> Salin
+                <i class="bi bi-clipboard"></i> <span id="shareModalCopyBtnText">Salin</span>
               </button>
             </div>
-            <small class="text-muted d-block mt-2">
-              <i class="bi bi-info-circle"></i> Klik tombol "Salin" atau pilih teks dan salin dengan Ctrl+C
-            </small>
+            <div class="alert alert-info mb-0" role="alert">
+              <i class="bi bi-info-circle"></i> <small>Klik tombol "Salin" untuk menyalin link ke clipboard, atau pilih teks dan salin dengan Ctrl+C (Cmd+C di Mac)</small>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>

@@ -226,77 +226,75 @@ class GiniRatioController extends Controller
             // Build cache key for summary
             $cacheKey = "gini_ratio_summary_api";
 
+            // Clear cache first to ensure fresh data
+            Cache::forget($cacheKey);
+
             // Try to get from cache
             $summary = Cache::remember($cacheKey, self::CACHE_DURATION_SUMMARY, function () {
-                // Get all Surabaya data ordered by year (optimized - only needed columns)
-                $surabaya_data = GiniRatio::select([
+                // First, get ALL data from database to see what we have
+                $allRecords = GiniRatio::select([
                     'id',
+                    'location_name',
+                    'location_type',
                     'year',
                     'gini_ratio_value'
                 ])
-                ->where('location_name', 'Kota Surabaya')
-                ->where('location_type', 'Kota')
-                ->orderBy('year', 'asc')
+                ->orderBy('id', 'desc')
                 ->get();
                 
-                // Get all Jawa Timur data ordered by year (optimized - only needed columns)
-                $jatim_data = GiniRatio::select([
-                    'id',
-                    'year',
-                    'gini_ratio_value'
-                ])
-                ->where('location_name', 'Jawa Timur')
-                ->where('location_type', 'Provinsi')
-                ->orderBy('year', 'asc')
-                ->get();
+                Log::info('Gini Ratio - All records in database', [
+                    'total_count' => $allRecords->count(),
+                    'sample_records' => $allRecords->take(10)->map(function($r) {
+                        return [
+                            'id' => $r->id,
+                            'location_name' => $r->location_name,
+                            'location_type' => $r->location_type,
+                            'year' => $r->year,
+                            'gini_ratio_value' => $r->gini_ratio_value
+                        ];
+                    })->toArray()
+                ]);
                 
-                // Get latest Surabaya data (optimized query)
-                $surabaya_latest = GiniRatio::select([
-                    'id',
-                    'year',
-                    'gini_ratio_value'
-                ])
-                ->where('location_name', 'Kota Surabaya')
-                ->where('location_type', 'Kota')
-                ->orderBy('year', 'desc')
-                ->first();
+                // Filter data manually (case-insensitive)
+                $surabaya_data = $allRecords->filter(function($item) {
+                    $name = strtolower($item->location_name ?? '');
+                    return strpos($name, 'surabaya') !== false;
+                })->map(function($item) {
+                    return (object)[
+                        'id' => $item->id,
+                        'year' => $item->year,
+                        'gini_ratio_value' => $item->gini_ratio_value
+                    ];
+                })->sortBy('year')->values();
                 
-                // Get latest Jawa Timur data (optimized query)
-                $jatim_latest = GiniRatio::select([
-                    'id',
-                    'year',
-                    'gini_ratio_value'
-                ])
-                ->where('location_name', 'Jawa Timur')
-                ->where('location_type', 'Provinsi')
-                ->orderBy('year', 'desc')
-                ->first();
+                $jatim_data = $allRecords->filter(function($item) {
+                    $name = strtolower($item->location_name ?? '');
+                    return strpos($name, 'jawa timur') !== false || 
+                           strpos($name, 'jatim') !== false;
+                })->map(function($item) {
+                    return (object)[
+                        'id' => $item->id,
+                        'year' => $item->year,
+                        'gini_ratio_value' => $item->gini_ratio_value
+                    ];
+                })->sortBy('year')->values();
                 
-                // Get previous Surabaya data (second latest) - optimized query
-                $surabaya_previous = GiniRatio::select([
-                    'id',
-                    'year',
-                    'gini_ratio_value'
-                ])
-                ->where('location_name', 'Kota Surabaya')
-                ->where('location_type', 'Kota')
-                ->orderBy('year', 'desc')
-                ->skip(1)
-                ->first();
+                Log::info('Gini Ratio - Filtered data', [
+                    'surabaya_count' => $surabaya_data->count(),
+                    'jatim_count' => $jatim_data->count(),
+                    'surabaya_sample' => $surabaya_data->take(3)->toArray(),
+                    'jatim_sample' => $jatim_data->take(3)->toArray(),
+                ]);
                 
-                // Get previous Jawa Timur data (second latest) - optimized query
-                $jatim_previous = GiniRatio::select([
-                    'id',
-                    'year',
-                    'gini_ratio_value'
-                ])
-                ->where('location_name', 'Jawa Timur')
-                ->where('location_type', 'Provinsi')
-                ->orderBy('year', 'desc')
-                ->skip(1)
-                ->first();
+                // Get latest data (by ID desc)
+                $surabaya_latest = $surabaya_data->sortByDesc('id')->first();
+                $jatim_latest = $jatim_data->sortByDesc('id')->first();
                 
-                // Calculate changes for Surabaya
+                // Get previous data (second latest by ID)
+                $surabaya_previous = $surabaya_data->sortByDesc('id')->skip(1)->first();
+                $jatim_previous = $jatim_data->sortByDesc('id')->skip(1)->first();
+                
+                // Calculate changes
                 $surabaya_change = null;
                 if ($surabaya_latest && $surabaya_previous) {
                     if ($surabaya_latest->gini_ratio_value !== null && $surabaya_previous->gini_ratio_value !== null) {
@@ -304,7 +302,6 @@ class GiniRatioController extends Controller
                     }
                 }
                 
-                // Calculate changes for Jawa Timur
                 $jatim_change = null;
                 if ($jatim_latest && $jatim_previous) {
                     if ($jatim_latest->gini_ratio_value !== null && $jatim_previous->gini_ratio_value !== null) {
@@ -312,9 +309,22 @@ class GiniRatioController extends Controller
                     }
                 }
                 
+                Log::info('Gini Ratio - Final summary', [
+                    'surabaya_latest' => $surabaya_latest ? [
+                        'id' => $surabaya_latest->id,
+                        'year' => $surabaya_latest->year,
+                        'value' => $surabaya_latest->gini_ratio_value
+                    ] : null,
+                    'jatim_latest' => $jatim_latest ? [
+                        'id' => $jatim_latest->id,
+                        'year' => $jatim_latest->year,
+                        'value' => $jatim_latest->gini_ratio_value
+                    ] : null,
+                ]);
+                
                 return [
-                    'surabaya_data' => $surabaya_data,
-                    'jatim_data' => $jatim_data,
+                    'surabaya_data' => $surabaya_data->toArray(),
+                    'jatim_data' => $jatim_data->toArray(),
                     'surabaya_latest' => $surabaya_latest,
                     'jatim_latest' => $jatim_latest,
                     'surabaya_previous' => $surabaya_previous,
@@ -360,4 +370,3 @@ class GiniRatioController extends Controller
         }
     }
 }
-
