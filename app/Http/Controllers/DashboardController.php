@@ -4,19 +4,93 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use App\Models\Publication;
 use App\Models\News;
+use App\Models\Infographic;
 
 class DashboardController extends Controller
 {
     /**
      * Display dashboard page.
-     * Note: All data is fetched via API endpoints, not directly from database.
      */
     public function dashboard()
     {
-        // Data will be fetched from API via JavaScript/Axios on frontend
-        return view('dashboard.dashboard');
+        try {
+            // Get latest news, publications, and infographics for carousel and cards
+            $latestNews = News::orderBy('release_date', 'desc')->limit(5)->get();
+            $latestPublications = Publication::orderBy('date', 'desc')->limit(5)->get();
+            $latestInfographics = Infographic::orderBy('created_at', 'desc')->limit(4)->get();
+            
+            // Get carousel items for each type
+            $carouselNews = $latestNews->map(function($news) {
+                return [
+                    'type' => 'news',
+                    'id' => $news->id,
+                    'title' => $news->title ?? 'Berita',
+                    'image' => $news->picture_url ?? null,
+                    'date' => $news->release_date ?? null,
+                ];
+            })->filter(function($item) {
+                return !empty($item['title']);
+            });
+            
+            $carouselPublications = $latestPublications->map(function($pub) {
+                return [
+                    'type' => 'publication',
+                    'id' => $pub->id,
+                    'title' => $pub->title ?? 'Publikasi',
+                    'image' => $pub->image ?? null,
+                    'date' => $pub->date ?? null,
+                ];
+            })->filter(function($item) {
+                return !empty($item['title']);
+            });
+            
+            $carouselInfographics = $latestInfographics->map(function($infographic) {
+                return [
+                    'type' => 'infographic',
+                    'id' => $infographic->id,
+                    'title' => $infographic->title ?? 'Infografis',
+                    'image' => $infographic->image ?? null,
+                    'date' => $infographic->created_at ?? null,
+                ];
+            })->filter(function($item) {
+                return !empty($item['title']);
+            });
+            
+            // Default carousel items (news, fallback to publications or infographics if news is empty)
+            $carouselItems = $carouselNews;
+            if ($carouselItems->isEmpty()) {
+                $carouselItems = $carouselPublications;
+            }
+            if ($carouselItems->isEmpty()) {
+                $carouselItems = $carouselInfographics;
+            }
+            
+            return view('dashboard.dashboard', [
+                'latestNews' => $latestNews,
+                'latestPublications' => $latestPublications,
+                'latestInfographics' => $latestInfographics,
+                'carouselItems' => $carouselItems,
+                'carouselNews' => $carouselNews,
+                'carouselPublications' => $carouselPublications,
+                'carouselInfographics' => $carouselInfographics,
+            ]);
+        } catch (\Exception $e) {
+            // Log error and return view with empty data
+            \Log::error('Dashboard error: ' . $e->getMessage());
+            
+            return view('dashboard.dashboard', [
+                'latestNews' => collect(),
+                'latestPublications' => collect(),
+                'latestInfographics' => collect(),
+                'carouselItems' => collect(),
+                'carouselNews' => collect(),
+                'carouselPublications' => collect(),
+                'carouselInfographics' => collect(),
+            ]);
+        }
     }
 
     /**

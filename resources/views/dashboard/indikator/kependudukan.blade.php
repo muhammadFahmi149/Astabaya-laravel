@@ -889,10 +889,80 @@
       }
 
       const pieChart = echarts.init(pieChartDom);
-      const pieData = pieChartData.map(d => ({
-        value: d.value,
-        name: d.name
-      }));
+      
+      // Function to extract age range from age group string (e.g., "0-4" -> [0, 4])
+      function parseAgeGroup(ageGroup) {
+        if (!ageGroup) return null;
+        // Handle formats like "0-4", "5-9", "75+", etc.
+        if (ageGroup.includes('+')) {
+          const start = parseInt(ageGroup.replace('+', ''));
+          return { start: start, end: 999 }; // 999 as max age
+        }
+        const parts = ageGroup.split('-');
+        if (parts.length === 2) {
+          return { start: parseInt(parts[0]), end: parseInt(parts[1]) };
+        }
+        return null;
+      }
+      
+      // Function to categorize age group
+      function categorizeAge(ageGroup) {
+        const ageRange = parseAgeGroup(ageGroup);
+        if (!ageRange) return null;
+        
+        const { start, end } = ageRange;
+        
+        // Bayi-balita (0-5 tahun): includes groups that fall within 0-5
+        if (start >= 0 && start <= 5) {
+          return 'Bayi-balita (0-5 tahun)';
+        }
+        // Anak-anak (5-11 tahun): includes groups that start at 5 or later but within 5-11
+        if (start >= 5 && start <= 11) {
+          return 'Anak-anak (5-11 tahun)';
+        }
+        // Remaja (12-25 tahun): includes groups that start at 12 or later but within 12-25
+        if (start >= 12 && start <= 25) {
+          return 'Remaja (12-25 tahun)';
+        }
+        // Dewasa (26-45 tahun): includes groups that start at 26 or later but within 26-45
+        if (start >= 26 && start <= 45) {
+          return 'Dewasa (26-45 tahun)';
+        }
+        // Lansia (46 tahun ke atas): includes groups that start at 46 or later
+        if (start >= 46) {
+          return 'Lansia (46+ tahun)';
+        }
+        
+        return null;
+      }
+      
+      // Group data by category
+      const groupedData = {};
+      pieChartData.forEach(d => {
+        const category = categorizeAge(d.name);
+        if (category) {
+          if (!groupedData[category]) {
+            groupedData[category] = 0;
+          }
+          groupedData[category] += d.value;
+        }
+      });
+      
+      // Convert to array format for ECharts
+      const pieData = Object.keys(groupedData).map(category => ({
+        name: category,
+        value: groupedData[category]
+      })).sort((a, b) => {
+        // Sort by category order
+        const order = {
+          'Bayi-balita (0-5 tahun)': 1,
+          'Anak-anak (5-11 tahun)': 2,
+          'Remaja (12-25 tahun)': 3,
+          'Dewasa (26-45 tahun)': 4,
+          'Lansia (46+ tahun)': 5
+        };
+        return (order[a.name] || 999) - (order[b.name] || 999);
+      });
 
       pieChart.setOption({
         tooltip: {
