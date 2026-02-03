@@ -88,7 +88,7 @@
             <div class="row">
                 <div class="col-lg-4">
                     <div class="left-image wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s">
-                        <img class="person-graphic" src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/about-left-astabaya.png')); ?>" alt="person graphic">
+                        <img class="person-graphic" src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/tab_kemiskinan.png')); ?>" alt="person graphic">
                     </div>
                 </div>
                 <div class="col-lg-8 align-self-center">
@@ -170,9 +170,9 @@
     <div id="services" class="our-services section" style="padding: 110px 0px">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6 align-self-center wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
+                <div class="col-lg-6 align-self-start wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
                     <div class="left-image">
-                        <img src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/services-left-astabaya.png')); ?>" alt="">
+                        <img src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/tab_kemiskinan.png')); ?>" alt="">
                     </div>
                 </div>
                 <div class="col-lg-6 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.2s">
