@@ -1678,18 +1678,15 @@
       return;
     }
 
-    // Try to get CSRF token from cookie first, then from meta tag
-    let csrftoken = getCookie("XSRF-TOKEN");
-    if (!csrftoken) {
-      const metaTag = document.querySelector('meta[name="csrf-token"]');
-      if (metaTag) {
-        csrftoken = metaTag.getAttribute("content");
-      }
-    }
+    // Get CSRF token from meta tag (Laravel standard)
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    const csrftoken = metaTag ? metaTag.getAttribute('content') : null;
+    
+    console.log("[Publications Bookmark] CSRF Token:", csrftoken ? "Found" : "NOT FOUND");
 
     if (!csrftoken) {
-      console.error("CSRF token not found");
-      alert("Sesi Anda telah berakhir. Silakan refresh halaman dan login kembali.");
+      console.error("CSRF token not found! Silakan refresh halaman (Ctrl+F5).");
+      alert("Token CSRF tidak ditemukan. Silakan refresh halaman (Ctrl+F5).");
       button.disabled = false;
       return;
     }
@@ -1704,7 +1701,7 @@
         }
 
         console.log("Deleting bookmark:", { bookmarkId, contentType, objectId });
-        const response = await fetch(`/api/bookmarks/delete/${bookmarkId}/`, {
+        const response = await fetch(`/bookmarks/${bookmarkId}`, {
           method: "DELETE",
           headers: { 
             "X-CSRF-TOKEN": csrftoken,
@@ -1748,7 +1745,7 @@
         
         console.log("Adding bookmark:", requestBody);
         
-        const response = await fetch(`/api/bookmarks/add/`, {
+        const response = await fetch(`/bookmarks/add`, {
           method: "POST",
           headers: { 
             "Content-Type": "application/json", 
@@ -1786,7 +1783,7 @@
           if (response.status === 409) {
             // Bookmark already exists, fetch and update UI
             try {
-              const existingBookmarks = await fetch(`/api/bookmarks/`, {
+              const existingBookmarks = await fetch(`/bookmarks`, {
                 headers: { 
                   "X-CSRF-TOKEN": csrftoken,
                   "X-Requested-With": "XMLHttpRequest"
@@ -1958,7 +1955,7 @@
       }
       
       // Fetch user's bookmarks
-      const response = await fetch('/api/bookmarks/', {
+      const response = await fetch('/bookmarks', {
         headers: { 
           "X-CSRF-TOKEN": csrftoken,
           "X-Requested-With": "XMLHttpRequest"

@@ -1072,7 +1072,7 @@
             // Check if toggleBookmark function exists, if not, load it
             if (typeof toggleBookmark === 'undefined') {
                 // Load bookmarks and sync bookmark buttons
-                fetch('/api/bookmarks/')
+                fetch('/bookmarks')
                     .then(response => response.json())
                     .then(data => {
                         const bookmarks = data.bookmarks || data || [];

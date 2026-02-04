@@ -251,7 +251,7 @@
                                     <button class="btn btn-sm btn-primary" onclick="showNewsModal(<?php echo e($index); ?>)">
                                         <i class="bi bi-book"></i> Baca Selengkapnya
                                     </button>
-                                    <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="<?php echo e($item->id); ?>" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)">
+                                    <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="<?php echo e($item->news_id); ?>" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)">
                                         <i class="bi bi-bookmark"></i> Bookmark
                                     </button>
                                 </div>
@@ -294,7 +294,7 @@
                                             <button class="btn btn-sm btn-primary" onclick="showNewsModal(<?php echo e($index); ?>)" style="font-size: 0.8rem;">
                                                 <i class="bi bi-book"></i> Baca
                                             </button>
-                                            <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="<?php echo e($item->id); ?>" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)" style="font-size: 0.8rem;">
+                                            <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="<?php echo e($item->news_id); ?>" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)" style="font-size: 0.8rem;">
                                                 <i class="bi bi-bookmark"></i> Bookmark
                                             </button>
                                         </div>
@@ -367,7 +367,7 @@
     <?php if(isset($dataNews) && $dataNews->count() > 0): ?>
         <?php $__currentLoopData = $dataNews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <div class="news-data"
-             data-id="<?php echo e($item->id); ?>"
+             data-id="<?php echo e($item->news_id); ?>"
              data-title="<?php echo e(e($item->title ?? '')); ?>"
              data-content="<?php echo e(e($item->content ?? '')); ?>"
              data-category="<?php echo e(e($item->category_name ?? '')); ?>"
@@ -626,13 +626,15 @@
         <?php if(auth()->guard()->check()): ?>
         const modalBookmarkBtn = document.getElementById('modalNewsBookmarkBtn');
         if (modalBookmarkBtn) {
+            // Use news_id for News model (custom primary key)
+            const newsId = item.news_id || item.id;
             // Find the news in the list to get bookmark_id
-            const newsElement = document.querySelector(`.bookmark-btn[data-content-type="news"][data-object-id="${item.id}"]`);
+            const newsElement = document.querySelector(`.bookmark-btn[data-content-type="news"][data-object-id="${newsId}"]`);
             if (newsElement) {
                 const bookmarkId = newsElement.dataset.bookmarkId || '';
                 const isBookmarked = newsElement.classList.contains('bookmarked');
                 
-                modalBookmarkBtn.dataset.objectId = String(item.id);
+                modalBookmarkBtn.dataset.objectId = String(newsId);
                 modalBookmarkBtn.dataset.bookmarkId = bookmarkId;
                 
                 const icon = modalBookmarkBtn.querySelector('i');
@@ -651,7 +653,8 @@
                 }
             } else {
                 // Set default values
-                modalBookmarkBtn.dataset.objectId = String(item.id);
+                const newsId = item.news_id || item.id;
+                modalBookmarkBtn.dataset.objectId = String(newsId);
                 modalBookmarkBtn.dataset.bookmarkId = '';
                 modalBookmarkBtn.classList.remove('bookmarked');
                 const icon = modalBookmarkBtn.querySelector('i');
@@ -769,17 +772,21 @@
 
     // Load bookmarks for authenticated users
     document.addEventListener('DOMContentLoaded', function() {
+        <?php if(auth()->guard()->check()): ?>
         if (isAuthenticated) {
             // Check if toggleBookmark function exists, if not, load it
             if (typeof toggleBookmark === 'undefined') {
                 // Load bookmarks and sync bookmark buttons
-                fetch('/api/bookmarks/')
+                fetch('/bookmarks')
                     .then(response => response.json())
                     .then(data => {
-                        const bookmarks = data.bookmarks || data || [];
+                        const bookmarks = data || [];
+                        console.log('[News] Loaded bookmarks:', bookmarks.length);
                         bookmarks.forEach(bookmark => {
-                            if (bookmark.content_type === 'news') {
+                            // Use content_type_model (new field name from backend)
+                            if (bookmark.content_type_model === 'news') {
                                 const buttons = document.querySelectorAll(`.bookmark-btn[data-content-type="news"][data-object-id="${bookmark.object_id}"]`);
+                                console.log('[News] Found', buttons.length, 'buttons for bookmark', bookmark.id);
                                 buttons.forEach(btn => {
                                     btn.classList.add('bookmarked');
                                     const icon = btn.querySelector('i');
@@ -797,6 +804,7 @@
                     });
             }
         }
+        <?php endif; ?>
     });
 
     // Toast notification animations

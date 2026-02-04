@@ -3111,7 +3111,7 @@
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'X-CSRFToken': csrfToken,
+              'X-CSRF-TOKEN': csrfToken,
             },
             body: JSON.stringify(data),
           });
@@ -3144,7 +3144,7 @@
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'X-CSRFToken': csrfToken,
+              'X-CSRF-TOKEN': csrfToken,
             },
             body: JSON.stringify(data),
           });
@@ -3243,33 +3243,16 @@
         const icon = button.querySelector("i");
         const text = button.querySelector("span");
 
-        function getCookie(name) {
-          let cookieValue = null;
-          if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              if (cookie.substring(0, name.length + 1) === name + "=") {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-              }
-            }
-          }
-          return cookieValue;
-        }
+        // Get CSRF token (Laravel way - from meta tag)
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        const csrftoken = metaTag ? metaTag.getAttribute('content') : null;
         
-        // Try to get CSRF token from cookie first, then from meta tag
-        let csrftoken = getCookie("csrftoken");
-        if (!csrftoken) {
-          const metaTag = document.querySelector('meta[name="csrf-token"]');
-          if (metaTag) {
-            csrftoken = metaTag.getAttribute("content");
-          }
-        }
+        console.log("[Bookmark v3] CSRF Token:", csrftoken ? `Found (${csrftoken.substring(0, 10)}...)` : "NOT FOUND");
+        console.log("[Bookmark v3] Meta tag exists:", !!metaTag);
 
         if (!csrftoken) {
-          console.error("CSRF token not found");
-          alert("Sesi Anda telah berakhir. Silakan refresh halaman dan login kembali.");
+          console.error("CSRF token not found! Meta tag:", metaTag);
+          alert("Token CSRF tidak ditemukan. Silakan refresh halaman (Ctrl+F5).");
           button.disabled = false;
           return;
         }
@@ -3284,10 +3267,10 @@
             }
 
             console.log("Deleting bookmark:", { bookmarkId, contentType, objectId });
-          const response = await fetch(`/api/bookmarks/delete/${bookmarkId}/`, {
+          const response = await fetch(`/bookmarks/${bookmarkId}`, {
             method: "DELETE",
               headers: { 
-                "X-CSRFToken": csrftoken,
+                "X-CSRF-TOKEN": csrftoken,
                 "X-Requested-With": "XMLHttpRequest"
               },
               credentials: "include",
@@ -3328,11 +3311,11 @@
             
             console.log("Adding bookmark:", requestBody);
             
-          const response = await fetch(`/api/bookmarks/add/`, {
+          const response = await fetch(`/bookmarks/add`, {
             method: "POST",
               headers: { 
                 "Content-Type": "application/json", 
-                "X-CSRFToken": csrftoken,
+                "X-CSRF-TOKEN": csrftoken,
                 "X-Requested-With": "XMLHttpRequest"
               },
               credentials: "include",
@@ -3340,8 +3323,17 @@
             });
 
             console.log("Add response status:", response.status);
-            const responseData = await response.json().catch(() => ({}));
-            console.log("Add response data:", responseData);
+            console.log("Add response headers:", Object.fromEntries(response.headers.entries()));
+            const responseText = await response.text();
+            console.log("Add response text:", responseText);
+            let responseData = {};
+            try {
+              responseData = JSON.parse(responseText);
+              console.log("Add response data (parsed):", responseData);
+            } catch (e) {
+              console.error("Failed to parse response as JSON:", e);
+              console.log("Response was:", responseText);
+            }
 
           if (response.ok) {
             button.classList.add("bookmarked");
@@ -3366,9 +3358,9 @@
               if (response.status === 409) {
                 // Bookmark already exists, fetch && update UI
                 try {
-                  const existingBookmarks = await fetch(`/api/bookmarks/`, {
+                  const existingBookmarks = await fetch(`/bookmarks`, {
                     headers: { 
-                      "X-CSRFToken": csrftoken,
+                      "X-CSRF-TOKEN": csrftoken,
                       "X-Requested-With": "XMLHttpRequest"
                     },
                     credentials: "include",
@@ -3404,14 +3396,20 @@
                   alert("Bookmark sudah ada di daftar Anda.");
                 }
               } else {
-                const errorMsg = responseData.error || responseData.detail || responseData.non_field_errors || "Terjadi kesalahan";
-                console.error("Add bookmark error:", responseData);
+                const errorMsg = responseData.error || responseData.detail || responseData.non_field_errors || responseData.message || "Terjadi kesalahan";
+                console.error("Add bookmark error:", {
+                  status: response.status,
+                  statusText: response.statusText,
+                  responseData: responseData,
+                  errorMsg: errorMsg
+                });
                 alert("Gagal menambahkan bookmark: " + (Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg));
               }
             }
           }
         } catch (error) {
           console.error("Error toggling bookmark:", error);
+          console.error("Error stack:", error.stack);
           alert("Terjadi kesalahan: " + error.message);
         } finally {
           button.disabled = false;
@@ -3425,28 +3423,11 @@
         return;
         @endguest
         
-        function getCookie(name) {
-          let cookieValue = null;
-          if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              if (cookie.substring(0, name.length + 1) === name + "=") {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-              }
-            }
-          }
-          return cookieValue;
-        }
+        // Get CSRF token from meta tag (Laravel standard)
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        const csrftoken = metaTag ? metaTag.getAttribute('content') : null;
         
-        let csrftoken = getCookie("csrftoken");
-        if (!csrftoken) {
-          const metaTag = document.querySelector('meta[name="csrf-token"]');
-          if (metaTag) {
-            csrftoken = metaTag.getAttribute("content");
-          }
-        }
+        console.log('[updateBookmarkList] CSRF Token:', csrftoken ? 'Found' : 'NOT FOUND');
 
         if (!csrftoken) {
           console.error("CSRF token not found for updating bookmark list");
@@ -3454,21 +3435,28 @@
         }
 
         try {
-          const response = await fetch(`/api/bookmarks/`, {
+          const response = await fetch(`/bookmarks`, {
             headers: { 
-              "X-CSRFToken": csrftoken,
+              "X-CSRF-TOKEN": csrftoken,
               "X-Requested-With": "XMLHttpRequest"
             },
             credentials: "include",
           });
 
+          console.log('[updateBookmarkList] Response status:', response.status);
+
           if (response.ok) {
             const bookmarks = await response.json();
+            console.log('[updateBookmarkList] Bookmarks loaded:', bookmarks.length, bookmarks);
+            
             const bookmarkList = document.getElementById("bookmarkList");
             const countIndicator = document.getElementById("bookmarkCount") || document.querySelector("#notificationDropdown .count");
             const emptyMessage = document.getElementById("emptyBookmarkMessage");
 
-            if (!bookmarkList) return;
+            if (!bookmarkList) {
+              console.error('[updateBookmarkList] bookmarkList element not found!');
+              return;
+            }
 
             // Clear existing items
             bookmarkList.innerHTML = "";
@@ -3499,27 +3487,38 @@
               // Add bookmark items
               bookmarks.forEach(bookmark => {
                 const item = bookmark.content_object;
-                if (!item || !item.title) return;
+                console.log('[updateBookmarkList] Processing bookmark:', {
+                  id: bookmark.id,
+                  type: bookmark.content_type_model,
+                  has_object: !!item,
+                  has_title: item?.title
+                });
+                
+                if (!item || !item.title) {
+                  console.warn('[updateBookmarkList] Skipping bookmark - no content_object or title:', bookmark);
+                  return;
+                }
 
                 let itemUrl = "#";
-                let iconClass = "bi bi-bookmark-fill"; // Default icon
+                let iconClass = "bi bi-bookmark-fill"; // Default icon (fallback jika tidak ada gambar)
                 let contentTypeLabel = ""; // Label untuk menampilkan asal bookmark
+                let imageUrl = bookmark.image_url; // Ambil image URL dari API
                 
                 // Determine URL, icon, && label based on content type
                 if (bookmark.content_type_model === "news") {
                   const newsId = item.news_id || bookmark.object_id;
                   itemUrl = `/news/#news-${newsId}`;
-                  iconClass = "bi bi-file-earmark-text"; // Icon berita dari sidebar
+                  iconClass = "bi bi-file-earmark-text"; // Icon berita dari sidebar (fallback)
                   contentTypeLabel = "Berita";
                 } else if (bookmark.content_type_model === "infographic") {
                   const infographicId = item.id || bookmark.object_id;
                   itemUrl = `/infographics/#infographic-${infographicId}`;
-                  iconClass = "bi bi-bar-chart-line"; // Icon infografis dari sidebar
+                  iconClass = "bi bi-bar-chart-line"; // Icon infografis dari sidebar (fallback)
                   contentTypeLabel = "Infografis";
                 } else if (bookmark.content_type_model === "publication") {
                   const pubId = item.pub_id || bookmark.object_id;
                   itemUrl = `/publications/#publication-${pubId}`;
-                  iconClass = "icon-book"; // Icon publikasi dari sidebar
+                  iconClass = "icon-book"; // Icon publikasi dari sidebar (fallback)
                   contentTypeLabel = "Publikasi";
                 }
 
@@ -3532,12 +3531,29 @@
                 // Format: "Judul (Asal)"
                 const formattedTitle = `${title} (${contentTypeLabel})`;
 
-                bookmarkItem.innerHTML = `
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-primary">
-                      <i class="${iconClass} mx-0"></i>
+                // Gunakan gambar thumbnail jika tersedia, jika tidak gunakan icon
+                let thumbnailHtml = '';
+                if (imageUrl) {
+                  thumbnailHtml = `
+                    <div class="preview-thumbnail">
+                      <img src="${imageUrl}" 
+                           alt="${title}" 
+                           style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px;"
+                           onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;preview-icon bg-primary&quot;><i class=&quot;${iconClass} mx-0&quot;></i></div>';">
                     </div>
-                  </div>
+                  `;
+                } else {
+                  thumbnailHtml = `
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-primary">
+                        <i class="${iconClass} mx-0"></i>
+                      </div>
+                    </div>
+                  `;
+                }
+
+                bookmarkItem.innerHTML = `
+                  ${thumbnailHtml}
                   <div class="preview-item-content">
                     <h6 class="preview-subject font-weight-normal" style="word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">${formattedTitle}</h6>
                   </div>
@@ -3719,9 +3735,9 @@
         }
 
         try {
-          const response = await fetch(`/api/bookmarks/`, {
+          const response = await fetch(`/bookmarks`, {
             headers: { 
-              "X-CSRFToken": csrftoken,
+              "X-CSRF-TOKEN": csrftoken,
               "X-Requested-With": "XMLHttpRequest"
             },
             credentials: "include",
@@ -3821,8 +3837,9 @@
 
         // Initial refresh after a short delay to ensure DOM is ready
         setTimeout(function() {
-          console.log('Initial bookmark status refresh...');
+          console.log('Initial bookmark status refresh and list update...');
           refreshBookmarkStatus();
+          updateBookmarkList(); // Also update bookmark dropdown on page load
         }, 500);
         @endauth
         

@@ -57,6 +57,12 @@ Route::get('/publications', [DashboardController::class, 'publications'])->name(
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
+    // Bookmark routes (accessible from web with session auth)
+    // Changed from /api/bookmarks to /bookmarks to enable CSRF verification
+    Route::get('/bookmarks', [ApiDataController::class, 'viewBookmarks'])->name('api.bookmarks');
+    Route::post('/bookmarks/add', [ApiDataController::class, 'addBookmark'])->name('api.bookmarks.add');
+    Route::delete('/bookmarks/{id}', [ApiDataController::class, 'deleteBookmark'])->name('api.bookmarks.delete');
+    
     // Download routes (require login)
     Route::get('/infographics/download/{id}', [DashboardController::class, 'downloadInfographic'])->name('download-infographic');
     Route::get('/publications/download/{pub_id}', [DashboardController::class, 'downloadPublication'])->name('download-publication');

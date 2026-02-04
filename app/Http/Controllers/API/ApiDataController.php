@@ -172,6 +172,34 @@ class ApiDataController extends Controller
 
 
     /**
+     * Map frontend content type names to Laravel model classes
+     */
+    private function mapContentTypeToModel($contentTypeName)
+    {
+        $mapping = [
+            'news' => 'App\Models\News',
+            'infographic' => 'App\Models\Infographic',
+            'publication' => 'App\Models\Publication',
+        ];
+
+        return $mapping[$contentTypeName] ?? null;
+    }
+
+    /**
+     * Map Laravel model class to frontend content type name
+     */
+    private function mapModelToContentType($modelClass)
+    {
+        $mapping = [
+            'App\Models\News' => 'news',
+            'App\Models\Infographic' => 'infographic',
+            'App\Models\Publication' => 'publication',
+        ];
+
+        return $mapping[$modelClass] ?? null;
+    }
+
+    /**
      * View bookmarks for authenticated user.
      */
     public function viewBookmarks(Request $request)
@@ -181,7 +209,34 @@ class ApiDataController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return response()->json($bookmarks);
+        // Transform bookmarks to match frontend expectations
+        $transformedBookmarks = $bookmarks->map(function ($bookmark) {
+            // Get image URL based on content type
+            $imageUrl = null;
+            if ($bookmark->bookmarkable) {
+                if ($bookmark->bookmarkable instanceof News) {
+                    $imageUrl = $bookmark->bookmarkable->picture_url;
+                } elseif ($bookmark->bookmarkable instanceof Infographic) {
+                    $imageUrl = $bookmark->bookmarkable->image;
+                } elseif ($bookmark->bookmarkable instanceof Publication) {
+                    $imageUrl = $bookmark->bookmarkable->image;
+                }
+            }
+
+            return [
+                'id' => $bookmark->id,
+                'user_id' => $bookmark->user_id,
+                'bookmarkable_type' => $bookmark->bookmarkable_type,
+                'bookmarkable_id' => $bookmark->bookmarkable_id,
+                'content_type_model' => $this->mapModelToContentType($bookmark->bookmarkable_type),
+                'object_id' => $bookmark->bookmarkable_id,
+                'content_object' => $bookmark->bookmarkable,
+                'image_url' => $imageUrl,
+                'created_at' => $bookmark->created_at,
+            ];
+        });
+
+        return response()->json($transformedBookmarks);
     }
 
     /**
@@ -189,15 +244,58 @@ class ApiDataController extends Controller
      */
     public function addBookmark(Request $request)
     {
-        $request->validate([
-            'bookmarkable_type' => 'required|string',
-            'bookmarkable_id' => 'required|integer',
+        // Log request data for debugging
+        \Log::info('Add Bookmark Request', [
+            'all_input' => $request->all(),
+            'content_type_name' => $request->input('content_type_name'),
+            'object_id' => $request->input('object_id'),
+            'user_id' => $request->user()->id ?? 'not authenticated'
         ]);
+
+        // Accept both frontend field names (content_type_name, object_id) 
+        // and backend field names (bookmarkable_type, bookmarkable_id)
+        $contentType = $request->input('content_type_name') ?? $request->input('bookmarkable_type');
+        $objectId = $request->input('object_id') ?? $request->input('bookmarkable_id');
+
+        // Validate
+        if (!$contentType || !$objectId) {
+            \Log::error('Add Bookmark Validation Failed', [
+                'content_type' => $contentType,
+                'object_id' => $objectId
+            ]);
+            return response()->json([
+                'error' => 'content_type_name dan object_id wajib diisi.'
+            ], 422);
+        }
+
+        // Map content type to model class
+        $modelClass = $this->mapContentTypeToModel($contentType);
+        
+        if (!$modelClass) {
+            // If already a full class name, use it
+            if (class_exists($contentType)) {
+                $modelClass = $contentType;
+            } else {
+                return response()->json([
+                    'error' => 'Tipe konten tidak valid.'
+                ], 422);
+            }
+        }
+
+        // Check if the object exists
+        $model = new $modelClass;
+        $primaryKey = $model->getKeyName();
+        
+        if (!$modelClass::where($primaryKey, $objectId)->exists()) {
+            return response()->json([
+                'error' => 'Item tidak ditemukan.'
+            ], 404);
+        }
 
         // Check if bookmark already exists
         $exists = Bookmark::where('user_id', $request->user()->id)
-            ->where('bookmarkable_type', $request->bookmarkable_type)
-            ->where('bookmarkable_id', $request->bookmarkable_id)
+            ->where('bookmarkable_type', $modelClass)
+            ->where('bookmarkable_id', $objectId)
             ->exists();
 
         if ($exists) {
@@ -208,11 +306,28 @@ class ApiDataController extends Controller
 
         $bookmark = Bookmark::create([
             'user_id' => $request->user()->id,
-            'bookmarkable_type' => $request->bookmarkable_type,
-            'bookmarkable_id' => $request->bookmarkable_id,
+            'bookmarkable_type' => $modelClass,
+            'bookmarkable_id' => $objectId,
         ]);
 
-        return response()->json($bookmark, 201);
+        // Load the related object
+        $bookmark->load('bookmarkable');
+
+        // Return in the format expected by frontend
+        $response = [
+            'id' => $bookmark->id,
+            'user_id' => $bookmark->user_id,
+            'bookmarkable_type' => $bookmark->bookmarkable_type,
+            'bookmarkable_id' => $bookmark->bookmarkable_id,
+            'content_type_model' => $this->mapModelToContentType($bookmark->bookmarkable_type),
+            'object_id' => $bookmark->bookmarkable_id,
+            'content_object' => $bookmark->bookmarkable,
+            'created_at' => $bookmark->created_at,
+        ];
+
+        \Log::info('Add Bookmark Success', ['response' => $response]);
+
+        return response()->json($response, 201);
     }
 
     /**

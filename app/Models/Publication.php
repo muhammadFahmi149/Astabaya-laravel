@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Publication extends Model
 {
@@ -21,4 +22,12 @@ class Publication extends Model
     protected $casts = [
         'date' => 'date',
     ];
+
+    /**
+     * Get all of the bookmarks for the publication.
+     */
+    public function bookmarks(): MorphMany
+    {
+        return $this->morphMany(Bookmark::class, 'bookmarkable');
+    }
 }
