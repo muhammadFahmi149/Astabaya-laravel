@@ -7,6 +7,9 @@
 <?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="<?php echo e(asset('js/share-utils.js')); ?>"></script>
+<link rel="stylesheet" href="<?php echo e(asset('css/share-styles.css')); ?>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
@@ -206,16 +209,38 @@
     <!-- Grafik Inflasi Bulan ke Bulan -->
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; margin-bottom: 20px; position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Perkembangan Inflasi Bulan ke Bulan (%)</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadMtoMDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadMtoMDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadMtoMExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadMtoMPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'inflasiMtoMChart','title' => 'Perkembangan Inflasi Bulan ke Bulan']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'inflasiMtoMChart','title' => 'Perkembangan Inflasi Bulan ke Bulan']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadMtoMDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadMtoMDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadMtoMExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadMtoMPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="inflasiMtoMChart" style="width: 100%; height: 400px;"></div>
@@ -225,16 +250,38 @@
     <!-- Grafik Inflasi Tahun ke Tahun -->
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; margin-bottom: 20px; position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Perkembangan Inflasi Tahun ke Tahun (%)</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadYonYDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadYonYDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadYonYExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadYonYPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'inflasiYonYChart','title' => 'Perkembangan Inflasi Tahun ke Tahun']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'inflasiYonYChart','title' => 'Perkembangan Inflasi Tahun ke Tahun']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadYonYDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadYonYDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadYonYExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadYonYPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="inflasiYonYChart" style="width: 100%; height: 400px;"></div>
@@ -317,16 +364,38 @@
   <div class="row mb-4" id="komoditasChartSection" style="display: none;">
     <div class="col-md-12">
       <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0" id="komoditasChartTitle">Inflasi Per Komoditas</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadKomoditasDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadKomoditasDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadKomoditasExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadKomoditasPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'inflasiPerKomoditasChart','title' => 'Inflasi Per Komoditas']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'inflasiPerKomoditasChart','title' => 'Inflasi Per Komoditas']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadKomoditasDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadKomoditasDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadKomoditasExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadKomoditasPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="inflasiPerKomoditasChart" style="width: 100%; height: 450px;"></div>
@@ -480,109 +549,74 @@ document.addEventListener('click', function(event) {
 
 // Load data on page load
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOMContentLoaded: Starting initialization');
+  // Initialize charts only after DOM is ready
+  const mtoMChartElement = document.getElementById('inflasiMtoMChart');
+  const yonYChartElement = document.getElementById('inflasiYonYChart');
+  const perKomoditasChartElement = document.getElementById('inflasiPerKomoditasChart');
   
-  // Use setTimeout to ensure all resources are loaded
-  setTimeout(function() {
-    console.log('Initializing charts and loading data...');
-    
-    // Initialize charts only after DOM is ready
-    const mtoMChartElement = document.getElementById('inflasiMtoMChart');
-    const yonYChartElement = document.getElementById('inflasiYonYChart');
-    const perKomoditasChartElement = document.getElementById('inflasiPerKomoditasChart');
-    
-    if (mtoMChartElement) {
-      mtoMChart = echarts.init(mtoMChartElement);
-      console.log('MtoM chart initialized');
-    } else {
-      console.warn('MtoM chart element not found');
-    }
-    
-    if (yonYChartElement) {
-      yonYChart = echarts.init(yonYChartElement);
-      console.log('YonY chart initialized');
-    } else {
-      console.warn('YonY chart element not found');
-    }
-    
-    if (perKomoditasChartElement) {
-      perKomoditasChart = echarts.init(perKomoditasChartElement);
-      console.log('PerKomoditas chart initialized');
-    } else {
-      console.warn('PerKomoditas chart element not found');
-    }
-    
-    // Update chart instances reference for export functions
-    updateChartInstances();
-    
-    // Load data first, then setup filters
-    loadInflasiSummary();
-    loadInflasiData();
-    loadYears();
-    setupYearFilter();
-    setupKomoditasFilter();
-    loadKomoditasExplanation();
+  if (mtoMChartElement) {
+    mtoMChart = echarts.init(mtoMChartElement);
+  }
+  if (yonYChartElement) {
+    yonYChart = echarts.init(yonYChartElement);
+  }
+  if (perKomoditasChartElement) {
+    perKomoditasChart = echarts.init(perKomoditasChartElement);
+  }
+  
+  // Update chart instances reference for export functions
+  updateChartInstances();
+  
+  // Load data first, then setup filters
+  loadInflasiSummary();
+  loadInflasiData();
+  loadYears();
+  setupYearFilter();
+  setupKomoditasFilter();
+  loadKomoditasExplanation();
 
-    // Debounce function for resize events
-    function debounce(func, wait) {
-      let timeout;
-      return function executedFunction(...args) {
-        const later = () => {
-          clearTimeout(timeout);
-          func(...args);
-        };
+  // Debounce function for resize events
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
         clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        func(...args);
       };
-    }
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
 
-    // Handle window resize for all charts with debounce
-    const debouncedResize = debounce(function() {
-      if (mtoMChart) mtoMChart.resize();
-      if (yonYChart) yonYChart.resize();
-      if (perKomoditasChart) perKomoditasChart.resize();
-    }, 250);
+  // Handle window resize for all charts with debounce
+  const debouncedResize = debounce(function() {
+    if (mtoMChart) mtoMChart.resize();
+    if (yonYChart) yonYChart.resize();
+    if (perKomoditasChart) perKomoditasChart.resize();
+  }, 250);
 
-    window.addEventListener('resize', debouncedResize);
-  }, 100);
+  window.addEventListener('resize', debouncedResize);
 });
 
 // Load inflasi summary data
 function loadInflasiSummary() {
-  console.log('Loading inflasi summary...');
   fetch(API_ROUTES.inflasiSummary)
     .then(response => {
-      console.log('Summary response status:', response.status);
       if (!response.ok) {
-        throw new Error('Network response was not ok: ' + response.status);
+        throw new Error('Network response was not ok');
       }
       return response.json();
     })
     .then(data => {
-      console.log('Summary data received:', data);
       if (data.status === 'success' && data.data) {
         const summary = data.data;
         updateSummaryCards(summary);
       } else {
-        console.warn('No inflasi summary data available or error status:', data);
-        updateSummaryCards({
-          latest: null,
-          previous_month: null,
-          previous_year: null,
-          m_to_m_change: null,
-          y_on_y_change: null
-        });
+        console.warn('No inflasi summary data available');
       }
     })
     .catch(error => {
       console.error('Error loading inflasi summary:', error);
-      // Show error state in summary cards
-      document.getElementById('m-to-m-value').textContent = '-';
-      document.getElementById('m-to-m-date').textContent = 'Error memuat data';
-      document.getElementById('y-on-y-value').textContent = '-';
-      document.getElementById('y-on-y-date').textContent = 'Error memuat data';
-      document.getElementById('kumulatif-value').textContent = '-';
-      document.getElementById('kumulatif-date').textContent = 'Error memuat data';
     });
 }
 
@@ -679,31 +713,17 @@ function updateSummaryCards(summary) {
 
 // Load years for filter
 function loadYears() {
-  console.log('Loading years...');
   fetch(API_ROUTES.inflasiYears)
-    .then(response => {
-      console.log('Years response status:', response.status);
-      if (!response.ok) {
-        throw new Error('Network response was not ok: ' + response.status);
-      }
-      return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-      console.log('Years data received:', data);
       if (data.status === 'success' && data.data && data.data.length > 0) {
         const years = data.data;
         const latestYear = years[0];
         selectedYear = latestYear;
-        console.log('Latest year selected:', latestYear);
         
         // Update filter year dropdown
         const dropdown = document.getElementById('filterYearDropdown');
         const select = document.getElementById('filterYear');
-        
-        if (!dropdown || !select) {
-          console.warn('Filter year dropdown or select not found');
-          return;
-        }
         
         // Clear existing options except Default
         const defaultItem = dropdown.querySelector('[data-value=""]');
@@ -755,8 +775,6 @@ function loadYears() {
         
         // Update info text
         document.getElementById('filterYearInfo').textContent = `Default menampilkan tahun terbaru (${latestYear})`;
-      } else {
-        console.warn('No years data available or error:', data);
       }
     })
     .catch(error => {
@@ -767,36 +785,27 @@ function loadYears() {
 // Load inflasi general data
 function loadInflasiData() {
   const url = selectedYear ? `${API_ROUTES.inflasi}?year=${selectedYear}` : API_ROUTES.inflasi;
-  console.log('Loading inflasi data from:', url);
   
   fetch(url)
     .then(response => {
-      console.log('Inflasi response status:', response.status);
       if (!response.ok) {
-        throw new Error('Network response was not ok: ' + response.status);
+        throw new Error('Network response was not ok');
       }
       return response.json();
     })
     .then(data => {
-      console.log('Inflasi data received:', data);
       if (data.status === 'success' && data.data && data.data.length > 0) {
         allInflasiData = data.data;
-        console.log('Total records loaded:', allInflasiData.length);
         updateChartData();
-        
         // Render charts after data is loaded
-        setTimeout(function() {
-          if (mtoMChart) {
-            console.log('Rendering MtoM chart...');
-            renderMtoMChart();
-          }
-          if (yonYChart) {
-            console.log('Rendering YonY chart...');
-            renderYonYChart();
-          }
-        }, 50);
+        if (mtoMChart) {
+          renderMtoMChart();
+        }
+        if (yonYChart) {
+          renderYonYChart();
+        }
       } else {
-        console.warn('No inflasi data available or error:', data);
+        console.warn('No inflasi data available');
         // Show empty charts
         if (mtoMChart) {
           mtoMChart.setOption({
@@ -935,14 +944,6 @@ function renderMtoMChart() {
   // Check if data is available
   if (!allInflasiData || allInflasiData.length === 0) {
     console.warn('No data available for MtoM chart');
-    mtoMChart.setOption({
-      title: {
-        text: 'Data tidak tersedia',
-        left: 'center',
-        top: 'center',
-        textStyle: { color: '#999', fontSize: 14 }
-      }
-    });
     return;
   }
   
@@ -1037,7 +1038,6 @@ function renderMtoMChart() {
     }]
   };
 
-  console.log('Setting MtoM chart option with', values.length, 'data points');
   mtoMChart.setOption(option, true); // Use notMerge=true to replace existing option
   
   // Resize chart to ensure proper rendering
@@ -1058,14 +1058,6 @@ function renderYonYChart() {
   // Check if data is available
   if (!allInflasiData || allInflasiData.length === 0) {
     console.warn('No data available for YoY chart');
-    yonYChart.setOption({
-      title: {
-        text: 'Data tidak tersedia',
-        left: 'center',
-        top: 'center',
-        textStyle: { color: '#999', fontSize: 14 }
-      }
-    });
     return;
   }
   
@@ -1160,7 +1152,6 @@ function renderYonYChart() {
     }]
   };
 
-  console.log('Setting YoY chart option with', values.length, 'data points');
   yonYChart.setOption(option, true); // Use notMerge=true to replace existing option
   updateChartData(); // Update data for export
   
@@ -2197,18 +2188,10 @@ function renderKomoditasChart(data, komoditasName) {
 
 // Load komoditas explanation
 function loadKomoditasExplanation() {
-  console.log('Loading komoditas explanation...');
   // Get all unique komoditas umum (flag 1) from all years
   fetch(`${API_ROUTES.inflasiPerKomoditas}?flag=1`)
-    .then(response => {
-      console.log('Komoditas response status:', response.status);
-      if (!response.ok) {
-        throw new Error('Network response was not ok: ' + response.status);
-      }
-      return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-      console.log('Komoditas data received:', data);
       if (data.status === 'success' && data.data.length > 0) {
         // Get unique komoditas umum and sort by code
         const uniqueUmum = {};
@@ -2228,16 +2211,12 @@ function loadKomoditasExplanation() {
           return codeA - codeB;
         });
         
-        console.log('Unique komoditas umum:', komoditasUmumList.length);
-        
         // Get latest year for filtering sub komoditas
         const latestYear = Math.max(...data.data.map(k => k.year));
-        console.log('Latest year for komoditas:', latestYear);
         
         // For each komoditas umum, get its sub komoditas (flag 2) using the correct API
         Promise.all(komoditasUmumList.map(k => {
-          const url = `${API_ROUTES.komoditasByFlag}?flag=2&year=${latestYear}&parent_code=${k.code}`;
-          return fetch(url)
+          return fetch(`${API_ROUTES.komoditasByFlag}?flag=2&year=${latestYear}&parent_code=${k.code}`)
             .then(res => res.json())
             .then(subData => {
               // Get unique sub komoditas and sort by name
@@ -2266,7 +2245,6 @@ function loadKomoditasExplanation() {
               };
             });
         })).then(results => {
-          console.log('All komoditas data loaded:', results.length);
           let html = '<div class="row">';
           
           results.forEach((result, index) => {
@@ -2306,35 +2284,22 @@ function loadKomoditasExplanation() {
           });
           
           html += '</div>';
-          const explanationEl = document.getElementById('komoditasExplanation');
-          if (explanationEl) {
-            explanationEl.innerHTML = html || 
-              '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Data komoditas belum tersedia.</div>';
-          }
+          document.getElementById('komoditasExplanation').innerHTML = html || 
+            '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Data komoditas belum tersedia.</div>';
         }).catch(error => {
           console.error('Error loading sub komoditas:', error);
-          const explanationEl = document.getElementById('komoditasExplanation');
-          if (explanationEl) {
-            explanationEl.innerHTML = 
-              '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Terjadi kesalahan saat memuat penjelasan komoditas.</div>';
-          }
+          document.getElementById('komoditasExplanation').innerHTML = 
+            '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Terjadi kesalahan saat memuat penjelasan komoditas.</div>';
         });
       } else {
-        console.warn('No komoditas data available');
-        const explanationEl = document.getElementById('komoditasExplanation');
-        if (explanationEl) {
-          explanationEl.innerHTML = 
-            '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Data komoditas belum tersedia. Silakan sinkronisasi data terlebih dahulu.</div>';
-        }
+        document.getElementById('komoditasExplanation').innerHTML = 
+          '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Data komoditas belum tersedia. Silakan sinkronisasi data terlebih dahulu.</div>';
       }
     })
     .catch(error => {
       console.error('Error loading komoditas explanation:', error);
-      const explanationEl = document.getElementById('komoditasExplanation');
-      if (explanationEl) {
-        explanationEl.innerHTML = 
-          '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Terjadi kesalahan saat memuat penjelasan komoditas.</div>';
-      }
+      document.getElementById('komoditasExplanation').innerHTML = 
+        '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Terjadi kesalahan saat memuat penjelasan komoditas.</div>';
     });
 }
 

@@ -1,17 +1,15 @@
-@extends('layouts.main')
+<?php $__env->startSection('title', 'IPM - Pengeluaran per Kapita'); ?>
 
-@section('title', 'IPM - Pengeluaran per Kapita')
-
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="container py-4">
   <h3 class="font-weight-bold mb-4">IPM - Pengeluaran per Kapita</h3>
   
@@ -72,7 +70,26 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Perbandingan Pengeluaran per Kapita: Surabaya vs Jawa Timur</h5>
           <div class="chart-header-actions">
-            <x-chart-share-button chartId="comparisonChart" title="Perbandingan Pengeluaran per Kapita Surabaya vs Jawa Timur" />
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'comparisonChart','title' => 'Perbandingan Pengeluaran per Kapita Surabaya vs Jawa Timur']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'comparisonChart','title' => 'Perbandingan Pengeluaran per Kapita Surabaya vs Jawa Timur']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
             <button id="downloadChartPengeluaran" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
               <i class="fas fa-file-excel"></i> <span>Excel</span>
             </button>
@@ -156,7 +173,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE = '{{ url("/api") }}';
+    const API_BASE = '<?php echo e(url("/api")); ?>';
     let surabayaData = [];
     let jatimData = [];
     let comparisonChart = null;
@@ -407,11 +424,11 @@
     
     // Helper function to check authentication before download
     function checkAuthBeforeDownload(callback, itemName = 'data') {
-      @auth
+      <?php if(auth()->guard()->check()): ?>
       // User authenticated, proceed with download
       callback();
       return true;
-      @else
+      <?php else: ?>
       // User not authenticated, show login modal
       if (typeof showLoginRequiredModal === 'function') {
         showLoginRequiredModal(itemName);
@@ -422,11 +439,11 @@
           const modal = new bootstrap.Modal(loginModal);
           modal.show();
         } else {
-          window.location.href = '{{ route("login") }}';
+          window.location.href = '<?php echo e(route("login")); ?>';
         }
       }
       return false;
-      @endauth
+      <?php endif; ?>
     }
 
     document.getElementById('downloadChartPengeluaran').addEventListener('click', function() {
@@ -459,4 +476,6 @@
   });
 </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\Astabaya-laravel\resources\views/dashboard/indikator/ipm_pengeluaran_per_kapita.blade.php ENDPATH**/ ?>

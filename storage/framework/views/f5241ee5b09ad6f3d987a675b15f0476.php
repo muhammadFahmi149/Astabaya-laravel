@@ -184,16 +184,38 @@
   <div class="row mb-4">
     <div class="col-md-12" style="padding:0px;">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Tren IPM Kota Surabaya vs Jawa Timur</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTrendDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadTrendDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadTrendExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadTrendPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'trendChart','title' => 'Tren IPM Kota Surabaya vs Jawa Timur']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'trendChart','title' => 'Tren IPM Kota Surabaya vs Jawa Timur']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTrendDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadTrendDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadTrendExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadTrendPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="trendChart" style="width: 100%; height: 450px;"></div>
@@ -206,16 +228,38 @@
   <div class="row mb-4">
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">UHH SP - Kota Surabaya</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadUhhSpDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadUhhSpDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadUhhSpExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadUhhSpPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'uhhSpChart','title' => 'UHH SP Kota Surabaya']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'uhhSpChart','title' => 'UHH SP Kota Surabaya']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadUhhSpDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadUhhSpDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadUhhSpExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadUhhSpPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="uhhSpChart" style="width: 100%; height: 350px;"></div>
@@ -223,16 +267,38 @@
     </div>
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">HLS - Kota Surabaya</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadHlsDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadHlsDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadHlsExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadHlsPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'hlsChart','title' => 'HLS Kota Surabaya']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'hlsChart','title' => 'HLS Kota Surabaya']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadHlsDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadHlsDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadHlsExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadHlsPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="hlsChart" style="width: 100%; height: 350px;"></div>
@@ -244,16 +310,38 @@
   <div class="row mb-4">
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">RLS - Kota Surabaya</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadRlsDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadRlsDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadRlsExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadRlsPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'rlsChart','title' => 'RLS Kota Surabaya']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'rlsChart','title' => 'RLS Kota Surabaya']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadRlsDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadRlsDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadRlsExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadRlsPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="rlsChart" style="width: 100%; height: 350px;"></div>
@@ -261,16 +349,38 @@
     </div>
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Pengeluaran per Kapita - Kota Surabaya</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadPengeluaranDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadPengeluaranDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadPengeluaranExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadPengeluaranPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'pengeluaranChart','title' => 'Pengeluaran per Kapita Kota Surabaya']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'pengeluaranChart','title' => 'Pengeluaran per Kapita Kota Surabaya']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadPengeluaranDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadPengeluaranDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadPengeluaranExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadPengeluaranPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="pengeluaranChart" style="width: 100%; height: 350px;"></div>
@@ -282,16 +392,38 @@
   <div class="row mb-4">
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Indeks Kesehatan - Kota Surabaya</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadIndeksKesehatanDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadIndeksKesehatanDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadIndeksKesehatanExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadIndeksKesehatanPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'indeksKesehatanChart','title' => 'Indeks Kesehatan Kota Surabaya']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'indeksKesehatanChart','title' => 'Indeks Kesehatan Kota Surabaya']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadIndeksKesehatanDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadIndeksKesehatanDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadIndeksKesehatanExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadIndeksKesehatanPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="indeksKesehatanChart" style="width: 100%; height: 350px;"></div>
@@ -299,16 +431,38 @@
     </div>
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Indeks Pendidikan - Kota Surabaya</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadIndeksPendidikanDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadIndeksPendidikanDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadIndeksPendidikanExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadIndeksPendidikanPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'indeksPendidikanChart','title' => 'Indeks Pendidikan Kota Surabaya']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'indeksPendidikanChart','title' => 'Indeks Pendidikan Kota Surabaya']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadIndeksPendidikanDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadIndeksPendidikanDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadIndeksPendidikanExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadIndeksPendidikanPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="indeksPendidikanChart" style="width: 100%; height: 350px;"></div>
@@ -320,16 +474,38 @@
   <div class="row mb-4">
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Indeks Hidup Layak - Kota Surabaya</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadIndeksHidupLayakDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadIndeksHidupLayakDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadIndeksHidupLayakExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadIndeksHidupLayakPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'indeksHidupLayakChart','title' => 'Indeks Hidup Layak Kota Surabaya']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'indeksHidupLayakChart','title' => 'Indeks Hidup Layak Kota Surabaya']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadIndeksHidupLayakDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadIndeksHidupLayakDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadIndeksHidupLayakExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadIndeksHidupLayakPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="indeksHidupLayakChart" style="width: 100%; height: 350px;"></div>
@@ -337,16 +513,38 @@
     </div>
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Komposisi Indikator IPM - Tahun Terakhir</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadCompositionDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadCompositionDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadCompositionExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadCompositionPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'compositionChart','title' => 'Komposisi Indikator IPM']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'compositionChart','title' => 'Komposisi Indikator IPM']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadCompositionDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadCompositionDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadCompositionExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadCompositionPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="compositionChart" style="width: 100%; height: 350px;"></div>

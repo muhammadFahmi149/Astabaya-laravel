@@ -92,7 +92,7 @@
       <div class="dashboard-card" style="position: relative;">
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
           <h4 class="mb-2 mb-md-0" style="font-size: clamp(18px, 3vw, 24px);">Perkembangan Tingkat Penghunian Kamar (TPK)</h4>
-          <div style="display: flex; gap: 8px; align-items: center;">
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <div class="dropdown">
               <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 Tahun: <span id="selectedYear">-</span>
@@ -100,14 +100,17 @@
               <ul class="dropdown-menu" aria-labelledby="yearDropdown" id="yearDropdownMenu">
               </ul>
             </div>
-            <div class="dropdown">
-              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                <i class="fas fa-download"></i> <span>Unduh</span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="downloadTpkLineDropdown" style="border-radius: 8px; min-width: 100%;">
-                <li><a class="dropdown-item" href="#" id="downloadTpkLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                <li><a class="dropdown-item" href="#" id="downloadTpkLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-              </ul>
+            <div class="chart-header-actions">
+              <x-chart-share-button chartId="tpkLineChart" title="Perkembangan TPK" />
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                  <i class="fas fa-download"></i> <span>Unduh</span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="downloadTpkLineDropdown" style="border-radius: 8px; min-width: 100%;">
+                  <li><a class="dropdown-item" href="#" id="downloadTpkLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadTpkLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -122,16 +125,19 @@
   <div class="row mt-4">
     <div class="col-md-12">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h4 class="mb-0" style="font-size: clamp(18px, 3vw, 24px);">Perbandingan TPK Beberapa Tahun</h4>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadTpkComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadTpkComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadTpkComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <x-chart-share-button chartId="tpkComparisonChart" title="Perbandingan TPK Beberapa Tahun" />
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadTpkComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadTpkComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadTpkComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div class="chart-container-wrapper">
@@ -145,16 +151,19 @@
   <div class="row mt-4">
     <div class="col-md-12">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h4 class="mb-0" style="font-size: clamp(18px, 3vw, 24px);">TPK Tahunan</h4>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkYearlyDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadTpkYearlyDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadTpkYearlyExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadTpkYearlyPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <x-chart-share-button chartId="tpkYearlyChart" title="TPK Tahunan" />
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkYearlyDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadTpkYearlyDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadTpkYearlyExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadTpkYearlyPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div class="chart-container-wrapper">

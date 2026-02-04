@@ -23,6 +23,7 @@
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/style.css')); ?>" />
+    <link rel="stylesheet" href="<?php echo e(asset('css/share-styles.css')); ?>" />
     <!-- endinject -->
     <link rel="shortcut icon" href="<?php echo e(asset('images/Aastabaya-favicon(2).png')); ?>" />
     <?php echo $__env->yieldPushContent('styles'); ?>
@@ -4410,6 +4411,7 @@
       </div>
     </div>
     
+    <script src="<?php echo e(asset('js/share-utils.js')); ?>"></script>
     <?php echo $__env->yieldPushContent('scripts'); ?>
   </body>
 </html>

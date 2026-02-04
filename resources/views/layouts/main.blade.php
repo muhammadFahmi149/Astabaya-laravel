@@ -23,6 +23,7 @@
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/share-styles.css') }}" />
     <!-- endinject -->
     <link rel="shortcut icon" href="{{ asset('images/Aastabaya-favicon(2).png') }}" />
     @stack('styles')
@@ -4408,6 +4409,7 @@
       </div>
     </div>
     
+    <script src="{{ asset('js/share-utils.js') }}"></script>
     @stack('scripts')
   </body>
 </html>

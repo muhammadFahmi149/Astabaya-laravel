@@ -74,9 +74,10 @@
   <div class="row mb-4">
     <div class="col-md-12">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Perbandingan UHH SP: Surabaya vs Jawa Timur</h5>
-          <div style="display: flex; gap: 8px;">
+          <div class="chart-header-actions">
+            <x-chart-share-button chartId="comparisonChart" title="Perbandingan UHH SP Surabaya vs Jawa Timur" />
             <button id="downloadChartUHHSP" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
               <i class="fas fa-file-excel"></i> <span>Excel</span>
             </button>
@@ -92,6 +93,11 @@
 </div>
 
 <style>
+  /* Ensure tooltip can appear - fix overflow issues */
+  .dashboard-card, .row, .container, .col-md-12, .col-md-6 {
+    overflow: visible !important;
+  }
+  
   .dashboard-card {
     background-color: white;
     border-radius: 10px;

@@ -90,16 +90,19 @@
   <div class="row mb-4 comparison-chart-row">
     <div class="col-md-12">
       <div class="dashboard-card comparison-chart-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;" class="chart-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;" class="chart-header">
           <h5 class="mb-0">Perbandingan TPT dan TPAK dari Tahun ke Tahun</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <x-chart-share-button chartId="comparisonChart" title="Perbandingan TPT dan TPAK" />
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -180,16 +183,19 @@
         <!-- Pie Chart for Demographics TPT -->
         <div class="col-md-6 mb-3">
           <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
               <h5 class="mb-0">Distribusi TPT Berdasarkan Gender (@if(isset($tpt_latest_data) && $tpt_latest_data){{ $tpt_latest_data->year ?? '-' }}@else-@endif)</h5>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                  <i class="fas fa-download"></i> <span>Unduh</span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="downloadTptPieDropdown" style="border-radius: 8px; min-width: 100%;">
-                  <li><a class="dropdown-item" href="#" id="downloadTptPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                  <li><a class="dropdown-item" href="#" id="downloadTptPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                </ul>
+              <div class="chart-header-actions">
+                <x-chart-share-button chartId="tptPieChart" title="Distribusi TPT Berdasarkan Gender" />
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                    <i class="fas fa-download"></i> <span>Unduh</span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="downloadTptPieDropdown" style="border-radius: 8px; min-width: 100%;">
+                    <li><a class="dropdown-item" href="#" id="downloadTptPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                    <li><a class="dropdown-item" href="#" id="downloadTptPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div class="chart-container-mobile">
@@ -201,16 +207,19 @@
         <!-- Line Chart TPT -->
         <div class="col-md-6 mb-3">
           <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
               <h5 class="mb-0">Tren TPT dari Tahun ke Tahun</h5>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                  <i class="fas fa-download"></i> <span>Unduh</span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="downloadTptLineDropdown" style="border-radius: 8px; min-width: 100%;">
-                  <li><a class="dropdown-item" href="#" id="downloadTptLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                  <li><a class="dropdown-item" href="#" id="downloadTptLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                </ul>
+              <div class="chart-header-actions">
+                <x-chart-share-button chartId="tptLineChart" title="Tren TPT dari Tahun ke Tahun" />
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                    <i class="fas fa-download"></i> <span>Unduh</span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="downloadTptLineDropdown" style="border-radius: 8px; min-width: 100%;">
+                    <li><a class="dropdown-item" href="#" id="downloadTptLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                    <li><a class="dropdown-item" href="#" id="downloadTptLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div class="chart-container-mobile">
@@ -276,16 +285,19 @@
         <!-- Pie Chart for Demographics TPAK -->
         <div class="col-md-6 mb-3">
           <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
               <h5 class="mb-0">Distribusi TPAK Berdasarkan Gender (<span id="tpak-pie-year">-</span>)</h5>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                  <i class="fas fa-download"></i> <span>Unduh</span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="downloadTpakPieDropdown" style="border-radius: 8px; min-width: 100%;">
-                  <li><a class="dropdown-item" href="#" id="downloadTpakPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                  <li><a class="dropdown-item" href="#" id="downloadTpakPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                </ul>
+              <div class="chart-header-actions">
+                <x-chart-share-button chartId="tpakPieChart" title="Distribusi TPAK Berdasarkan Gender" />
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                    <i class="fas fa-download"></i> <span>Unduh</span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="downloadTpakPieDropdown" style="border-radius: 8px; min-width: 100%;">
+                    <li><a class="dropdown-item" href="#" id="downloadTpakPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                    <li><a class="dropdown-item" href="#" id="downloadTpakPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div class="chart-container-mobile">
@@ -297,16 +309,19 @@
         <!-- Line Chart TPAK -->
         <div class="col-md-6 mb-3">
           <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
               <h5 class="mb-0">Tren TPAK dari Tahun ke Tahun</h5>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                  <i class="fas fa-download"></i> <span>Unduh</span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="downloadTpakLineDropdown" style="border-radius: 8px; min-width: 100%;">
-                  <li><a class="dropdown-item" href="#" id="downloadTpakLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                  <li><a class="dropdown-item" href="#" id="downloadTpakLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                </ul>
+              <div class="chart-header-actions">
+                <x-chart-share-button chartId="tpakLineChart" title="Tren TPAK dari Tahun ke Tahun" />
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                    <i class="fas fa-download"></i> <span>Unduh</span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="downloadTpakLineDropdown" style="border-radius: 8px; min-width: 100%;">
+                    <li><a class="dropdown-item" href="#" id="downloadTpakLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                    <li><a class="dropdown-item" href="#" id="downloadTpakLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div class="chart-container-mobile">

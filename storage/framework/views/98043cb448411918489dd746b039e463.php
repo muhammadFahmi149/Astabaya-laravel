@@ -88,16 +88,38 @@
   <div class="row mb-4 comparison-chart-row">
     <div class="col-md-12">
       <div class="dashboard-card comparison-chart-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;" class="chart-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;" class="chart-header">
           <h5 class="mb-0">Perbandingan TPT dan TPAK dari Tahun ke Tahun</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'comparisonChart','title' => 'Perbandingan TPT dan TPAK']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'comparisonChart','title' => 'Perbandingan TPT dan TPAK']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div class="chart-container-mobile">
@@ -132,35 +154,9 @@
           <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
             <div style="position: relative; z-index: 2;">
               <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Total TPT</h6>
-              <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
-                <?php if(isset($tpt_latest_data) && $tpt_latest_data && isset($tpt_latest_data->total)): ?>
-                  <?php echo e(number_format($tpt_latest_data->total, 2)); ?>%
-                <?php else: ?>
-                  -
-                <?php endif; ?>
-              </h3>
-              <div style="display: flex; align-items: center; gap: 5px; margin-top: 8px;">
-                <?php if(isset($tpt_total_change) && $tpt_total_change !== null): ?>
-                  <?php if($tpt_total_change > 0): ?>
-                    <span style="color: #28a745; font-size: 12px;">▲</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+<?php echo e(number_format($tpt_total_change, 2)); ?>%</span>
-                  <?php elseif($tpt_total_change < 0): ?>
-                    <span style="color: #dc3545; font-size: 12px;">▼</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;"><?php echo e(number_format($tpt_total_change, 2)); ?>%</span>
-                  <?php else: ?>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>
-                  <?php endif; ?>
-                  <?php if(isset($tpt_previous_data) && $tpt_previous_data): ?> <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari <?php echo e($tpt_previous_data->year ?? ''); ?></span><?php endif; ?>
-                <?php endif; ?>
-              </div>
-              <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">
-                <?php if(isset($tpt_latest_data) && $tpt_latest_data): ?>
-                  Tahun <?php echo e($tpt_latest_data->year ?? '-'); ?>
-
-                <?php else: ?>
-                  Data tidak tersedia
-                <?php endif; ?>
-              </small>
+              <h3 id="tpt-tab-total-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
+              <div id="tpt-tab-total-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
+              <small id="tpt-tab-total-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
             </div>
             <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
               <i class="fas fa-chart-line" style="font-size: 60px;"></i>
@@ -173,35 +169,9 @@
           <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
             <div style="position: relative; z-index: 2;">
               <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Laki-Laki</h6>
-              <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
-                <?php if(isset($tpt_latest_data) && $tpt_latest_data && isset($tpt_latest_data->laki_laki)): ?>
-                  <?php echo e(number_format($tpt_latest_data->laki_laki, 2)); ?>%
-                <?php else: ?>
-                  -
-                <?php endif; ?>
-              </h3>
-              <div style="display: flex; align-items: center; gap: 5px; margin-top: 8px;">
-                <?php if(isset($tpt_laki_laki_change) && $tpt_laki_laki_change !== null): ?>
-                  <?php if($tpt_laki_laki_change > 0): ?>
-                    <span style="color: #28a745; font-size: 12px;">▲</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+<?php echo e(number_format($tpt_laki_laki_change, 2)); ?>%</span>
-                  <?php elseif($tpt_laki_laki_change < 0): ?>
-                    <span style="color: #dc3545; font-size: 12px;">▼</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;"><?php echo e(number_format($tpt_laki_laki_change, 2)); ?>%</span>
-                  <?php else: ?>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>
-                  <?php endif; ?>
-                  <?php if(isset($tpt_previous_data) && $tpt_previous_data): ?> <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari <?php echo e($tpt_previous_data->year ?? ''); ?></span><?php endif; ?>
-                <?php endif; ?>
-              </div>
-              <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">
-                <?php if(isset($tpt_latest_data) && $tpt_latest_data): ?>
-                  Tahun <?php echo e($tpt_latest_data->year ?? '-'); ?>
-
-                <?php else: ?>
-                  Data tidak tersedia
-                <?php endif; ?>
-              </small>
+              <h3 id="tpt-tab-laki-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
+              <div id="tpt-tab-laki-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
+              <small id="tpt-tab-laki-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
             </div>
             <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
               <i class="fas fa-male" style="font-size: 60px;"></i>
@@ -214,35 +184,9 @@
           <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
             <div style="position: relative; z-index: 2;">
               <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Perempuan</h6>
-              <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
-                <?php if(isset($tpt_latest_data) && $tpt_latest_data && isset($tpt_latest_data->perempuan)): ?>
-                  <?php echo e(number_format($tpt_latest_data->perempuan, 2)); ?>%
-                <?php else: ?>
-                  -
-                <?php endif; ?>
-              </h3>
-              <div style="display: flex; align-items: center; gap: 5px; margin-top: 8px;">
-                <?php if(isset($tpt_perempuan_change) && $tpt_perempuan_change !== null): ?>
-                  <?php if($tpt_perempuan_change > 0): ?>
-                    <span style="color: #28a745; font-size: 12px;">▲</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+<?php echo e(number_format($tpt_perempuan_change, 2)); ?>%</span>
-                  <?php elseif($tpt_perempuan_change < 0): ?>
-                    <span style="color: #dc3545; font-size: 12px;">▼</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;"><?php echo e(number_format($tpt_perempuan_change, 2)); ?>%</span>
-                  <?php else: ?>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>
-                  <?php endif; ?>
-                  <?php if(isset($tpt_previous_data) && $tpt_previous_data): ?> <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari <?php echo e($tpt_previous_data->year ?? ''); ?></span><?php endif; ?>
-                <?php endif; ?>
-              </div>
-              <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">
-                <?php if(isset($tpt_latest_data) && $tpt_latest_data): ?>
-                  Tahun <?php echo e($tpt_latest_data->year ?? '-'); ?>
-
-                <?php else: ?>
-                  Data tidak tersedia
-                <?php endif; ?>
-              </small>
+              <h3 id="tpt-tab-perempuan-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
+              <div id="tpt-tab-perempuan-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
+              <small id="tpt-tab-perempuan-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
             </div>
             <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
               <i class="fas fa-female" style="font-size: 60px;"></i>
@@ -256,16 +200,38 @@
         <!-- Pie Chart for Demographics TPT -->
         <div class="col-md-6 mb-3">
           <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
               <h5 class="mb-0">Distribusi TPT Berdasarkan Gender (<?php if(isset($tpt_latest_data) && $tpt_latest_data): ?><?php echo e($tpt_latest_data->year ?? '-'); ?><?php else: ?>-<?php endif; ?>)</h5>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                  <i class="fas fa-download"></i> <span>Unduh</span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="downloadTptPieDropdown" style="border-radius: 8px; min-width: 100%;">
-                  <li><a class="dropdown-item" href="#" id="downloadTptPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                  <li><a class="dropdown-item" href="#" id="downloadTptPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                </ul>
+              <div class="chart-header-actions">
+                <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'tptPieChart','title' => 'Distribusi TPT Berdasarkan Gender']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'tptPieChart','title' => 'Distribusi TPT Berdasarkan Gender']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                    <i class="fas fa-download"></i> <span>Unduh</span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="downloadTptPieDropdown" style="border-radius: 8px; min-width: 100%;">
+                    <li><a class="dropdown-item" href="#" id="downloadTptPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                    <li><a class="dropdown-item" href="#" id="downloadTptPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div class="chart-container-mobile">
@@ -277,16 +243,38 @@
         <!-- Line Chart TPT -->
         <div class="col-md-6 mb-3">
           <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
               <h5 class="mb-0">Tren TPT dari Tahun ke Tahun</h5>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                  <i class="fas fa-download"></i> <span>Unduh</span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="downloadTptLineDropdown" style="border-radius: 8px; min-width: 100%;">
-                  <li><a class="dropdown-item" href="#" id="downloadTptLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                  <li><a class="dropdown-item" href="#" id="downloadTptLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                </ul>
+              <div class="chart-header-actions">
+                <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'tptLineChart','title' => 'Tren TPT dari Tahun ke Tahun']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'tptLineChart','title' => 'Tren TPT dari Tahun ke Tahun']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                    <i class="fas fa-download"></i> <span>Unduh</span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="downloadTptLineDropdown" style="border-radius: 8px; min-width: 100%;">
+                    <li><a class="dropdown-item" href="#" id="downloadTptLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                    <li><a class="dropdown-item" href="#" id="downloadTptLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div class="chart-container-mobile">
@@ -306,35 +294,9 @@
           <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
             <div style="position: relative; z-index: 2;">
               <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Total TPAK</h6>
-              <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
-                <?php if(isset($tpak_latest_data) && $tpak_latest_data && isset($tpak_latest_data->total)): ?>
-                  <?php echo e(number_format($tpak_latest_data->total, 2)); ?>%
-                <?php else: ?>
-                  -
-                <?php endif; ?>
-              </h3>
-              <div style="display: flex; align-items: center; gap: 5px; margin-top: 8px;">
-                <?php if(isset($tpak_total_change) && $tpak_total_change !== null): ?>
-                  <?php if($tpak_total_change > 0): ?>
-                    <span style="color: #28a745; font-size: 12px;">▲</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+<?php echo e(number_format($tpak_total_change, 2)); ?>%</span>
-                  <?php elseif($tpak_total_change < 0): ?>
-                    <span style="color: #dc3545; font-size: 12px;">▼</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;"><?php echo e(number_format($tpak_total_change, 2)); ?>%</span>
-                  <?php else: ?>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>
-                  <?php endif; ?>
-                  <?php if(isset($tpak_previous_data) && $tpak_previous_data): ?> <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari <?php echo e($tpak_previous_data->year ?? ''); ?></span><?php endif; ?>
-                <?php endif; ?>
-              </div>
-              <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">
-                <?php if(isset($tpak_latest_data) && $tpak_latest_data): ?>
-                  Tahun <?php echo e($tpak_latest_data->year ?? '-'); ?>
-
-                <?php else: ?>
-                  Data tidak tersedia
-                <?php endif; ?>
-              </small>
+              <h3 id="tpak-tab-total-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
+              <div id="tpak-tab-total-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
+              <small id="tpak-tab-total-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
             </div>
             <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
               <i class="fas fa-users" style="font-size: 60px;"></i>
@@ -347,35 +309,9 @@
           <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
             <div style="position: relative; z-index: 2;">
               <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Laki-Laki</h6>
-              <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
-                <?php if(isset($tpak_latest_data) && $tpak_latest_data && isset($tpak_latest_data->laki_laki)): ?>
-                  <?php echo e(number_format($tpak_latest_data->laki_laki, 2)); ?>%
-                <?php else: ?>
-                  -
-                <?php endif; ?>
-              </h3>
-              <div style="display: flex; align-items: center; gap: 5px; margin-top: 8px;">
-                <?php if(isset($tpak_laki_laki_change) && $tpak_laki_laki_change !== null): ?>
-                  <?php if($tpak_laki_laki_change > 0): ?>
-                    <span style="color: #28a745; font-size: 12px;">▲</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+<?php echo e(number_format($tpak_laki_laki_change, 2)); ?>%</span>
-                  <?php elseif($tpak_laki_laki_change < 0): ?>
-                    <span style="color: #dc3545; font-size: 12px;">▼</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;"><?php echo e(number_format($tpak_laki_laki_change, 2)); ?>%</span>
-                  <?php else: ?>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>
-                  <?php endif; ?>
-                  <?php if(isset($tpak_previous_data) && $tpak_previous_data): ?> <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari <?php echo e($tpak_previous_data->year ?? ''); ?></span><?php endif; ?>
-                <?php endif; ?>
-              </div>
-              <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">
-                <?php if(isset($tpak_latest_data) && $tpak_latest_data): ?>
-                  Tahun <?php echo e($tpak_latest_data->year ?? '-'); ?>
-
-                <?php else: ?>
-                  Data tidak tersedia
-                <?php endif; ?>
-              </small>
+              <h3 id="tpak-tab-laki-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
+              <div id="tpak-tab-laki-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
+              <small id="tpak-tab-laki-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
             </div>
             <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
               <i class="fas fa-male" style="font-size: 60px;"></i>
@@ -388,35 +324,9 @@
           <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
             <div style="position: relative; z-index: 2;">
               <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Perempuan</h6>
-              <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
-                <?php if(isset($tpak_latest_data) && $tpak_latest_data && isset($tpak_latest_data->perempuan)): ?>
-                  <?php echo e(number_format($tpak_latest_data->perempuan, 2)); ?>%
-                <?php else: ?>
-                  -
-                <?php endif; ?>
-              </h3>
-              <div style="display: flex; align-items: center; gap: 5px; margin-top: 8px;">
-                <?php if(isset($tpak_perempuan_change) && $tpak_perempuan_change !== null): ?>
-                  <?php if($tpak_perempuan_change > 0): ?>
-                    <span style="color: #28a745; font-size: 12px;">▲</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+<?php echo e(number_format($tpak_perempuan_change, 2)); ?>%</span>
-                  <?php elseif($tpak_perempuan_change < 0): ?>
-                    <span style="color: #dc3545; font-size: 12px;">▼</span>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;"><?php echo e(number_format($tpak_perempuan_change, 2)); ?>%</span>
-                  <?php else: ?>
-                    <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>
-                  <?php endif; ?>
-                  <?php if(isset($tpak_previous_data) && $tpak_previous_data): ?> <span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">dari <?php echo e($tpak_previous_data->year ?? ''); ?></span><?php endif; ?>
-                <?php endif; ?>
-              </div>
-              <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">
-                <?php if(isset($tpak_latest_data) && $tpak_latest_data): ?>
-                  Tahun <?php echo e($tpak_latest_data->year ?? '-'); ?>
-
-                <?php else: ?>
-                  Data tidak tersedia
-                <?php endif; ?>
-              </small>
+              <h3 id="tpak-tab-perempuan-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
+              <div id="tpak-tab-perempuan-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
+              <small id="tpak-tab-perempuan-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
             </div>
             <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
               <i class="fas fa-female" style="font-size: 60px;"></i>
@@ -430,16 +340,38 @@
         <!-- Pie Chart for Demographics TPAK -->
         <div class="col-md-6 mb-3">
           <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-              <h5 class="mb-0">Distribusi TPAK Berdasarkan Gender (<?php if(isset($tpak_latest_data) && $tpak_latest_data): ?><?php echo e($tpak_latest_data->year ?? '-'); ?><?php else: ?>-<?php endif; ?>)</h5>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                  <i class="fas fa-download"></i> <span>Unduh</span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="downloadTpakPieDropdown" style="border-radius: 8px; min-width: 100%;">
-                  <li><a class="dropdown-item" href="#" id="downloadTpakPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                  <li><a class="dropdown-item" href="#" id="downloadTpakPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                </ul>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
+              <h5 class="mb-0">Distribusi TPAK Berdasarkan Gender (<span id="tpak-pie-year">-</span>)</h5>
+              <div class="chart-header-actions">
+                <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'tpakPieChart','title' => 'Distribusi TPAK Berdasarkan Gender']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'tpakPieChart','title' => 'Distribusi TPAK Berdasarkan Gender']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                    <i class="fas fa-download"></i> <span>Unduh</span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="downloadTpakPieDropdown" style="border-radius: 8px; min-width: 100%;">
+                    <li><a class="dropdown-item" href="#" id="downloadTpakPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                    <li><a class="dropdown-item" href="#" id="downloadTpakPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div class="chart-container-mobile">
@@ -451,16 +383,38 @@
         <!-- Line Chart TPAK -->
         <div class="col-md-6 mb-3">
           <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
               <h5 class="mb-0">Tren TPAK dari Tahun ke Tahun</h5>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                  <i class="fas fa-download"></i> <span>Unduh</span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="downloadTpakLineDropdown" style="border-radius: 8px; min-width: 100%;">
-                  <li><a class="dropdown-item" href="#" id="downloadTpakLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                  <li><a class="dropdown-item" href="#" id="downloadTpakLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                </ul>
+              <div class="chart-header-actions">
+                <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'tpakLineChart','title' => 'Tren TPAK dari Tahun ke Tahun']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'tpakLineChart','title' => 'Tren TPAK dari Tahun ke Tahun']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+                <div class="dropdown">
+                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                    <i class="fas fa-download"></i> <span>Unduh</span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="downloadTpakLineDropdown" style="border-radius: 8px; min-width: 100%;">
+                    <li><a class="dropdown-item" href="#" id="downloadTpakLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                    <li><a class="dropdown-item" href="#" id="downloadTpakLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div class="chart-container-mobile">
@@ -725,6 +679,63 @@
       content: '';
       display: none;
     }
+    
+    /* Fix column spacing on mobile */
+    .row > [class*="col-"] {
+      padding-left: 5px !important;
+      padding-right: 5px !important;
+    }
+    
+    /* Ensure cards don't overflow */
+    .summary-card-mobile {
+      overflow: hidden !important;
+    }
+    
+    /* Better spacing for tab summary cards */
+    #tpt .row.mb-4,
+    #tpak .row.mb-4 {
+      margin-bottom: 1rem !important;
+    }
+    
+    /* Adjust tab content padding */
+    .tab-content {
+      padding-top: 10px;
+    }
+    
+    /* Fix nav tabs on mobile */
+    .nav-tabs {
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+    }
+    
+    .nav-tabs::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+    
+    .nav-tabs .nav-item {
+      flex-shrink: 0;
+    }
+    
+    .nav-tabs .nav-link {
+      white-space: nowrap;
+      padding: 8px 15px;
+      font-size: 14px;
+    }
+    
+    /* Fix summary card text overflow */
+    .summary-card-mobile h3 {
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    
+    /* Better spacing for change indicators */
+    .summary-card-mobile > div[style*="position: relative"][style*="z-index: 2"] > div[style*="display: flex"] {
+      flex-wrap: wrap;
+      align-items: center;
+    }
   }
   
   /* Download button styles */
@@ -955,6 +966,214 @@
           }
           tpakChangeEl.innerHTML = changeHtml;
         }
+      }
+      
+      // Update TPT Tab Summary Cards
+      updateTPTTabCards();
+      
+      // Update TPAK Tab Summary Cards
+      updateTPAKTabCards();
+    }
+    
+    // Function to update TPT tab summary cards
+    function updateTPTTabCards() {
+      if (!tptLatestData) return;
+      
+      // Total TPT
+      const tptTabTotalEl = document.getElementById('tpt-tab-total-value');
+      const tptTabTotalChangeEl = document.getElementById('tpt-tab-total-change');
+      const tptTabTotalYearEl = document.getElementById('tpt-tab-total-year');
+      
+      if (tptTabTotalEl) {
+        tptTabTotalEl.textContent = tptLatestData.total !== null ? tptLatestData.total.toFixed(2) + '%' : '-';
+      }
+      
+      if (tptTabTotalChangeEl && tptTotalChange !== null) {
+        let changeHtml = '';
+        if (tptTotalChange > 0) {
+          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tptTotalChange.toFixed(2)}%</span>`;
+        } else if (tptTotalChange < 0) {
+          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tptTotalChange.toFixed(2)}%</span>`;
+        } else {
+          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+        }
+        if (tptPreviousData && tptPreviousData.year) {
+          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tptPreviousData.year}</span>`;
+        }
+        tptTabTotalChangeEl.innerHTML = changeHtml;
+      }
+      
+      if (tptTabTotalYearEl) {
+        tptTabTotalYearEl.textContent = tptLatestData.year ? `Tahun ${tptLatestData.year}` : 'Data tidak tersedia';
+      }
+      
+      // Laki-Laki TPT
+      const tptTabLakiEl = document.getElementById('tpt-tab-laki-value');
+      const tptTabLakiChangeEl = document.getElementById('tpt-tab-laki-change');
+      const tptTabLakiYearEl = document.getElementById('tpt-tab-laki-year');
+      
+      if (tptTabLakiEl) {
+        tptTabLakiEl.textContent = tptLatestData.laki_laki !== null ? tptLatestData.laki_laki.toFixed(2) + '%' : '-';
+      }
+      
+      if (tptTabLakiChangeEl && tptLakiLakiChange !== null) {
+        let changeHtml = '';
+        if (tptLakiLakiChange > 0) {
+          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tptLakiLakiChange.toFixed(2)}%</span>`;
+        } else if (tptLakiLakiChange < 0) {
+          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tptLakiLakiChange.toFixed(2)}%</span>`;
+        } else {
+          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+        }
+        if (tptPreviousData && tptPreviousData.year) {
+          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tptPreviousData.year}</span>`;
+        }
+        tptTabLakiChangeEl.innerHTML = changeHtml;
+      }
+      
+      if (tptTabLakiYearEl) {
+        tptTabLakiYearEl.textContent = tptLatestData.year ? `Tahun ${tptLatestData.year}` : 'Data tidak tersedia';
+      }
+      
+      // Perempuan TPT
+      const tptTabPerempuanEl = document.getElementById('tpt-tab-perempuan-value');
+      const tptTabPerempuanChangeEl = document.getElementById('tpt-tab-perempuan-change');
+      const tptTabPerempuanYearEl = document.getElementById('tpt-tab-perempuan-year');
+      
+      if (tptTabPerempuanEl) {
+        tptTabPerempuanEl.textContent = tptLatestData.perempuan !== null ? tptLatestData.perempuan.toFixed(2) + '%' : '-';
+      }
+      
+      if (tptTabPerempuanChangeEl && tptPerempuanChange !== null) {
+        let changeHtml = '';
+        if (tptPerempuanChange > 0) {
+          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tptPerempuanChange.toFixed(2)}%</span>`;
+        } else if (tptPerempuanChange < 0) {
+          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tptPerempuanChange.toFixed(2)}%</span>`;
+        } else {
+          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+        }
+        if (tptPreviousData && tptPreviousData.year) {
+          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tptPreviousData.year}</span>`;
+        }
+        tptTabPerempuanChangeEl.innerHTML = changeHtml;
+      }
+      
+      if (tptTabPerempuanYearEl) {
+        tptTabPerempuanYearEl.textContent = tptLatestData.year ? `Tahun ${tptLatestData.year}` : 'Data tidak tersedia';
+      }
+      
+      // Update pie chart title year
+      const tptPieYearEl = document.getElementById('tpt-pie-year');
+      if (tptPieYearEl) {
+        tptPieYearEl.textContent = tptLatestData.year ? tptLatestData.year : '-';
+      }
+    }
+    
+    // Function to update TPAK tab summary cards
+    function updateTPAKTabCards() {
+      if (!tpakLatestData) return;
+      
+      // Total TPAK
+      const tpakTabTotalEl = document.getElementById('tpak-tab-total-value');
+      const tpakTabTotalChangeEl = document.getElementById('tpak-tab-total-change');
+      const tpakTabTotalYearEl = document.getElementById('tpak-tab-total-year');
+      
+      if (tpakTabTotalEl) {
+        tpakTabTotalEl.textContent = tpakLatestData.total !== null ? tpakLatestData.total.toFixed(2) + '%' : '-';
+      }
+      
+      if (tpakTabTotalChangeEl && tpakTotalChange !== null) {
+        let changeHtml = '';
+        if (tpakTotalChange > 0) {
+          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tpakTotalChange.toFixed(2)}%</span>`;
+        } else if (tpakTotalChange < 0) {
+          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tpakTotalChange.toFixed(2)}%</span>`;
+        } else {
+          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+        }
+        if (tpakPreviousData && tpakPreviousData.year) {
+          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tpakPreviousData.year}</span>`;
+        }
+        tpakTabTotalChangeEl.innerHTML = changeHtml;
+      }
+      
+      if (tpakTabTotalYearEl) {
+        tpakTabTotalYearEl.textContent = tpakLatestData.year ? `Tahun ${tpakLatestData.year}` : 'Data tidak tersedia';
+      }
+      
+      // Laki-Laki TPAK
+      const tpakTabLakiEl = document.getElementById('tpak-tab-laki-value');
+      const tpakTabLakiChangeEl = document.getElementById('tpak-tab-laki-change');
+      const tpakTabLakiYearEl = document.getElementById('tpak-tab-laki-year');
+      
+      if (tpakTabLakiEl) {
+        tpakTabLakiEl.textContent = tpakLatestData.laki_laki !== null ? tpakLatestData.laki_laki.toFixed(2) + '%' : '-';
+      }
+      
+      if (tpakTabLakiChangeEl && tpakLakiLakiChange !== null) {
+        let changeHtml = '';
+        if (tpakLakiLakiChange > 0) {
+          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tpakLakiLakiChange.toFixed(2)}%</span>`;
+        } else if (tpakLakiLakiChange < 0) {
+          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tpakLakiLakiChange.toFixed(2)}%</span>`;
+        } else {
+          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+        }
+        if (tpakPreviousData && tpakPreviousData.year) {
+          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tpakPreviousData.year}</span>`;
+        }
+        tpakTabLakiChangeEl.innerHTML = changeHtml;
+      }
+      
+      if (tpakTabLakiYearEl) {
+        tpakTabLakiYearEl.textContent = tpakLatestData.year ? `Tahun ${tpakLatestData.year}` : 'Data tidak tersedia';
+      }
+      
+      // Perempuan TPAK
+      const tpakTabPerempuanEl = document.getElementById('tpak-tab-perempuan-value');
+      const tpakTabPerempuanChangeEl = document.getElementById('tpak-tab-perempuan-change');
+      const tpakTabPerempuanYearEl = document.getElementById('tpak-tab-perempuan-year');
+      
+      if (tpakTabPerempuanEl) {
+        tpakTabPerempuanEl.textContent = tpakLatestData.perempuan !== null ? tpakLatestData.perempuan.toFixed(2) + '%' : '-';
+      }
+      
+      if (tpakTabPerempuanChangeEl && tpakPerempuanChange !== null) {
+        let changeHtml = '';
+        if (tpakPerempuanChange > 0) {
+          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tpakPerempuanChange.toFixed(2)}%</span>`;
+        } else if (tpakPerempuanChange < 0) {
+          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tpakPerempuanChange.toFixed(2)}%</span>`;
+        } else {
+          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+        }
+        if (tpakPreviousData && tpakPreviousData.year) {
+          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tpakPreviousData.year}</span>`;
+        }
+        tpakTabPerempuanChangeEl.innerHTML = changeHtml;
+      }
+      
+      if (tpakTabPerempuanYearEl) {
+        tpakTabPerempuanYearEl.textContent = tpakLatestData.year ? `Tahun ${tpakLatestData.year}` : 'Data tidak tersedia';
+      }
+      
+      // Update pie chart title year
+      const tpakPieYearEl = document.getElementById('tpak-pie-year');
+      if (tpakPieYearEl) {
+        tpakPieYearEl.textContent = tpakLatestData.year ? tpakLatestData.year : '-';
       }
     }
 

@@ -1,30 +1,29 @@
-@extends('layouts.main')
+<?php $__env->startSection('title', 'IPM - Harapan Lama Sekolah (HLS)'); ?>
 
-@section('title', 'IPM - Rata-rata Lama Sekolah (RLS)')
-
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-@endpush
+<?php $__env->stopPush(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="container py-4">
-  <h3 class="font-weight-bold mb-4">IPM - Rata-rata Lama Sekolah (RLS)</h3>
+  <h3 class="font-weight-bold mb-4">IPM - Harapan Lama Sekolah (HLS)</h3>
   
   <!-- Summary Cards -->
   <div class="row mb-4" style="display: flex; flex-wrap: nowrap; gap: 15px; margin-left: 0; margin-right: 0;">
+    <!-- Surabaya Summary Card -->
     <div class="col-6 mb-3" style="flex: 1; min-width: 0; padding-left: 0; padding-right: 0;">
-      <div class="summary-card" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; border-radius: 12px; padding: 25px; min-height: 200px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+      <div class="summary-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 12px; padding: 25px; min-height: 200px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
         <div style="position: relative; z-index: 2;">
           <h5 style="color: rgba(255, 255, 255, 0.95); font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">
-            <i class="fas fa-book-reader me-2"></i>Kota Surabaya
+            <i class="fas fa-graduation-cap me-2"></i>Kota Surabaya
           </h5>
           <h2 style="font-size: 42px; font-weight: 700; line-height: 1.2; margin: 0 0 10px 0;">
-            <span id="surabaya-value">-</span>
+            <span id="surabaya-value">-</span> <span style="font-size: 24px; font-weight: 400;">tahun</span>
           </h2>
           <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
             <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -37,18 +36,20 @@
           </div>
         </div>
         <div style="position: absolute; top: 10px; right: 10px; opacity: 0.1; z-index: 1;">
-          <i class="fas fa-book-reader" style="font-size: 80px;"></i>
+          <i class="fas fa-graduation-cap" style="font-size: 80px;"></i>
         </div>
       </div>
     </div>
+
+    <!-- Jawa Timur Summary Card -->
     <div class="col-6 mb-3" style="flex: 1; min-width: 0; padding-left: 0; padding-right: 0;">
-      <div class="summary-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border-radius: 12px; padding: 25px; min-height: 200px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+      <div class="summary-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 25px; min-height: 200px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
         <div style="position: relative; z-index: 2;">
           <h5 style="color: rgba(255, 255, 255, 0.95); font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">
-            <i class="fas fa-book-reader me-2"></i>Jawa Timur
+            <i class="fas fa-graduation-cap me-2"></i>Jawa Timur
           </h5>
           <h2 style="font-size: 42px; font-weight: 700; line-height: 1.2; margin: 0 0 10px 0;">
-            <span id="jatim-value">-</span>
+            <span id="jatim-value">-</span> <span style="font-size: 24px; font-weight: 400;">tahun</span>
           </h2>
           <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
             <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -61,23 +62,23 @@
           </div>
         </div>
         <div style="position: absolute; top: 10px; right: 10px; opacity: 0.1; z-index: 1;">
-          <i class="fas fa-book-reader" style="font-size: 80px;"></i>
+          <i class="fas fa-graduation-cap" style="font-size: 80px;"></i>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Comparison Chart -->
   <div class="row mb-4">
     <div class="col-md-12">
       <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-          <h5 class="mb-0">Perbandingan RLS: Surabaya vs Jawa Timur</h5>
-          <div class="chart-header-actions">
-            <x-chart-share-button chartId="comparisonChart" title="Perbandingan RLS Surabaya vs Jawa Timur" />
-            <button id="downloadChartRLS" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h5 class="mb-0">Perbandingan HLS: Surabaya vs Jawa Timur</h5>
+          <div style="display: flex; gap: 8px;">
+            <button id="downloadChartHLS" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
               <i class="fas fa-file-excel"></i> <span>Excel</span>
             </button>
-            <button id="downloadImageRLS" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
+            <button id="downloadImageHLS" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
               <i class="fas fa-image"></i> <span>PNG</span>
             </button>
           </div>
@@ -89,15 +90,23 @@
 </div>
 
 <style>
-  /* Ensure tooltip can appear - fix overflow issues */
-  .dashboard-card, .row, .container, .col-md-12, .col-md-6 {
-    overflow: visible !important;
+  .dashboard-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
   }
   
-  .dashboard-card { background-color: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; margin-bottom: 20px; }
-  .summary-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-  .summary-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); }
+  .summary-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
   
+  .summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  }
+
   /* Responsive styles for summary cards */
   @media (max-width: 768px) {
     .summary-card {
@@ -128,27 +137,27 @@
     }
     
     /* Download button responsive */
-    #downloadChartRLS, #downloadImageRLS {
+    #downloadChartHLS, #downloadImageHLS {
       padding: 3px 8px !important;
       font-size: 11px !important;
     }
     
-    #downloadChartRLS i, #downloadImageRLS i {
+    #downloadChartHLS i, #downloadImageHLS i {
       font-size: 10px !important;
     }
     
-    #downloadChartRLS span, #downloadImageRLS span {
+    #downloadChartHLS span, #downloadImageHLS span {
       display: none;
     }
   }
   
   @media (max-width: 576px) {
-    #downloadChartRLS, #downloadImageRLS {
+    #downloadChartHLS, #downloadImageHLS {
       padding: 4px 6px !important;
       font-size: 10px !important;
     }
     
-    #downloadChartRLS i, #downloadImageRLS i {
+    #downloadChartHLS i, #downloadImageHLS i {
       font-size: 12px !important;
       margin: 0 !important;
     }
@@ -157,7 +166,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE = '{{ url("/api") }}';
+    const API_BASE = '<?php echo e(url("/api")); ?>';
     let surabayaData = [];
     let jatimData = [];
     let comparisonChart = null;
@@ -165,7 +174,7 @@
     // Load summary data for cards
     async function loadSummaryData() {
       try {
-        const response = await fetch(`${API_BASE}/ipm-rls-summary`);
+        const response = await fetch(`${API_BASE}/ipm-hls-summary`);
         const result = await response.json();
         
         if (result.success && result.data) {
@@ -174,7 +183,7 @@
           // Update Surabaya card
           if (data.surabaya_latest) {
             document.getElementById('surabaya-value').textContent = data.surabaya_latest.value !== null 
-              ? parseFloat(data.surabaya_latest.value).toFixed(2) + ' tahun'
+              ? parseFloat(data.surabaya_latest.value).toFixed(2) 
               : '-';
             document.getElementById('surabaya-year').textContent = `Tahun ${data.surabaya_latest.year}`;
             
@@ -200,7 +209,7 @@
           // Update Jawa Timur card
           if (data.jatim_latest) {
             document.getElementById('jatim-value').textContent = data.jatim_latest.value !== null 
-              ? parseFloat(data.jatim_latest.value).toFixed(2) + ' tahun'
+              ? parseFloat(data.jatim_latest.value).toFixed(2) 
               : '-';
             document.getElementById('jatim-year').textContent = `Tahun ${data.jatim_latest.year}`;
             
@@ -231,7 +240,7 @@
           renderChart();
         }
       } catch (error) {
-        console.error('Error loading RLS summary data:', error);
+        console.error('Error loading HLS summary data:', error);
       }
     }
 
@@ -261,7 +270,7 @@
       const years = displayYears.map(y => y.toString());
       
       // Store displayYears in global scope for export function
-      window.displayYearsRLS = displayYears;
+      window.displayYearsHLS = displayYears;
 
       const surabayaValues = displayYears.map(year => {
         const data = surabayaProcessed.find(d => d.year === year);
@@ -274,8 +283,8 @@
       });
       
       // Store values in global scope for export function
-      window.surabayaValuesRLS = surabayaValues;
-      window.jatimValuesRLS = jatimValues;
+      window.surabayaValuesHLS = surabayaValues;
+      window.jatimValuesHLS = jatimValues;
 
       const comparisonChartDom = document.getElementById('comparisonChart');
       comparisonChart = echarts.init(comparisonChartDom);
@@ -309,7 +318,7 @@
             name: 'Kota Surabaya',
             type: 'line',
             data: surabayaValues,
-            itemStyle: { color: 'rgb(139, 92, 246)' },
+            itemStyle: { color: 'rgb(59, 130, 246)' },
             lineStyle: { width: 3 },
             symbol: 'circle',
             symbolSize: 8,
@@ -319,8 +328,8 @@
                 type: 'linear',
                 x: 0, y: 0, x2: 0, y2: 1,
                 colorStops: [
-                  { offset: 0, color: 'rgba(139, 92, 246, 0.3)' },
-                  { offset: 1, color: 'rgba(139, 92, 246, 0.05)' }
+                  { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
+                  { offset: 1, color: 'rgba(59, 130, 246, 0.05)' }
                 ]
               }
             }
@@ -329,7 +338,7 @@
             name: 'Jawa Timur',
             type: 'line',
             data: jatimValues,
-            itemStyle: { color: 'rgb(245, 158, 11)' },
+            itemStyle: { color: 'rgb(16, 185, 129)' },
             lineStyle: { width: 3 },
             symbol: 'circle',
             symbolSize: 8,
@@ -339,8 +348,8 @@
                 type: 'linear',
                 x: 0, y: 0, x2: 0, y2: 1,
                 colorStops: [
-                  { offset: 0, color: 'rgba(245, 158, 11, 0.3)' },
-                  { offset: 1, color: 'rgba(245, 158, 11, 0.05)' }
+                  { offset: 0, color: 'rgba(16, 185, 129, 0.3)' },
+                  { offset: 1, color: 'rgba(16, 185, 129, 0.05)' }
                 ]
               }
             }
@@ -352,35 +361,58 @@
         comparisonChart.resize();
       });
     }
-    
-    function exportToExcelRLS() {
-      const exportData = [['Tahun', 'Kota Surabaya (tahun)', 'Jawa Timur (tahun)']];
-      if (window.displayYearsRLS && window.surabayaValuesRLS && window.jatimValuesRLS) {
-        window.displayYearsRLS.forEach((year, index) => {
-          const surabayaVal = window.surabayaValuesRLS[index] !== null 
-            ? window.surabayaValuesRLS[index].toFixed(2) 
+
+    // Export to Excel function
+    function exportToExcel() {
+      // Prepare data for export
+      const exportData = [];
+      
+      // Header row
+      exportData.push(['Tahun', 'Kota Surabaya (tahun)', 'Jawa Timur (tahun)']);
+      
+      // Data rows
+      if (window.displayYearsHLS && window.surabayaValuesHLS && window.jatimValuesHLS) {
+        window.displayYearsHLS.forEach((year, index) => {
+          const surabayaVal = window.surabayaValuesHLS[index] !== null 
+            ? window.surabayaValuesHLS[index].toFixed(2) 
             : 'Data tidak tersedia';
-          const jatimVal = window.jatimValuesRLS[index] !== null 
-            ? window.jatimValuesRLS[index].toFixed(2) 
+          const jatimVal = window.jatimValuesHLS[index] !== null 
+            ? window.jatimValuesHLS[index].toFixed(2) 
             : 'Data tidak tersedia';
           exportData.push([year.toString(), surabayaVal, jatimVal]);
         });
       }
+      
+      // Create workbook and worksheet
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(exportData);
-      ws['!cols'] = [{ wch: 10 }, { wch: 25 }, { wch: 25 }];
-      XLSX.utils.book_append_sheet(wb, ws, 'Data RLS');
+      
+      // Set column widths
+      ws['!cols'] = [
+        { wch: 10 }, // Tahun
+        { wch: 25 }, // Kota Surabaya
+        { wch: 25 }  // Jawa Timur
+      ];
+      
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Data HLS');
+      
+      // Generate filename with current date
       const today = new Date();
-      XLSX.writeFile(wb, `RLS_Surabaya_vs_JawaTimur_${today.toISOString().split('T')[0]}.xlsx`);
+      const dateStr = today.toISOString().split('T')[0];
+      const filename = `HLS_Surabaya_vs_JawaTimur_${dateStr}.xlsx`;
+      
+      // Save file
+      XLSX.writeFile(wb, filename);
     }
     
     // Helper function to check authentication before download
     function checkAuthBeforeDownload(callback, itemName = 'data') {
-      @auth
+      <?php if(auth()->guard()->check()): ?>
       // User authenticated, proceed with download
       callback();
       return true;
-      @else
+      <?php else: ?>
       // User not authenticated, show login modal
       if (typeof showLoginRequiredModal === 'function') {
         showLoginRequiredModal(itemName);
@@ -391,18 +423,20 @@
           const modal = new bootstrap.Modal(loginModal);
           modal.show();
         } else {
-          window.location.href = '{{ route("login") }}';
+          window.location.href = '<?php echo e(route("login")); ?>';
         }
       }
       return false;
-      @endauth
+      <?php endif; ?>
     }
 
-    document.getElementById('downloadChartRLS').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportToExcelRLS, 'data RLS');
+    // Add click event to download button
+    document.getElementById('downloadChartHLS').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToExcel, 'data HLS');
     });
     
-    function exportToPNGRLS() {
+    // Export chart as PNG
+    function exportToPNGHLS() {
       if (!comparisonChart) {
         alert('Grafik belum dimuat. Silakan tunggu sebentar.');
         return;
@@ -414,13 +448,13 @@
         backgroundColor: '#fff'
       });
       const link = document.createElement('a');
-      link.download = `RLS_Chart_Surabaya_vs_JawaTimur_${new Date().toISOString().split('T')[0]}.png`;
+      link.download = `HLS_Chart_Surabaya_vs_JawaTimur_${new Date().toISOString().split('T')[0]}.png`;
       link.href = url;
       link.click();
     }
     
-    document.getElementById('downloadImageRLS').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportToPNGRLS, 'grafik RLS');
+    document.getElementById('downloadImageHLS').addEventListener('click', function() {
+      checkAuthBeforeDownload(exportToPNGHLS, 'grafik HLS');
     });
 
     // Load data on page load
@@ -428,4 +462,6 @@
   });
 </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\Astabaya-laravel\resources\views/dashboard/indikator/ipm_hls.blade.php ENDPATH**/ ?>
