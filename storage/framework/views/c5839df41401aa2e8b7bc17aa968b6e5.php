@@ -1,14 +1,9 @@
-<?php $__env->startSection('title', 'PDRB Pengeluaran'); ?>
-
-<?php $__env->startPush('styles'); ?>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-<?php $__env->stopPush(); ?>
-
 <?php $__env->startSection('content'); ?>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 
 <div class="container py-4">
-  <h3 class="font-weight-bold mb-4">PDRB Pengeluaran</h3>
+  <h3 class="font-weight-bold mb-4">PDRB Lapangan Usaha</h3>
   
   <!-- Infinite Carousel for Summary Cards - All Data -->
   <div class="row mb-4">
@@ -17,7 +12,7 @@
         <div class="card-body" style="padding: 25px;">
           <div class="indicator-carousel-wrapper" style="position: relative; overflow: hidden; padding: 0;">
             <div class="indicator-carousel-track" id="pdrbSheetCarousel" style="display: flex; gap: 15px; will-change: transform;">
-              <!-- Cards will be populated by JavaScript -->
+              <!-- Cards will be populated by JavaScript from API -->
             </div>
           </div>
         </div>
@@ -54,14 +49,14 @@
             <div class="chart-header-actions">
               <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'adhbChart','title' => 'ADHB PDRB Pengeluaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'adhbChart','title' => 'ADHB PDRB Lapangan Usaha']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('chart-share-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'adhbChart','title' => 'ADHB PDRB Pengeluaran']); ?>
+<?php $component->withAttributes(['chartId' => 'adhbChart','title' => 'ADHB PDRB Lapangan Usaha']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
@@ -97,14 +92,14 @@
             <div class="chart-header-actions">
               <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'adhkChart','title' => 'ADHK PDRB Pengeluaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'adhkChart','title' => 'ADHK PDRB Lapangan Usaha']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('chart-share-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'adhkChart','title' => 'ADHK PDRB Pengeluaran']); ?>
+<?php $component->withAttributes(['chartId' => 'adhkChart','title' => 'ADHK PDRB Lapangan Usaha']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
@@ -134,22 +129,110 @@
     </div>
 
     <div class="row mb-4">
-      <!-- Distribusi Card -->
+      <!-- Laju PDRB Card -->
       <div class="col-md-6 mb-3">
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-            <h5 class="mb-0">Distribusi - Komponen Pengeluaran <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
+            <h5 class="mb-0">Laju PDRB <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
             <div class="chart-header-actions">
               <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'distribusiChart','title' => 'Distribusi PDRB Komponen Pengeluaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'lajuChart','title' => 'Laju PDRB']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('chart-share-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'distribusiChart','title' => 'Distribusi PDRB Komponen Pengeluaran']); ?>
+<?php $component->withAttributes(['chartId' => 'lajuChart','title' => 'Laju PDRB']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadLajuDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                  <i class="fas fa-download"></i> <span>Unduh</span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="downloadLajuDropdown" style="border-radius: 8px; min-width: 100%;">
+                  <li><a class="dropdown-item" href="#" id="downloadLajuExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadLajuPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="chart-scroll-container">
+            <div id="lajuChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Laju Implisit Card -->
+      <div class="col-md-6 mb-3">
+        <div class="dashboard-card" style="position: relative;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
+            <h5 class="mb-0">Laju Implisit <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
+            <div class="chart-header-actions">
+              <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'lajuImplisitChart','title' => 'Laju Implisit PDRB']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'lajuImplisitChart','title' => 'Laju Implisit PDRB']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadLajuImplisitDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                  <i class="fas fa-download"></i> <span>Unduh</span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="downloadLajuImplisitDropdown" style="border-radius: 8px; min-width: 100%;">
+                  <li><a class="dropdown-item" href="#" id="downloadLajuImplisitExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                  <li><a class="dropdown-item" href="#" id="downloadLajuImplisitPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="chart-scroll-container">
+            <div id="lajuImplisitChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <!-- Distribusi Card -->
+      <div class="col-md-12 mb-3">
+        <div class="dashboard-card" style="position: relative;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
+            <h5 class="mb-0">Distribusi - Lapangan Usaha <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
+            <div class="chart-header-actions">
+              <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'distribusiChart','title' => 'Distribusi PDRB Lapangan Usaha']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'distribusiChart','title' => 'Distribusi PDRB Lapangan Usaha']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
@@ -179,64 +262,21 @@
             </select>
           </div>
           <div class="chart-scroll-container">
-            <div id="distribusiChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Laju PDRB Card -->
-      <div class="col-md-6 mb-3">
-        <div class="dashboard-card" style="position: relative;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-            <h5 class="mb-0">Laju PDRB <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
-            <div class="chart-header-actions">
-              <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'lajuChart','title' => 'Laju PDRB Pengeluaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('chart-share-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'lajuChart','title' => 'Laju PDRB Pengeluaran']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadLajuDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                  <i class="fas fa-download"></i> <span>Unduh</span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="downloadLajuDropdown" style="border-radius: 8px; min-width: 100%;">
-                  <li><a class="dropdown-item" href="#" id="downloadLajuExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                  <li><a class="dropdown-item" href="#" id="downloadLajuPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="chart-scroll-container">
-            <div id="lajuChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+            <div id="distribusiChart" class="chart-responsive" style="width: 100%; height: 500px;"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Filter PDRB Pengeluaran -->
+    <!-- Filter PDRB Lapangan Usaha -->
     <div class="row mb-4">
       <div class="col-md-12">
         <div class="dashboard-card filter-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; min-height: auto; overflow: visible;">
-          <h5 class="mb-4">
-            <i class="fas fa-search me-2"></i>Filter PDRB Pengeluaran
+            <h5 class="mb-4">
+            <i class="fas fa-search me-2"></i>Filter PDRB Lapangan Usaha
           </h5>
           <p class="text-muted mb-4" style="font-size: 14px;">
-            Pilih jenis PDRB dan jenis pengeluaran untuk melihat data sesuai kebutuhan. Pilih satu jenis PDRB dan satu atau lebih jenis pengeluaran.
+            Pilih jenis PDRB dan lapangan usaha untuk melihat data sesuai kebutuhan. Pilih satu jenis PDRB dan satu atau lebih lapangan usaha.
           </p>
           
           <div class="row g-3">
@@ -261,43 +301,29 @@
                   <div class="filter-option-pdrb" data-value="Distribusi" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
                     Distribusi
                   </div>
-                  <div class="filter-option-pdrb" data-value="Laju Pertumbuhan" style="padding: 10px 12px; cursor: pointer; font-size: 14px;">
+                  <div class="filter-option-pdrb" data-value="Laju Pertumbuhan" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
                     Laju Pertumbuhan
+                  </div>
+                  <div class="filter-option-pdrb" data-value="Laju Implisit" style="padding: 10px 12px; cursor: pointer; font-size: 14px;">
+                    Laju Implisit
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Filter Jenis Pengeluaran (Multiple Selection with Tags) -->
+            <!-- Filter Lapangan Usaha (Multiple Selection with Tags) -->
             <div class="col-md-6">
               <label class="form-label" style="font-weight: 600; margin-bottom: 8px;">
-                <span class="badge bg-success me-2">2</span>Jenis Pengeluaran
+                <span class="badge bg-success me-2">2</span>Lapangan Usaha
               </label>
               <div id="filterJenisPengeluaranWrapper" style="position: relative; overflow: visible; z-index: 9999;">
                 <div id="filterJenisPengeluaranInput" class="form-control" style="padding: 6px 12px; border-radius: 6px; min-height: 40px; height: auto; font-size: 14px; cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; background-color: #fff;">
-                  <span id="filterJenisPengeluaranPlaceholder" style="color: #6c757d;">Pilih Jenis Pengeluaran</span>
+                  <span id="filterJenisPengeluaranPlaceholder" style="color: #6c757d;">Pilih Lapangan Usaha</span>
                   <div id="filterJenisPengeluaranTags" style="display: none; flex-wrap: wrap; gap: 6px; flex: 1;"></div>
                   <i class="fas fa-chevron-down" style="color: #6c757d; margin-left: auto; flex-shrink: 0;"></i>
                 </div>
                 <div id="filterJenisPengeluaranDropdown" style="display: none; position: fixed; background: white; border: 1px solid #dee2e6; border-radius: 6px; margin-top: 0; max-height: 300px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                  <div class="filter-option" data-value="Pengeluaran Konsumsi Rumah Tangga" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    Pengeluaran Konsumsi Rumah Tangga
-                  </div>
-                  <div class="filter-option" data-value="Pengeluaran Konsumsi LNPRT" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    Pengeluaran Konsumsi LNPRT
-                  </div>
-                  <div class="filter-option" data-value="Pengeluaran Konsumsi Pemerintah" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    Pengeluaran Konsumsi Pemerintah
-                  </div>
-                  <div class="filter-option" data-value="Pembentukan Modal Tetap Bruto" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    Pembentukan Modal Tetap Bruto
-                  </div>
-                  <div class="filter-option" data-value="Perubahan Inventori" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    Perubahan Inventori
-                  </div>
-                  <div class="filter-option" data-value="Net Ekspor Barang dan Jasa" style="padding: 10px 12px; cursor: pointer; font-size: 14px;">
-                    Net Ekspor Barang dan Jasa
-                  </div>
+                  <!-- Options will be populated dynamically from API -->
                 </div>
               </div>
             </div>
@@ -320,18 +346,18 @@
         <div class="col-md-12">
           <div class="dashboard-card" style="position: relative;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-              <h5 class="mb-0" id="filteredChartTitle">Grafik PDRB Pengeluaran</h5>
+              <h5 class="mb-0" id="filteredChartTitle">Grafik PDRB Lapangan Usaha</h5>
               <div class="chart-header-actions">
                 <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'filteredChart','title' => 'Grafik PDRB Pengeluaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'filteredChart','title' => 'PDRB Lapangan Usaha (Filter)']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('chart-share-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'filteredChart','title' => 'Grafik PDRB Pengeluaran']); ?>
+<?php $component->withAttributes(['chartId' => 'filteredChart','title' => 'PDRB Lapangan Usaha (Filter)']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
@@ -373,14 +399,14 @@
             <div class="chart-header-actions">
               <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'adhbTriwulananChart','title' => 'ADHB Triwulanan PDRB Pengeluaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'adhbTriwulananChart','title' => 'ADHB Triwulanan PDRB']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('chart-share-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'adhbTriwulananChart','title' => 'ADHB Triwulanan PDRB Pengeluaran']); ?>
+<?php $component->withAttributes(['chartId' => 'adhbTriwulananChart','title' => 'ADHB Triwulanan PDRB']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
@@ -423,14 +449,14 @@
             <div class="chart-header-actions">
               <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'adhkTriwulananChart','title' => 'ADHK Triwulanan PDRB Pengeluaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'adhkTriwulananChart','title' => 'ADHK Triwulanan PDRB']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('chart-share-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'adhkTriwulananChart','title' => 'ADHK Triwulanan PDRB Pengeluaran']); ?>
+<?php $component->withAttributes(['chartId' => 'adhkTriwulananChart','title' => 'ADHK Triwulanan PDRB']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
@@ -471,18 +497,18 @@
       <div class="col-md-6 mb-3">
         <div class="dashboard-card" style="position: relative;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-            <h5 class="mb-0">Distribusi Triwulanan - Komponen Pengeluaran <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
+            <h5 class="mb-0">Distribusi Triwulanan - Lapangan Usaha <span style="font-size: 14px; font-weight: normal; color: #666;">(Persen)</span></h5>
             <div class="chart-header-actions">
               <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'distribusiTriwulananChart','title' => 'Distribusi Triwulanan PDRB Pengeluaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'distribusiTriwulananChart','title' => 'Distribusi Triwulanan PDRB Lapangan Usaha']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('chart-share-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'distribusiTriwulananChart','title' => 'Distribusi Triwulanan PDRB Pengeluaran']); ?>
+<?php $component->withAttributes(['chartId' => 'distribusiTriwulananChart','title' => 'Distribusi Triwulanan PDRB Lapangan Usaha']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
@@ -537,14 +563,14 @@
             <div class="chart-header-actions">
               <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'lajuQtoQChart','title' => 'Laju Q-to-Q PDRB Pengeluaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'lajuQtoQChart','title' => 'Laju Q-to-Q PDRB']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('chart-share-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'lajuQtoQChart','title' => 'Laju Q-to-Q PDRB Pengeluaran']); ?>
+<?php $component->withAttributes(['chartId' => 'lajuQtoQChart','title' => 'Laju Q-to-Q PDRB']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
@@ -589,14 +615,14 @@
             <div class="chart-header-actions">
               <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'lajuYtoYChart','title' => 'Laju Y-to-Y PDRB Pengeluaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'lajuYtoYChart','title' => 'Laju Y-to-Y PDRB']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('chart-share-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'lajuYtoYChart','title' => 'Laju Y-to-Y PDRB Pengeluaran']); ?>
+<?php $component->withAttributes(['chartId' => 'lajuYtoYChart','title' => 'Laju Y-to-Y PDRB']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
@@ -639,14 +665,14 @@
             <div class="chart-header-actions">
               <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'lajuCtoCChart','title' => 'Laju C-to-C PDRB Pengeluaran']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'lajuCtoCChart','title' => 'Laju C-to-C PDRB']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('chart-share-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'lajuCtoCChart','title' => 'Laju C-to-C PDRB Pengeluaran']); ?>
+<?php $component->withAttributes(['chartId' => 'lajuCtoCChart','title' => 'Laju C-to-C PDRB']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
@@ -682,145 +708,16 @@
       </div>
     </div>
 
-    <!-- Filter PDRB Pengeluaran Triwulanan -->
-    <div class="row mb-4">
-      <div class="col-md-12">
-        <div class="dashboard-card filter-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; min-height: auto; overflow: visible;">
-          <h5 class="mb-4">
-            <i class="fas fa-search me-2"></i>Filter PDRB Pengeluaran Triwulanan
-          </h5>
-          <p class="text-muted mb-4" style="font-size: 14px;">
-            Pilih jenis PDRB dan jenis pengeluaran untuk melihat data sesuai kebutuhan. Pilih satu jenis PDRB dan satu atau lebih jenis pengeluaran.
-          </p>
-          
-          <div class="row g-3">
-            <!-- Filter Jenis PDRB (Single Selection) -->
-            <div class="col-md-6">
-              <label class="form-label" style="font-weight: 600; margin-bottom: 8px;">
-                <span class="badge bg-primary me-2">1</span>Jenis PDRB
-              </label>
-              <div id="filterJenisPDRBTriwulananWrapper" style="position: relative; overflow: visible; z-index: 9999;">
-                <div id="filterJenisPDRBTriwulananInput" class="form-control" style="padding: 6px 12px; border-radius: 6px; min-height: 40px; height: auto; font-size: 14px; cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; background-color: #fff;">
-                  <span id="filterJenisPDRBTriwulananPlaceholder" style="color: #6c757d;">Pilih Jenis PDRB</span>
-                  <span id="filterJenisPDRBTriwulananSelected" style="display: none; color: #333; flex: 1;"></span>
-                  <i class="fas fa-chevron-down" style="color: #6c757d; margin-left: auto; flex-shrink: 0;"></i>
-                </div>
-                <div id="filterJenisPDRBTriwulananDropdown" style="display: none; position: fixed; background: white; border: 1px solid #dee2e6; border-radius: 6px; margin-top: 0; max-height: 300px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                  <div class="filter-option-pdrb-triwulanan" data-value="ADHB" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    ADHB (Atas Dasar Harga Berlaku)
-                  </div>
-                  <div class="filter-option-pdrb-triwulanan" data-value="ADHK" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    ADHK (Atas Dasar Harga Konstan)
-                  </div>
-                  <div class="filter-option-pdrb-triwulanan" data-value="Laju Q-to-Q" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    Laju Q-to-Q
-                  </div>
-                  <div class="filter-option-pdrb-triwulanan" data-value="Laju Y-to-Y" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    Laju Y-to-Y
-                  </div>
-                  <div class="filter-option-pdrb-triwulanan" data-value="Laju C-to-C" style="padding: 10px 12px; cursor: pointer; font-size: 14px;">
-                    Laju C-to-C
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Filter Jenis Pengeluaran (Multiple Selection with Tags) -->
-            <div class="col-md-6">
-              <label class="form-label" style="font-weight: 600; margin-bottom: 8px;">
-                <span class="badge bg-success me-2">2</span>Jenis Pengeluaran
-              </label>
-              <div id="filterJenisPengeluaranTriwulananWrapper" style="position: relative; overflow: visible; z-index: 9999;">
-                <div id="filterJenisPengeluaranTriwulananInput" class="form-control" style="padding: 6px 12px; border-radius: 6px; min-height: 40px; height: auto; font-size: 14px; cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; background-color: #fff;">
-                  <span id="filterJenisPengeluaranTriwulananPlaceholder" style="color: #6c757d;">Pilih Jenis Pengeluaran</span>
-                  <div id="filterJenisPengeluaranTriwulananTags" style="display: none; flex-wrap: wrap; gap: 6px; flex: 1;"></div>
-                  <i class="fas fa-chevron-down" style="color: #6c757d; margin-left: auto; flex-shrink: 0;"></i>
-                </div>
-                <div id="filterJenisPengeluaranTriwulananDropdown" style="display: none; position: fixed; background: white; border: 1px solid #dee2e6; border-radius: 6px; margin-top: 0; max-height: 300px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                  <div class="filter-option-triwulanan" data-value="Konsumsi Akhir Rumah Tangga" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    Konsumsi Akhir Rumah Tangga
-                  </div>
-                  <div class="filter-option-triwulanan" data-value="Konsumsi Akhir Pemerintah" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    Konsumsi Akhir Pemerintah
-                  </div>
-                  <div class="filter-option-triwulanan" data-value="Pembentukan Modal Tetap Bruto" style="padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;">
-                    Pembentukan Modal Tetap Bruto
-                  </div>
-                  <div class="filter-option-triwulanan" data-value="Lainnya" style="padding: 10px 12px; cursor: pointer; font-size: 14px;">
-                    Lainnya
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row mt-4">
-            <div class="col-md-12">
-              <button id="btnTerapkanFilterPDRBTriwulanan" class="btn btn-primary btn-lg w-100" style="padding: 12px; border-radius: 8px;" disabled>
-                <i class="fas fa-check me-2"></i>Terapkan
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Chart Section (Hidden by default, shown after applying filter) -->
-    <div id="filteredChartSectionTriwulanan" style="display: none;">
-      <div class="row mb-4">
-        <div class="col-md-12">
-          <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-              <h5 class="mb-0" id="filteredChartTitleTriwulanan">Grafik PDRB Pengeluaran Triwulanan</h5>
-              <div class="chart-header-actions">
-                <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'filteredChartTriwulanan','title' => 'Grafik PDRB Pengeluaran Triwulanan']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('chart-share-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'filteredChartTriwulanan','title' => 'Grafik PDRB Pengeluaran Triwulanan']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-                <div class="dropdown">
-                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadFilteredTriwulananDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                    <i class="fas fa-download"></i> <span>Unduh</span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="downloadFilteredTriwulananDropdown" style="border-radius: 8px; min-width: 100%;">
-                    <li><a class="dropdown-item" href="#" id="downloadFilteredTriwulananExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                    <li><a class="dropdown-item" href="#" id="downloadFilteredTriwulananPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="chart-scroll-container">
-              <div id="filteredChartTriwulanan" class="chart-responsive" style="width: 100%; height: 400px;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- Additional Info Card -->
   <div class="row">
     <div class="col-md-12">
       <div class="dashboard-card" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang PDRB Pengeluaran</h5>
+        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang PDRB Lapangan Usaha</h5>
         <p style="margin-bottom: 0; line-height: 1.8;">
           <strong>Produk Domestik Regional Bruto (PDRB)</strong> adalah nilai tambah barang dan jasa yang dihasilkan oleh unit-unit produksi di suatu wilayah dalam jangka waktu tertentu. 
-          PDRB Pengeluaran mengelompokkan kegiatan ekonomi berdasarkan komponen pengeluaran (expenditure approach). 
+          PDRB Lapangan Usaha mengelompokkan kegiatan ekonomi berdasarkan jenis kegiatan produksi (lapangan usaha). 
           Terdapat beberapa jenis PDRB yang dihitung:
         </p>
         <ul style="margin-top: 12px; margin-bottom: 0; line-height: 1.8;">
@@ -828,15 +725,17 @@
             Menggambarkan nilai tambah bruto berdasarkan harga pasar saat ini.</li>
           <li><strong>ADHK (Atas Dasar Harga Konstan)</strong>: PDRB yang dihitung menggunakan harga pada tahun dasar tertentu. 
             Digunakan untuk mengukur pertumbuhan ekonomi riil dengan menghilangkan pengaruh inflasi.</li>
-          <li><strong>Distribusi</strong>: Kontribusi masing-masing komponen pengeluaran terhadap total PDRB, dinyatakan dalam persen. 
-            Menunjukkan komponen pengeluaran mana yang dominan di suatu wilayah.</li>
+          <li><strong>Distribusi</strong>: Kontribusi masing-masing lapangan usaha terhadap total PDRB, dinyatakan dalam persen. 
+            Menunjukkan sektor ekonomi mana yang dominan di suatu wilayah.</li>
           <li><strong>Laju Pertumbuhan</strong>: Perubahan PDRB dari periode ke periode, dinyatakan dalam persen. 
             Menggambarkan dinamika pertumbuhan ekonomi.</li>
+          <li><strong>Laju Implisit</strong>: Laju pertumbuhan PDRB ADHK yang dihitung secara implisit, 
+            digunakan untuk mengukur pertumbuhan ekonomi riil.</li>
         </ul>
         <p style="margin-top: 12px; margin-bottom: 16px; line-height: 1.8;">
-          Komponen pengeluaran dalam PDRB meliputi: Pengeluaran Konsumsi Rumah Tangga, Pengeluaran Konsumsi LNPRT (Lembaga Non-Profit yang Melayani Rumah Tangga), 
-          Pengeluaran Konsumsi Pemerintah, Pembentukan Modal Tetap Bruto, Perubahan Inventori, dan Net Ekspor Barang dan Jasa. 
-          PDRB Pengeluaran memberikan gambaran tentang bagaimana output ekonomi digunakan atau dialokasikan dalam perekonomian regional.
+          PDRB merupakan indikator penting untuk mengukur kinerja perekonomian suatu wilayah. 
+          Data PDRB digunakan untuk perencanaan pembangunan, evaluasi kebijakan ekonomi, dan analisis struktur perekonomian regional. 
+          Lapangan usaha dikelompokkan menjadi beberapa sektor seperti Pertanian, Industri, Perdagangan, Jasa, dan lainnya.
         </p>
       </div>
     </div>
@@ -1188,211 +1087,6 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // API Base URL
-    const API_BASE_URL = '<?php echo e(url("/api")); ?>';
-    
-    // CSRF Token for Laravel
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    
-    // Helper function to fetch API data
-    async function fetchAPI(url) {
-      try {
-        const response = await fetch(url, {
-          headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {})
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data.success ? data.data : null;
-      } catch (error) {
-        console.error('API fetch error:', error);
-        return null;
-      }
-    }
-
-    // ========== Load Initial Data ==========
-    let latestBySheet = {};
-    let allYears = [];
-    let adhbByCategory = {};
-    let adhkByCategory = {};
-    let distribusiByCategory = {};
-    let lajuByCategory = {};
-    let adhbTriwulananByCategory = {};
-    let adhkTriwulananByCategory = {};
-    let distribusiTriwulananByCategory = {};
-    let lajuQtoQByCategory = {};
-    let lajuYtoYByCategory = {};
-    let lajuCtoCByCategory = {};
-
-    // Load all data on page load
-    async function loadAllData() {
-      try {
-        // Load summary data for carousel
-        latestBySheet = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-summary`) || {};
-        
-        // Load all years
-        allYears = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-years`) || [];
-        
-        // Load data by category for charts
-        adhbByCategory = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-by-category?type=adhb`) || {};
-        adhkByCategory = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-by-category?type=adhk`) || {};
-        distribusiByCategory = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-by-category?type=distribusi`) || {};
-        lajuByCategory = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-by-category?type=laju`) || {};
-        adhbTriwulananByCategory = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-by-category?type=adhb_triwulanan`) || {};
-        adhkTriwulananByCategory = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-by-category?type=adhk_triwulanan`) || {};
-        distribusiTriwulananByCategory = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-by-category?type=distribusi_triwulanan`) || {};
-        lajuQtoQByCategory = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-by-category?type=laju_qtoq`) || {};
-        lajuYtoYByCategory = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-by-category?type=laju_ytoy`) || {};
-        lajuCtoCByCategory = await fetchAPI(`${API_BASE_URL}/pdrb-pengeluaran-by-category?type=laju_ctoc`) || {};
-        
-        // Populate year filters
-        populateYearFilters();
-        
-        // Render carousel
-        renderCarousel();
-        
-        // Set default selected years to latest year
-        if (allYears && allYears.length > 0) {
-          const latestYear = Math.max(...allYears);
-          selectedYearDistribusi = latestYear;
-          selectedYearDistribusiTriwulanan = latestYear;
-          
-          // Set default year in dropdowns
-          const yearFilterDistribusi = document.getElementById('yearFilterDistribusi');
-          if (yearFilterDistribusi) {
-            yearFilterDistribusi.value = latestYear;
-          }
-          const yearFilterDistribusiTriwulanan = document.getElementById('yearFilterDistribusiTriwulanan');
-          if (yearFilterDistribusiTriwulanan) {
-            yearFilterDistribusiTriwulanan.value = latestYear;
-          }
-        }
-        
-        // Set default to latest quarter for Distribusi Triwulanan
-        const latestQuarterInfo = findLatestQuarter();
-        if (latestQuarterInfo) {
-          if (!selectedYearDistribusiTriwulanan) {
-            selectedYearDistribusiTriwulanan = latestQuarterInfo.year;
-          }
-          const yearFilterDistribusiTriwulanan = document.getElementById('yearFilterDistribusiTriwulanan');
-          if (yearFilterDistribusiTriwulanan) {
-            yearFilterDistribusiTriwulanan.value = latestQuarterInfo.year;
-          }
-          selectedQuarterDistribusiTriwulanan = latestQuarterInfo.quarter;
-          const quarterFilterDistribusiTriwulanan = document.getElementById('quarterFilterDistribusiTriwulanan');
-          if (quarterFilterDistribusiTriwulanan) {
-            quarterFilterDistribusiTriwulanan.value = latestQuarterInfo.quarter;
-          }
-        }
-        
-        // Initialize charts after data is loaded
-        setTimeout(() => {
-          updateAllCharts();
-        }, 200);
-      } catch (error) {
-        console.error('Error loading data:', error);
-      }
-    }
-
-    // Populate year filter dropdowns
-    function populateYearFilters() {
-      const yearSelects = [
-        'yearFilterDistribusi',
-        'yearFilterADHBTriwulanan',
-        'yearFilterADHKTriwulanan',
-        'yearFilterDistribusiTriwulanan',
-        'yearFilterLajuQtoQ',
-        'yearFilterLajuYtoY',
-        'yearFilterLajuCtoC'
-      ];
-      
-      yearSelects.forEach(selectId => {
-        const select = document.getElementById(selectId);
-        if (select) {
-          // Clear existing options except first
-          const firstOption = select.querySelector('option[value=""]');
-          select.innerHTML = '';
-          if (firstOption) {
-            select.appendChild(firstOption);
-          }
-          
-          // Add year options
-          allYears.forEach(year => {
-            const option = document.createElement('option');
-            option.value = year;
-            option.textContent = year;
-            select.appendChild(option);
-          });
-        }
-      });
-    }
-
-    // Render carousel cards
-    function renderCarousel() {
-      const carousel = document.getElementById('pdrbSheetCarousel');
-      if (!carousel || !latestBySheet) return;
-      
-      carousel.innerHTML = '';
-      
-      let cardIndex = 0;
-      Object.keys(latestBySheet).forEach(sheetName => {
-        const sheetData = latestBySheet[sheetName];
-        const card = document.createElement('div');
-        card.className = 'indicator-card';
-        card.setAttribute('data-card-index', cardIndex);
-        card.style.cssText = 'min-width: 240px; border-radius: 12px; padding: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); position: relative; overflow: hidden;';
-        
-        const isPercentage = sheetName.includes('Distribusi') || sheetName.includes('Laju');
-        const value = sheetData.data?.value || 0;
-        const valueDisplay = isPercentage 
-          ? `${parseFloat(value).toFixed(2)}%`
-          : `<span class="rupiah-value" data-value="${parseFloat(value).toFixed(0)}">Rp ${formatRupiah(parseFloat(value).toFixed(0))}</span>`;
-        
-        card.innerHTML = `
-          <div style="position: relative; z-index: 2;">
-            <h6 class="card-title" style="font-size: 12px; margin-bottom: 8px; font-weight: 500;">${sheetName}</h6>
-            <h6 class="card-subtitle" style="font-size: 11px; margin-bottom: 10px; font-weight: 400;">${truncateWords(sheetData.category || '', 5)}</h6>
-            <h3 class="card-value" style="font-size: 22px; font-weight: 700; margin-bottom: 6px; word-break: break-word; overflow-wrap: break-word; white-space: normal;">${valueDisplay}</h3>
-            <div id="sheet-${cardIndex}-comparison" style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;"></div>
-            <small class="card-year" style="font-size: 11px;">
-              ${sheetData.data ? `Tahun ${sheetData.data.year}${sheetData.data.preliminary_flag ? ' ' + sheetData.data.preliminary_flag : ''}` : 'Data tidak tersedia'}
-            </small>
-          </div>
-        `;
-        
-        carousel.appendChild(card);
-        cardIndex++;
-      });
-      
-      // Apply colors and start carousel animation
-      setTimeout(() => {
-        applyCardColors();
-        initCarousel();
-        calculateCarouselComparisons();
-      }, 100);
-    }
-
-    // Helper functions
-    function truncateWords(str, num) {
-      const words = str.split(' ');
-      return words.slice(0, num).join(' ') + (words.length > num ? '...' : '');
-    }
-
-    function formatRupiah(value) {
-      if (!value && value !== 0) return '';
-      const numStr = value.toString().replace(/\D/g, '');
-      return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
-
-    window.formatRupiah = formatRupiah;
-
     // ========== Toggle Button Functionality ==========
     const btnTahunan = document.getElementById('btnTahunan');
     const btnTriwulanan = document.getElementById('btnTriwulanan');
@@ -1744,34 +1438,39 @@
       }
     });
 
-    // Handle option selection
+    // Handle option selection using event delegation
     if (filterJenisPengeluaranDropdown) {
-      const filterOptions = filterJenisPengeluaranDropdown.querySelectorAll('.filter-option');
-      filterOptions.forEach(option => {
-        option.addEventListener('click', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-          const value = this.getAttribute('data-value');
-          
-          // Toggle selection
-          if (selectedPengeluaran.includes(value)) {
-            selectedPengeluaran = selectedPengeluaran.filter(v => v !== value);
-            this.classList.remove('selected');
-          } else {
-            selectedPengeluaran.push(value);
-            this.classList.add('selected');
-          }
-          
-          updateTagsDisplay();
-          checkFilterValidity();
-          
-          // Don't close dropdown after selection - allow multiple selections
-        });
-      });
-      
-      // Prevent dropdown from closing when clicking inside it
+      // Use event delegation to handle clicks on dynamically added options
       filterJenisPengeluaranDropdown.addEventListener('click', function(e) {
+        // Check if clicked element is a filter option or inside one
+        const option = e.target.closest('.filter-option');
+        if (!option) {
+          // If clicking on dropdown itself but not an option, don't close
+          return;
+        }
+        
         e.stopPropagation();
+        e.preventDefault();
+        
+        const value = option.getAttribute('data-value');
+        
+        if (!value) return;
+        
+        // Toggle selection
+        if (selectedPengeluaran.includes(value)) {
+          selectedPengeluaran = selectedPengeluaran.filter(v => v !== value);
+          option.classList.remove('selected');
+          option.style.backgroundColor = '';
+        } else {
+          selectedPengeluaran.push(value);
+          option.classList.add('selected');
+          option.style.backgroundColor = '#e7f3ff';
+        }
+        
+        updateTagsDisplay();
+        checkFilterValidity();
+        
+        // Don't close dropdown after selection - allow multiple selections
       });
     }
 
@@ -1862,6 +1561,11 @@
             unit = 'Persen';
           } else if (selectedJenisPDRB === 'Laju Pertumbuhan') {
             dataByCategory = lajuByCategory;
+            isPercentage = true;
+            isQuarterly = false;
+            unit = 'Persen';
+          } else if (selectedJenisPDRB === 'Laju Implisit') {
+            dataByCategory = lajuImplisitByCategory;
             isPercentage = true;
             isQuarterly = false;
             unit = 'Persen';
@@ -2196,30 +1900,36 @@
       }
     });
 
-    // Handle option selection for triwulanan
+    // Handle option selection for triwulanan using event delegation
     if (filterJenisPengeluaranTriwulananDropdown) {
-      const filterOptionsTriwulanan = filterJenisPengeluaranTriwulananDropdown.querySelectorAll('.filter-option-triwulanan');
-      filterOptionsTriwulanan.forEach(option => {
-        option.addEventListener('click', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-          const value = this.getAttribute('data-value');
-          
-          if (selectedPengeluaranTriwulanan.includes(value)) {
-            selectedPengeluaranTriwulanan = selectedPengeluaranTriwulanan.filter(v => v !== value);
-            this.classList.remove('selected');
-          } else {
-            selectedPengeluaranTriwulanan.push(value);
-            this.classList.add('selected');
-          }
-          
-          updateTagsDisplayTriwulanan();
-          checkFilterValidityTriwulanan();
-        });
-      });
-      
+      // Use event delegation to handle clicks on dynamically added options
       filterJenisPengeluaranTriwulananDropdown.addEventListener('click', function(e) {
+        // Check if clicked element is a filter option or inside one
+        const option = e.target.closest('.filter-option-triwulanan');
+        if (!option) {
+          // If clicking on dropdown itself but not an option, don't close
+          return;
+        }
+        
         e.stopPropagation();
+        e.preventDefault();
+        
+        const value = option.getAttribute('data-value');
+        
+        if (!value) return;
+        
+        if (selectedPengeluaranTriwulanan.includes(value)) {
+          selectedPengeluaranTriwulanan = selectedPengeluaranTriwulanan.filter(v => v !== value);
+          option.classList.remove('selected');
+          option.style.backgroundColor = '';
+        } else {
+          selectedPengeluaranTriwulanan.push(value);
+          option.classList.add('selected');
+          option.style.backgroundColor = '#e7f3ff';
+        }
+        
+        updateTagsDisplayTriwulanan();
+        checkFilterValidityTriwulanan();
       });
     }
 
@@ -2380,25 +2090,231 @@
     setTimeout(applyCardColors, 100);
     setTimeout(applyCardColors, 600);
 
-    // ========== PDRB Sheet Carousel - Continuous Infinite Scroll to Right ==========
-    let carouselAnimationId = null;
-    let carouselCurrentPosition = 0;
-    let carouselIsPaused = false;
-    
-    function initCarousel() {
+    // Carousel will be initialized in populateCarouselCards() after data is loaded
+
+    // ========== Data Variables (will be populated from API) ==========
+    let adhbByCategory = {};
+    let adhkByCategory = {};
+    let distribusiByCategory = {};
+    let lajuByCategory = {};
+    let lajuImplisitByCategory = {};
+    let adhbTriwulananByCategory = {};
+    let adhkTriwulananByCategory = {};
+    let distribusiTriwulananByCategory = {};
+    let lajuQtoQByCategory = {};
+    let lajuYtoYByCategory = {};
+    let lajuCtoCByCategory = {};
+    let latestBySheet = {};
+    let allYears = [];
+    let latestYear = null;
+    let selectedYearDistribusi = null;
+    let selectedYearDistribusiTriwulanan = null;
+    let selectedQuarterDistribusiTriwulanan = null;
+    let selectedYearADHBTriwulanan = null;
+    let selectedYearADHKTriwulanan = null;
+    let selectedYearLajuQtoQ = null;
+    let selectedYearLajuYtoY = null;
+    let selectedYearLajuCtoC = null;
+
+    // ========== API Base URL ==========
+    const API_BASE_URL = '/api';
+
+    // ========== Helper function to group data by category ==========
+    function groupDataByCategory(dataArray) {
+      const grouped = {};
+      if (!dataArray || !Array.isArray(dataArray)) return grouped;
+      
+      dataArray.forEach(item => {
+        const category = item.industry_category || item.expenditure_category;
+        if (!category) return;
+        
+        if (!grouped[category]) {
+          grouped[category] = [];
+        }
+        
+        const dataItem = {
+          year: item.year,
+          value: parseFloat(item.value) || 0,
+          preliminary_flag: item.preliminary_flag || ''
+        };
+        
+        if (item.quarter) {
+          dataItem.quarter = item.quarter;
+        }
+        
+        grouped[category].push(dataItem);
+      });
+      
+      // Sort each category's data by year and quarter
+      Object.keys(grouped).forEach(category => {
+        grouped[category].sort((a, b) => {
+          if (a.year !== b.year) return a.year - b.year;
+          if (a.quarter && b.quarter) {
+            const quarterOrder = { 'I': 1, 'II': 2, 'III': 3, 'IV': 4 };
+            return (quarterOrder[a.quarter] || 0) - (quarterOrder[b.quarter] || 0);
+          }
+          return 0;
+        });
+      });
+      
+      return grouped;
+    }
+
+    // ========== Load All Data from API ==========
+    async function loadAllData() {
+      try {
+        // Load all data types in parallel
+        const [
+          adhbRes, adhkRes, distribusiRes, lajuRes, lajuImplisitRes,
+          adhbTriRes, adhkTriRes, distribusiTriRes,
+          lajuQtoQRes, lajuYtoYRes, lajuCtoCRes,
+          summaryRes, yearsRes
+        ] = await Promise.all([
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhb`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhk`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=distribusi`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_implisit`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhb_triwulanan`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhk_triwulanan`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=distribusi_triwulanan`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_qtoq`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_ytoy`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_ctoc`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-summary`).then(r => r.json()),
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-years`).then(r => r.json())
+        ]);
+
+        // Process responses
+        if (adhbRes.success) adhbByCategory = adhbRes.data || {};
+        if (adhkRes.success) adhkByCategory = adhkRes.data || {};
+        if (distribusiRes.success) distribusiByCategory = distribusiRes.data || {};
+        if (lajuRes.success) lajuByCategory = lajuRes.data || {};
+        if (lajuImplisitRes.success) lajuImplisitByCategory = lajuImplisitRes.data || {};
+        if (adhbTriRes.success) adhbTriwulananByCategory = adhbTriRes.data || {};
+        if (adhkTriRes.success) adhkTriwulananByCategory = adhkTriRes.data || {};
+        if (distribusiTriRes.success) distribusiTriwulananByCategory = distribusiTriRes.data || {};
+        if (lajuQtoQRes.success) lajuQtoQByCategory = lajuQtoQRes.data || {};
+        if (lajuYtoYRes.success) lajuYtoYByCategory = lajuYtoYRes.data || {};
+        if (lajuCtoCRes.success) lajuCtoCByCategory = lajuCtoCRes.data || {};
+        if (summaryRes.success) latestBySheet = summaryRes.data || {};
+        if (yearsRes.success) {
+          allYears = yearsRes.data || [];
+          if (allYears.length > 0) {
+            latestYear = Math.max(...allYears);
+            selectedYearDistribusi = latestYear;
+            selectedYearDistribusiTriwulanan = latestYear;
+          }
+        }
+
+        // Populate year filter dropdowns
+        populateYearFilters();
+        
+        // Populate carousel cards
+        populateCarouselCards();
+        
+        // Set default quarter for triwulanan
+        setDefaultQuarter();
+        
+        // Populate filter dropdowns
+        populateIndustryCategoryFilter();
+        populateIndustryCategoryFilterTriwulanan();
+        
+        // Initialize charts
+        setTimeout(() => {
+          updateAllCharts();
+        }, 100);
+        
+      } catch (error) {
+        console.error('Error loading data from API:', error);
+      }
+    }
+
+    // ========== Populate Year Filter Dropdowns ==========
+    function populateYearFilters() {
+      const yearFilterDistribusi = document.getElementById('yearFilterDistribusi');
+      const yearFilterDistribusiTriwulanan = document.getElementById('yearFilterDistribusiTriwulanan');
+      const yearFilterADHBTriwulanan = document.getElementById('yearFilterADHBTriwulanan');
+      const yearFilterADHKTriwulanan = document.getElementById('yearFilterADHKTriwulanan');
+      const yearFilterLajuQtoQ = document.getElementById('yearFilterLajuQtoQ');
+      const yearFilterLajuYtoY = document.getElementById('yearFilterLajuYtoY');
+      const yearFilterLajuCtoC = document.getElementById('yearFilterLajuCtoC');
+
+      const yearOptions = allYears.map(year => `<option value="${year}" ${year === latestYear ? 'selected' : ''}>${year}</option>`).join('');
+
+      if (yearFilterDistribusi) {
+        yearFilterDistribusi.innerHTML = '<option value="">Semua Tahun</option>' + yearOptions;
+        if (selectedYearDistribusi) {
+          yearFilterDistribusi.value = selectedYearDistribusi;
+        }
+      }
+
+      if (yearFilterDistribusiTriwulanan) {
+        yearFilterDistribusiTriwulanan.innerHTML = '<option value="">Pilih Tahun</option>' + yearOptions;
+        if (selectedYearDistribusiTriwulanan) {
+          yearFilterDistribusiTriwulanan.value = selectedYearDistribusiTriwulanan;
+        }
+      }
+
+      [yearFilterADHBTriwulanan, yearFilterADHKTriwulanan, yearFilterLajuQtoQ, yearFilterLajuYtoY, yearFilterLajuCtoC].forEach(select => {
+        if (select) {
+          select.innerHTML = '<option value="">4 Triwulan Terakhir</option>' + yearOptions;
+        }
+      });
+    }
+
+    // ========== Populate Carousel Cards ==========
+    function populateCarouselCards() {
+      const carousel = document.getElementById('pdrbSheetCarousel');
+      if (!carousel) return;
+
+      carousel.innerHTML = '';
+      let cardIndex = 0;
+
+      Object.keys(latestBySheet).forEach(sheetName => {
+        const sheetData = latestBySheet[sheetName];
+        if (!sheetData || !sheetData.data) return;
+
+        const card = document.createElement('div');
+        card.className = 'indicator-card';
+        card.setAttribute('data-card-index', cardIndex);
+        card.style.cssText = 'min-width: 240px; border-radius: 12px; padding: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); position: relative; overflow: hidden;';
+
+        const isPercentage = sheetName.includes('Distribusi') || sheetName.includes('Laju');
+        const value = sheetData.data.value || 0;
+        const valueDisplay = isPercentage 
+          ? `${parseFloat(value).toFixed(2)}%`
+          : `<span class="rupiah-value" data-value="${parseFloat(value).toFixed(0)}">Rp ${parseFloat(value).toFixed(0)}</span>`;
+
+        card.innerHTML = `
+          <div style="position: relative; z-index: 2;">
+            <h6 class="card-title" style="font-size: 12px; margin-bottom: 8px; font-weight: 500;">${sheetName}</h6>
+            <h6 class="card-subtitle" style="font-size: 11px; margin-bottom: 10px; font-weight: 400;">${(sheetData.category || '').substring(0, 50)}</h6>
+            <h3 class="card-value" style="font-size: 22px; font-weight: 700; margin-bottom: 6px; word-break: break-word; overflow-wrap: break-word; white-space: normal;">${valueDisplay}</h3>
+            <div id="sheet-${cardIndex}-comparison" style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;"></div>
+            <small class="card-year" style="font-size: 11px;">Tahun ${sheetData.data.year}${sheetData.data.preliminary_flag ? ' ' + sheetData.data.preliminary_flag : ''}</small>
+          </div>
+        `;
+
+        carousel.appendChild(card);
+        cardIndex++;
+      });
+
+      // Apply colors and calculate comparisons
+      setTimeout(() => {
+        applyCardColors();
+        calculateCarouselComparisons();
+        initializeCarousel();
+      }, 100);
+    }
+
+    // ========== Initialize Carousel Animation ==========
+    function initializeCarousel() {
       const carousel = document.getElementById('pdrbSheetCarousel');
       if (!carousel) return;
 
       const cards = carousel.querySelectorAll('.indicator-card');
       if (cards.length === 0) return;
-
-      // Stop existing animation if any
-      if (carouselAnimationId !== null) {
-        cancelAnimationFrame(carouselAnimationId);
-      }
-
-      // Apply colors after cards are wrapped
-      setTimeout(applyCardColors, 200);
 
       // Wrap existing cards in content set
       const originalContent = document.createElement('div');
@@ -2410,9 +2326,11 @@
       
       // Move existing cards to originalContent
       const cardsArray = Array.from(cards);
-      cardsArray.forEach(card => {
-        originalContent.appendChild(card);
-      });
+      if (cardsArray.length > 0) {
+        cardsArray.forEach(card => {
+          originalContent.appendChild(card);
+        });
+      }
 
       // Create duplicate content set for seamless loop
       const duplicateContent = originalContent.cloneNode(true);
@@ -2434,45 +2352,42 @@
         return contentSets[0] ? contentSets[0].offsetWidth + 15 : 0; // +15 for gap
       }
 
-      // Reset position
-      carouselCurrentPosition = 0;
+      let currentPosition = 0;
+      let isPaused = false;
+      let animationFrameId;
       const scrollSpeed = 1.5; // pixels per frame (adjust for speed)
 
       function animate() {
-        if (!carouselIsPaused) {
+        if (!isPaused) {
           const contentSetWidth = getContentSetWidth();
           
           if (contentSetWidth > 0) {
             // Move to the right (negative translateX = content moves right)
-            carouselCurrentPosition += scrollSpeed;
+            currentPosition += scrollSpeed;
 
             // When we've scrolled past one complete set, reset seamlessly
-            if (carouselCurrentPosition >= contentSetWidth) {
+            if (currentPosition >= contentSetWidth) {
               // Reset position without transition for seamless loop
-              carouselCurrentPosition = carouselCurrentPosition - contentSetWidth;
+              currentPosition = currentPosition - contentSetWidth;
             }
 
             carousel.style.transition = 'none';
-            carousel.style.transform = `translateX(-${carouselCurrentPosition}px)`;
+            carousel.style.transform = `translateX(-${currentPosition}px)`;
           }
         }
 
-        carouselAnimationId = requestAnimationFrame(animate);
+        animationFrameId = requestAnimationFrame(animate);
       }
 
       // Pause on hover
       const carouselWrapper = carousel.closest('.indicator-carousel-wrapper');
       if (carouselWrapper) {
-        // Remove existing listeners if any
-        const newWrapper = carouselWrapper.cloneNode(true);
-        carouselWrapper.parentNode.replaceChild(newWrapper, carouselWrapper);
-        
-        newWrapper.addEventListener('mouseenter', () => {
-          carouselIsPaused = true;
+        carouselWrapper.addEventListener('mouseenter', () => {
+          isPaused = true;
         });
 
-        newWrapper.addEventListener('mouseleave', () => {
-          carouselIsPaused = false;
+        carouselWrapper.addEventListener('mouseleave', () => {
+          isPaused = false;
         });
       }
 
@@ -2485,27 +2400,113 @@
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
           const contentSetWidth = getContentSetWidth();
-          if (contentSetWidth > 0 && carouselCurrentPosition > 0) {
-            carouselCurrentPosition = carouselCurrentPosition % contentSetWidth;
+          if (contentSetWidth > 0 && currentPosition > 0) {
+            currentPosition = currentPosition % contentSetWidth;
             carousel.style.transition = 'none';
-            carousel.style.transform = `translateX(-${carouselCurrentPosition}px)`;
+            carousel.style.transform = `translateX(-${currentPosition}px)`;
           }
         }, 250);
       });
     }
 
-    // ========== Data Variables (loaded from API) ==========
-    // All data is loaded via API in loadAllData() function
-    // Variables are declared at the top and populated asynchronously
+    // ========== Populate Filter Dropdown with Industry Categories ==========
+    function populateIndustryCategoryFilter() {
+      const filterDropdown = document.getElementById('filterJenisPengeluaranDropdown');
+      if (!filterDropdown) return;
+      
+      // Collect all unique industry categories from all data sources
+      const allCategories = new Set();
+      Object.keys(adhbByCategory).forEach(cat => allCategories.add(cat));
+      Object.keys(adhkByCategory).forEach(cat => allCategories.add(cat));
+      Object.keys(distribusiByCategory).forEach(cat => allCategories.add(cat));
+      Object.keys(lajuByCategory).forEach(cat => allCategories.add(cat));
+      Object.keys(lajuImplisitByCategory).forEach(cat => allCategories.add(cat));
+      
+      // Sort categories
+      const sortedCategories = Array.from(allCategories).sort();
+      
+      // Populate dropdown
+      filterDropdown.innerHTML = '';
+      sortedCategories.forEach(category => {
+        const option = document.createElement('div');
+        option.className = 'filter-option';
+        option.setAttribute('data-value', category);
+        option.style.cssText = 'padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0; pointer-events: auto;';
+        option.textContent = category;
+        
+        // Add hover effect
+        option.addEventListener('mouseenter', function() {
+          this.style.backgroundColor = '#f0f8ff';
+        });
+        option.addEventListener('mouseleave', function() {
+          if (!this.classList.contains('selected')) {
+            this.style.backgroundColor = '';
+          }
+        });
+        
+        filterDropdown.appendChild(option);
+      });
+      
+      // Remove border from last item
+      if (filterDropdown.lastElementChild) {
+        filterDropdown.lastElementChild.style.borderBottom = 'none';
+      }
+    }
     
-    let selectedYearDistribusi = null;
-    let selectedYearDistribusiTriwulanan = null;
-    let selectedQuarterDistribusiTriwulanan = null;
-    let selectedYearADHBTriwulanan = null;
-    let selectedYearADHKTriwulanan = null;
-    let selectedYearLajuQtoQ = null;
-    let selectedYearLajuYtoY = null;
-    let selectedYearLajuCtoC = null;
+    // Populate filter on page load (after DOM is ready)
+    setTimeout(() => {
+      populateIndustryCategoryFilter();
+    }, 100);
+    
+    // ========== Populate Triwulanan Filter Dropdown with Industry Categories ==========
+    function populateIndustryCategoryFilterTriwulanan() {
+      const filterDropdown = document.getElementById('filterJenisPengeluaranTriwulananDropdown');
+      if (!filterDropdown) return;
+      
+      // Collect all unique industry categories from triwulanan data sources
+      const allCategories = new Set();
+      Object.keys(adhbTriwulananByCategory).forEach(cat => allCategories.add(cat));
+      Object.keys(adhkTriwulananByCategory).forEach(cat => allCategories.add(cat));
+      Object.keys(distribusiTriwulananByCategory).forEach(cat => allCategories.add(cat));
+      Object.keys(lajuQtoQByCategory).forEach(cat => allCategories.add(cat));
+      Object.keys(lajuYtoYByCategory).forEach(cat => allCategories.add(cat));
+      Object.keys(lajuCtoCByCategory).forEach(cat => allCategories.add(cat));
+      
+      // Sort categories
+      const sortedCategories = Array.from(allCategories).sort();
+      
+      // Populate dropdown
+      filterDropdown.innerHTML = '';
+      sortedCategories.forEach(category => {
+        const option = document.createElement('div');
+        option.className = 'filter-option-triwulanan';
+        option.setAttribute('data-value', category);
+        option.style.cssText = 'padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0; pointer-events: auto;';
+        option.textContent = category;
+        
+        // Add hover effect
+        option.addEventListener('mouseenter', function() {
+          this.style.backgroundColor = '#f0f8ff';
+        });
+        option.addEventListener('mouseleave', function() {
+          if (!this.classList.contains('selected')) {
+            this.style.backgroundColor = '';
+          }
+        });
+        
+        filterDropdown.appendChild(option);
+      });
+      
+      // Remove border from last item
+      if (filterDropdown.lastElementChild) {
+        filterDropdown.lastElementChild.style.borderBottom = 'none';
+      }
+    }
+    
+    // Populate triwulanan filter on page load (after DOM is ready)
+    setTimeout(() => {
+      populateIndustryCategoryFilterTriwulanan();
+    }, 100);
 
     // ========== Helper function to create line chart (7 years) ==========
     function createLineChart(canvasId, dataByCategory, isPercentage = false, isQuarterly = false, selectedCategories = []) {
@@ -2851,138 +2852,26 @@
       
       const chart = echarts.init(chartDom);
       
-      // Filter categories - only show PDRB/Produk Domestik Regional Bruto
-      // Exclude all expenditure components
+      // For PDRB Lapangan Usaha, show ALL industry categories (not just PDRB total)
+      // This is different from PDRB Pengeluaran which only shows PDRB total
       let categories = Object.keys(dataByCategory);
       
       // Debug: log all available categories
       console.log(`[${canvasId}] All available categories:`, categories);
       
-      // List of specific expenditure component patterns to exclude (exact matches from console log)
-      const expenditurePatterns = [
-        'KONSUMSI AKHIR RUMAH TANGGA',
-        'KONSUMSI AKHIR PEMERINTAH',
-        'KONSUMSI AKHIR',
-        'PENGELUARAN KONSUMSI RUMAH TANGGA',
-        'PENGELUARAN KONSUMSI LNPRT',
-        'PENGELUARAN KONSUMSI PEMERINTAH',
-        'PEMBENTUKAN MODAL TETAP BRUTO',
-        'PERUBAHAN INVENTORI',
-        'NET EKSPOR BARANG DAN JASA',
-        'LAINNYA'
-      ];
+      // Filter out empty or invalid categories
+      categories = categories.filter(cat => cat && cat.trim() !== '');
       
-      // First, try to find PDRB category
-      let pdrbCategory = null;
+      // For PDRB Lapangan Usaha, we want to show all industry categories
+      // But we can optionally prioritize showing PDRB total if it exists
+      // For now, show all categories - user can filter if needed
       
-      // Look for exact match first
-      for (const cat of categories) {
-        if (!cat || cat.trim() === '') continue;
-        const catUpper = cat.toUpperCase().trim();
-        
-        // Check if it's an expenditure component
-        const isExpenditure = expenditurePatterns.some(pattern => {
-          return catUpper === pattern || catUpper.includes(pattern);
-        });
-        
-        if (isExpenditure) {
-          continue; // Skip expenditure components
-        }
-        
-        // Check if it's PDRB - be very flexible
-        const isPDRB = catUpper === 'PDRB' || 
-                       catUpper === 'PRODUK DOMESTIK REGIONAL BRUTO' ||
-                       catUpper.includes('PRODUK DOMESTIK REGIONAL BRUTO') ||
-                       (catUpper.includes('PRODUK') && 
-                        catUpper.includes('DOMESTIK') && 
-                        catUpper.includes('REGIONAL') && 
-                        catUpper.includes('BRUTO'));
-        
-        if (isPDRB) {
-          pdrbCategory = cat;
-          console.log(`[${canvasId}] Found PDRB category:`, cat);
-          break;
-        }
+      if (categories.length === 0) {
+        console.warn(`[${canvasId}] No categories available. Data:`, dataByCategory);
+        return null;
       }
       
-      // If PDRB found, use it; otherwise calculate from expenditure components
-      if (pdrbCategory) {
-        categories = [pdrbCategory];
-        console.log(`[${canvasId}] Using PDRB category:`, categories);
-      } else {
-        console.warn(`[${canvasId}] No PDRB category found. Available categories:`, categories);
-        console.log(`[${canvasId}] Calculating PDRB from expenditure components...`);
-        
-        // Calculate PDRB as sum of all expenditure components
-        const calculatedPDRB = {};
-        const allQuartersSet = new Set();
-        const validQuarters = ['I', 'II', 'III', 'IV']; // Only include these quarters
-        
-        // Get all quarters from all categories (exclude TOTAL and Jumlah)
-        Object.values(dataByCategory).forEach(dataList => {
-          dataList.forEach(item => {
-            // Exclude TOTAL, Jumlah, and any other non-standard quarters
-            const quarterUpper = (item.quarter || '').toUpperCase().trim();
-            if (quarterUpper === 'TOTAL' || quarterUpper === 'JUMLAH' || 
-                quarterUpper === 'QTOTAL' || !validQuarters.includes(item.quarter)) {
-              return; // Skip this quarter
-            }
-            
-            const quarterKey = `${item.year}-${item.quarter}`;
-            allQuartersSet.add(quarterKey);
-          });
-        });
-        
-        // Calculate PDRB for each quarter
-        allQuartersSet.forEach(quarterKey => {
-          const [year, quarter] = quarterKey.split('-');
-          let total = 0;
-          
-          // Sum all expenditure components for this quarter
-          Object.keys(dataByCategory).forEach(cat => {
-            const catUpper = cat.toUpperCase().trim();
-            const isExpenditure = expenditurePatterns.some(pattern => {
-              return catUpper === pattern || catUpper.includes(pattern);
-            });
-            
-            if (isExpenditure) {
-              const categoryData = dataByCategory[cat];
-              const item = categoryData.find(d => d.year === parseInt(year) && d.quarter === quarter);
-              if (item && item.value !== null && item.value !== undefined) {
-                total += item.value;
-              }
-            }
-          });
-          
-          if (!calculatedPDRB[quarterKey]) {
-            calculatedPDRB[quarterKey] = [];
-          }
-          calculatedPDRB[quarterKey].push({
-            year: parseInt(year),
-            quarter: quarter,
-            value: total,
-            preliminary_flag: ''
-          });
-        });
-        
-        // Convert to array format
-        const calculatedPDRBArray = [];
-        Object.keys(calculatedPDRB).sort().forEach(quarterKey => {
-          calculatedPDRB[quarterKey].forEach(item => {
-            calculatedPDRBArray.push(item);
-          });
-        });
-        
-        // Add calculated PDRB to dataByCategory
-        if (calculatedPDRBArray.length > 0) {
-          dataByCategory['Produk Domestik Regional Bruto'] = calculatedPDRBArray;
-          categories = ['Produk Domestik Regional Bruto'];
-          console.log(`[${canvasId}] Calculated PDRB from expenditure components:`, calculatedPDRBArray);
-        } else {
-          categories = [];
-          console.warn(`[${canvasId}] Could not calculate PDRB. No data available.`);
-        }
-      }
+      console.log(`[${canvasId}] Using categories:`, categories);
       
       // Prepare x-axis data and series
       let xAxisData = [];
@@ -2991,8 +2880,12 @@
       // Get all quarters from data, excluding TOTAL and Jumlah
       const allQuarters = [];
       const validQuarters = ['I', 'II', 'III', 'IV']; // Only include these quarters
-      Object.values(dataByCategory).forEach(dataList => {
-        dataList.forEach(item => {
+      
+      // Collect all quarters from all categories
+      categories.forEach(category => {
+        if (!dataByCategory[category]) return;
+        const categoryData = dataByCategory[category];
+        categoryData.forEach(item => {
           // Exclude TOTAL, Jumlah, and any other non-standard quarters
           const quarterUpper = (item.quarter || '').toUpperCase().trim();
           if (quarterUpper === 'TOTAL' || quarterUpper === 'JUMLAH' || 
@@ -3014,11 +2907,21 @@
         return (quarterOrder[a.quarter] || 0) - (quarterOrder[b.quarter] || 0);
       });
       
+      if (allQuarters.length === 0) {
+        console.warn(`[${canvasId}] No valid quarters found in data`);
+        return null;
+      }
+      
       // Filter by selected year or get last 4 quarters
       let selectedQuarters = [];
       if (selectedYear) {
         // Get all quarters from selected year
         selectedQuarters = allQuarters.filter(q => q.year === selectedYear);
+        if (selectedQuarters.length === 0) {
+          console.warn(`[${canvasId}] No quarters found for year ${selectedYear}`);
+          // Fallback to last 4 quarters
+          selectedQuarters = allQuarters.slice(-4);
+        }
       } else {
         // Get last 4 quarters
         selectedQuarters = allQuarters.slice(-4);
@@ -3027,19 +2930,35 @@
       // Create x-axis labels
       xAxisData = selectedQuarters.map(q => `${q.year} Q${q.quarter}`);
       
-      // Prepare series data for each category (only PDRB categories)
-      // Ensure we only process categories that passed the filter
+      console.log(`[${canvasId}] Selected quarters:`, selectedQuarters);
+      console.log(`[${canvasId}] X-axis data:`, xAxisData);
+      
+      // Prepare series data for each category
       series = categories.map((category, index) => {
         // Double-check: ensure category exists in dataByCategory
         if (!dataByCategory[category]) {
+          console.warn(`[${canvasId}] Category not found in data:`, category);
           return null;
         }
         
         const categoryData = dataByCategory[category];
         const values = selectedQuarters.map(q => {
           const item = categoryData.find(d => d.year === q.year && d.quarter === q.quarter);
-          return item ? item.value : null;
+          if (!item) {
+            console.log(`[${canvasId}] No data for ${category} at ${q.year} Q${q.quarter}`);
+            return null;
+          }
+          return item.value;
         });
+        
+        // Check if all values are null
+        const hasData = values.some(v => v !== null && v !== undefined);
+        if (!hasData) {
+          console.warn(`[${canvasId}] No data for category:`, category);
+          return null;
+        }
+        
+        console.log(`[${canvasId}] Category ${category} values:`, values);
         
         return {
           name: category.length > 30 ? category.substring(0, 30) + '...' : category,
@@ -3056,6 +2975,13 @@
           }
         };
       }).filter(s => s !== null); // Remove any null entries
+      
+      if (series.length === 0) {
+        console.error(`[${canvasId}] No series data available after filtering`);
+        return null;
+      }
+      
+      console.log(`[${canvasId}] Final series count:`, series.length);
 
       const option = {
         tooltip: {
@@ -3164,13 +3090,14 @@
       
       const chart = echarts.init(chartDom);
       
-      // Filter data by selected year and exclude PDRB/GRDP
+      // Filter data by selected year and exclude PDRB/GRDP/PRODUK DOMESTIK REGIONAL BRUTO
       let filteredData = {};
       if (selectedYear) {
         Object.keys(dataByCategory).forEach(category => {
-          // Exclude PDRB and GRDP
+          // Exclude PDRB, GRDP, and PRODUK DOMESTIK REGIONAL BRUTO
           const categoryUpper = category.toUpperCase();
-          if (categoryUpper.includes('PDRB') || categoryUpper.includes('GRDP')) {
+          if (categoryUpper.includes('PDRB') || categoryUpper.includes('GRDP') || 
+              categoryUpper.includes('PRODUK DOMESTIK REGIONAL BRUTO')) {
             return;
           }
           
@@ -3188,11 +3115,12 @@
           }
         });
       } else {
-        // Get latest year data for each category (excluding PDRB/GRDP)
+        // Get latest year data for each category (excluding PDRB/GRDP/PRODUK DOMESTIK REGIONAL BRUTO)
         Object.keys(dataByCategory).forEach(category => {
-          // Exclude PDRB and GRDP
+          // Exclude PDRB, GRDP, and PRODUK DOMESTIK REGIONAL BRUTO
           const categoryUpper = category.toUpperCase();
-          if (categoryUpper.includes('PDRB') || categoryUpper.includes('GRDP')) {
+          if (categoryUpper.includes('PDRB') || categoryUpper.includes('GRDP') || 
+              categoryUpper.includes('PRODUK DOMESTIK REGIONAL BRUTO')) {
             return;
           }
           
@@ -3583,6 +3511,7 @@
         chartInstances.adhk = createLineChart('adhkChart', adhkByCategory, false, false, []);
         chartInstances.distribusi = createDistribusiBarChart('distribusiChart', distribusiByCategory, selectedYearDistribusi, false);
         chartInstances.laju = createLineChart('lajuChart', lajuByCategory, true, false, []);
+        chartInstances.lajuImplisit = createLineChart('lajuImplisitChart', lajuImplisitByCategory, true, false, []);
       } else {
         // Create charts for triwulanan - all line charts only show PDRB and last 4 quarters
         chartInstances.adhbTriwulanan = createTriwulananLineChart('adhbTriwulananChart', adhbTriwulananByCategory, false, selectedYearADHBTriwulanan);
@@ -3623,22 +3552,16 @@
     
     // Find latest quarter from data
     function findLatestQuarter() {
-      if (!distribusiTriwulananByCategory || Object.keys(distribusiTriwulananByCategory).length === 0) {
-        return null;
-      }
-      
       const allYearQuarterPairs = [];
       Object.values(distribusiTriwulananByCategory).forEach(dataList => {
-        if (Array.isArray(dataList)) {
-          dataList.forEach(item => {
-            if (item.quarter && ['I', 'II', 'III', 'IV'].includes(item.quarter)) {
-              const pair = `${item.year}-${item.quarter}`;
-              if (!allYearQuarterPairs.includes(pair)) {
-                allYearQuarterPairs.push(pair);
-              }
+        dataList.forEach(item => {
+          if (item.quarter && ['I', 'II', 'III', 'IV'].includes(item.quarter)) {
+            const pair = `${item.year}-${item.quarter}`;
+            if (!allYearQuarterPairs.includes(pair)) {
+              allYearQuarterPairs.push(pair);
             }
-          });
-        }
+          }
+        });
       });
       
       if (allYearQuarterPairs.length > 0) {
@@ -3654,6 +3577,23 @@
         return { year: parseInt(latestYear), quarter: latestQuarter };
       }
       return null;
+    }
+    
+    // Set default to latest quarter (called after data is loaded)
+    function setDefaultQuarter() {
+      const latestQuarterInfo = findLatestQuarter();
+      if (latestQuarterInfo) {
+        if (!selectedYearDistribusiTriwulanan) {
+          selectedYearDistribusiTriwulanan = latestQuarterInfo.year;
+          if (yearFilterDistribusiTriwulanan) {
+            yearFilterDistribusiTriwulanan.value = latestQuarterInfo.year;
+          }
+        }
+        selectedQuarterDistribusiTriwulanan = latestQuarterInfo.quarter;
+        if (quarterFilterDistribusiTriwulanan) {
+          quarterFilterDistribusiTriwulanan.value = latestQuarterInfo.quarter;
+        }
+      }
     }
     
     function updateDistribusiTriwulananChart() {
@@ -3756,7 +3696,7 @@
     }
 
 
-    // Charts will be initialized after data is loaded in loadAllData()
+    // Charts will be initialized in loadAllData() after data is loaded
 
     // Handle window resize
     let resizeTimeout;
@@ -3818,8 +3758,6 @@
 
     // ========== Calculate Year-over-Year Comparisons for Carousel Cards ==========
     function calculateCarouselComparisons() {
-      if (!latestBySheet || Object.keys(latestBySheet).length === 0) return;
-      
       Object.keys(latestBySheet).forEach((sheetName, index) => {
         const sheetData = latestBySheet[sheetName];
         if (!sheetData || !sheetData.all_data || sheetData.all_data.length < 2) return;
@@ -3832,8 +3770,8 @@
         
         const diff = latest.value - previous.value;
         
-        const containers = document.querySelectorAll(`#sheet-${index}-comparison`);
-        if (!containers || containers.length === 0) return;
+        const container = document.getElementById(`sheet-${index}-comparison`);
+        if (!container) return;
         
         let arrow = '─';
         let arrowColor = '#666';
@@ -3859,14 +3797,12 @@
            <span style="color: ${valueColor}; font-size: 14px; font-weight: 600;">${diff >= 0 ? '+' : ''}Rp ${diffFormattedRupiah}</span>
            <span style="color: rgba(255, 255, 255, 0.8); font-size: 12px;">dari ${previous.year}</span>`;
         
-        containers.forEach(container => {
-          container.innerHTML = comparisonHTML;
-          // Update comparison text color to white
-          container.querySelectorAll('span').forEach(span => {
-            if (span.style.color !== 'rgba(255, 255, 255, 0.8)') {
-              span.style.color = 'rgba(255, 255, 255, 0.9)';
-            }
-          });
+        container.innerHTML = comparisonHTML;
+        // Update comparison text color to white
+        container.querySelectorAll('span').forEach(span => {
+          if (span.style.color !== 'rgba(255, 255, 255, 0.8)') {
+            span.style.color = 'rgba(255, 255, 255, 0.9)';
+          }
         });
         
         // Re-apply Rupiah formatting after comparison is set
@@ -3875,8 +3811,14 @@
     }
 
     // ========== Initialize on Page Load ==========
-    // Load all data when DOM is ready
-    loadAllData();
+    // Load all data when page is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        loadAllData();
+      });
+    } else {
+      loadAllData();
+    }
 
     // ========== Auto-Resize Charts on Window/Sidebar Changes ==========
     // Auto-resize charts when window size changes
@@ -3890,9 +3832,6 @@
       // Also resize filtered charts if they exist
       if (typeof filteredChartInstance !== 'undefined' && filteredChartInstance && filteredChartInstance.resize) {
         filteredChartInstance.resize();
-      }
-      if (typeof filteredChartInstanceTriwulanan !== 'undefined' && filteredChartInstanceTriwulanan && filteredChartInstanceTriwulanan.resize) {
-        filteredChartInstanceTriwulanan.resize();
       }
     });
 
@@ -3912,9 +3851,6 @@
           if (typeof filteredChartInstance !== 'undefined' && filteredChartInstance && filteredChartInstance.resize) {
             filteredChartInstance.resize();
           }
-          if (typeof filteredChartInstanceTriwulanan !== 'undefined' && filteredChartInstanceTriwulanan && filteredChartInstanceTriwulanan.resize) {
-            filteredChartInstanceTriwulanan.resize();
-          }
         }, 350);
       });
     }
@@ -3923,10 +3859,9 @@
     if (typeof ResizeObserver !== 'undefined') {
       // Get all chart containers
       const chartIds = [
-        'adhbChart', 'adhkChart', 'distribusiChart', 'lajuChart',
+        'adhbChart', 'adhkChart', 'lajuChart', 'lajuImplisitChart', 'distribusiChart',
         'adhbTriwulananChart', 'adhkTriwulananChart', 'distribusiTriwulananChart',
-        'lajuQtoQChart', 'lajuYtoYChart', 'lajuCtoCChart',
-        'filteredChart', 'filteredChartTriwulanan'
+        'lajuQtoQChart', 'lajuYtoYChart', 'lajuCtoCChart', 'filteredChart'
       ];
       
       chartIds.forEach(chartId => {
@@ -3937,8 +3872,7 @@
               // Find the chart instance for this element
               const chartName = chartId.replace('Chart', '');
               const chart = chartInstances[chartName] || 
-                           (chartId === 'filteredChart' && typeof filteredChartInstance !== 'undefined' ? filteredChartInstance : null) ||
-                           (chartId === 'filteredChartTriwulanan' && typeof filteredChartInstanceTriwulanan !== 'undefined' ? filteredChartInstanceTriwulanan : null);
+                           (chartId === 'filteredChart' && typeof filteredChartInstance !== 'undefined' ? filteredChartInstance : null);
               
               if (chart && chart.resize) {
                 chart.resize();
@@ -3954,4 +3888,4 @@
 
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\Astabaya-laravel\resources\views/dashboard/indikator/pdrb_pengeluaran.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\Astabaya-laravel\resources\views/dashboard/indikator/pdrb_lapangan_usaha.blade.php ENDPATH**/ ?>

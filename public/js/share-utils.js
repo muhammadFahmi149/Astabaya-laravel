@@ -308,6 +308,63 @@
         }
     };
 
+    // Fungsi untuk copy URL chart langsung ke clipboard
+    window.copyChartURL = function(button) {
+        const url = window.location.href;
+        
+        // Copy to clipboard
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url)
+                .then(() => {
+                    showCopySuccessChart(button);
+                })
+                .catch(err => {
+                    console.error('Gagal menyalin:', err);
+                    fallbackCopyChart(url, button);
+                });
+        } else {
+            fallbackCopyChart(url, button);
+        }
+    };
+
+    function fallbackCopyChart(url, button) {
+        // Create temporary input
+        const input = document.createElement('input');
+        input.value = url;
+        input.style.position = 'fixed';
+        input.style.opacity = '0';
+        document.body.appendChild(input);
+        input.select();
+        input.setSelectionRange(0, 99999);
+
+        try {
+            document.execCommand('copy');
+            showCopySuccessChart(button);
+        } catch (err) {
+            console.error('Gagal menyalin:', err);
+            alert('Gagal menyalin link. Silakan salin manual.');
+        }
+        
+        document.body.removeChild(input);
+    }
+
+    function showCopySuccessChart(button) {
+        const originalHTML = button.innerHTML;
+        const originalTitle = button.title;
+        
+        button.innerHTML = '<i class="fas fa-check"></i> <span>Tersalin!</span>';
+        button.title = 'Link berhasil disalin';
+        button.classList.add('btn-success');
+        button.classList.remove('btn-outline-primary');
+        
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.title = originalTitle;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-outline-primary');
+        }, 2000);
+    }
+
     // Initialize share buttons yang sudah ada di halaman
     document.addEventListener('DOMContentLoaded', function() {
         // Event delegation untuk tombol share
@@ -331,4 +388,5 @@
         });
     });
 })();
+
 

@@ -66,7 +66,9 @@
               </div>
             </div>
           </div>
-          <div id="adhbChart" style="width: 100%; height: 400px;"></div>
+          <div class="chart-scroll-container">
+            <div id="adhbChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
         </div>
       </div>
 
@@ -88,7 +90,9 @@
               </div>
             </div>
           </div>
-          <div id="adhkChart" style="width: 100%; height: 400px;"></div>
+          <div class="chart-scroll-container">
+            <div id="adhkChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -119,7 +123,9 @@
               <!-- Options will be populated by JavaScript -->
             </select>
           </div>
-          <div id="distribusiChart" style="width: 100%; height: 400px;"></div>
+          <div class="chart-scroll-container">
+            <div id="distribusiChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
         </div>
       </div>
 
@@ -141,7 +147,9 @@
               </div>
             </div>
           </div>
-          <div id="lajuChart" style="width: 100%; height: 400px;"></div>
+          <div class="chart-scroll-container">
+            <div id="lajuChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -252,7 +260,9 @@
                 </div>
               </div>
             </div>
-            <div id="filteredChart" style="width: 100%; height: 400px;"></div>
+            <div class="chart-scroll-container">
+              <div id="filteredChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -287,7 +297,9 @@
               <!-- Options will be populated by JavaScript -->
             </select>
           </div>
-          <div id="adhbTriwulananChart" style="width: 100%; height: 400px;"></div>
+          <div class="chart-scroll-container">
+            <div id="adhbTriwulananChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
         </div>
       </div>
 
@@ -316,7 +328,9 @@
               <!-- Options will be populated by JavaScript -->
             </select>
           </div>
-          <div id="adhkTriwulananChart" style="width: 100%; height: 400px;"></div>
+          <div class="chart-scroll-container">
+            <div id="adhkTriwulananChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -359,7 +373,9 @@
               </select>
             </div>
           </div>
-          <div id="distribusiTriwulananChart" style="width: 100%; height: 400px;"></div>
+          <div class="chart-scroll-container">
+            <div id="distribusiTriwulananChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
         </div>
       </div>
 
@@ -388,7 +404,9 @@
               <!-- Options will be populated by JavaScript -->
             </select>
           </div>
-          <div id="lajuQtoQChart" style="width: 100%; height: 400px;"></div>
+          <div class="chart-scroll-container">
+            <div id="lajuQtoQChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -419,7 +437,9 @@
               <!-- Options will be populated by JavaScript -->
             </select>
           </div>
-          <div id="lajuYtoYChart" style="width: 100%; height: 400px;"></div>
+          <div class="chart-scroll-container">
+            <div id="lajuYtoYChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
         </div>
       </div>
 
@@ -448,7 +468,9 @@
               <!-- Options will be populated by JavaScript -->
             </select>
           </div>
-          <div id="lajuCtoCChart" style="width: 100%; height: 400px;"></div>
+          <div class="chart-scroll-container">
+            <div id="lajuCtoCChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -556,7 +578,9 @@
                 </div>
               </div>
             </div>
-            <div id="filteredChartTriwulanan" style="width: 100%; height: 400px;"></div>
+            <div class="chart-scroll-container">
+              <div id="filteredChartTriwulanan" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -607,6 +631,35 @@
     display: flex;
     flex-direction: column;
     min-height: 500px;
+  }
+
+  /* Chart scroll container - default no scroll for desktop */
+  .chart-scroll-container {
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+
+  .chart-scroll-container::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .chart-scroll-container::-webkit-scrollbar-track {
+    background: #f7fafc;
+    border-radius: 10px;
+  }
+
+  .chart-scroll-container::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 10px;
+  }
+
+  .chart-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+  }
+
+  .chart-responsive {
+    width: 100% !important;
+    box-sizing: border-box;
   }
   
   /* Exception for filter card - allow dropdown to overflow */
@@ -669,6 +722,35 @@
     #filteredChart,
     #filteredChartTriwulanan {
       min-height: 350px !important;
+    }
+
+    /* Enable scroll on tablet and mobile only */
+    .chart-scroll-container {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e0 #f7fafc;
+      padding-bottom: 10px;
+    }
+    
+    .chart-responsive {
+      min-width: 600px !important;
+    }
+  }
+
+  @media (max-width: 576px) {
+    /* Make charts more scrollable on mobile phones */
+    .chart-scroll-container {
+      padding-bottom: 12px;
+    }
+    
+    .chart-responsive {
+      min-width: 700px !important;
+    }
+
+    .dashboard-card {
+      padding: 15px !important;
     }
   }
 
@@ -3569,6 +3651,78 @@
     // ========== Initialize on Page Load ==========
     // Load all data when DOM is ready
     loadAllData();
+
+    // ========== Auto-Resize Charts on Window/Sidebar Changes ==========
+    // Auto-resize charts when window size changes
+    window.addEventListener('resize', function() {
+      Object.values(chartInstances).forEach(chart => {
+        if (chart && chart.resize) {
+          chart.resize();
+        }
+      });
+      
+      // Also resize filtered charts if they exist
+      if (typeof filteredChartInstance !== 'undefined' && filteredChartInstance && filteredChartInstance.resize) {
+        filteredChartInstance.resize();
+      }
+      if (typeof filteredChartInstanceTriwulanan !== 'undefined' && filteredChartInstanceTriwulanan && filteredChartInstanceTriwulanan.resize) {
+        filteredChartInstanceTriwulanan.resize();
+      }
+    });
+
+    // Listen for sidebar toggle to resize charts
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener('click', function() {
+        // Wait for sidebar transition to complete (usually 300ms)
+        setTimeout(function() {
+          Object.values(chartInstances).forEach(chart => {
+            if (chart && chart.resize) {
+              chart.resize();
+            }
+          });
+          
+          // Also resize filtered charts if they exist
+          if (typeof filteredChartInstance !== 'undefined' && filteredChartInstance && filteredChartInstance.resize) {
+            filteredChartInstance.resize();
+          }
+          if (typeof filteredChartInstanceTriwulanan !== 'undefined' && filteredChartInstanceTriwulanan && filteredChartInstanceTriwulanan.resize) {
+            filteredChartInstanceTriwulanan.resize();
+          }
+        }, 350);
+      });
+    }
+    
+    // Use ResizeObserver for more accurate container size detection
+    if (typeof ResizeObserver !== 'undefined') {
+      // Get all chart containers
+      const chartIds = [
+        'adhbChart', 'adhkChart', 'distribusiChart', 'lajuChart',
+        'adhbTriwulananChart', 'adhkTriwulananChart', 'distribusiTriwulananChart',
+        'lajuQtoQChart', 'lajuYtoYChart', 'lajuCtoCChart',
+        'filteredChart', 'filteredChartTriwulanan'
+      ];
+      
+      chartIds.forEach(chartId => {
+        const chartElement = document.getElementById(chartId);
+        if (chartElement && chartElement.parentElement) {
+          const observer = new ResizeObserver(function() {
+            setTimeout(function() {
+              // Find the chart instance for this element
+              const chartName = chartId.replace('Chart', '');
+              const chart = chartInstances[chartName] || 
+                           (chartId === 'filteredChart' && typeof filteredChartInstance !== 'undefined' ? filteredChartInstance : null) ||
+                           (chartId === 'filteredChartTriwulanan' && typeof filteredChartInstanceTriwulanan !== 'undefined' ? filteredChartInstanceTriwulanan : null);
+              
+              if (chart && chart.resize) {
+                chart.resize();
+              }
+            }, 100);
+          });
+          observer.observe(chartElement.parentElement);
+        }
+      });
+    }
   });
 </script>
 

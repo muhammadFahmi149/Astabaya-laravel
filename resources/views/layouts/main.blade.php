@@ -3986,6 +3986,12 @@
             const targetBtn = shareBtn || (isShareButton ? e.target.closest('button') : null) || (parentIsShareBtn ? e.target.closest('button') : null);
             
             if (targetBtn) {
+              // Skip if this button has an onclick handler (to avoid conflicts with page-specific handlers)
+              if (targetBtn.hasAttribute('onclick')) {
+                console.log('Skipping button with onclick handler:', targetBtn);
+                return;
+              }
+              
               console.log('Share button detected:', targetBtn, 'Classes:', targetBtn.className); // Debug
               e.preventDefault();
               e.stopPropagation();
@@ -4024,35 +4030,14 @@
               
               console.log('Share button clicked:', { title, url, button: targetBtn }); // Debug log
               
-              // Try Web Share API first (for mobile devices)
-              if (navigator.share) {
-                try {
-                  await navigator.share({
-                    title: title,
-                    text: 'Lihat konten ini: ' + title,
-                    url: url
-                  });
-                  console.log('Share successful');
-                  return;
-                } catch (err) {
-                  if (err.name !== 'AbortError') {
-                    console.log('Error sharing or user cancelled:', err);
-                    // Fallback: show share modal
-                    console.log('Calling showShareModal:', { title, url });
-                    showShareModal(title, url);
-                  }
-                }
-              } else {
-                // Show share modal with textarea for manual copy
-                    console.log('Web Share API not available, calling showShareModal:', { title, url });
-                showShareModal(title, url);
-              }
+              // Directly copy to clipboard (no Web Share API or modal)
+              await copyToClipboardGlobal(url, title, targetBtn);
             }
           });
         });
         
         // Global copy to clipboard function (maintains user interaction context)
-        async function copyToClipboardGlobal(text, title) {
+        async function copyToClipboardGlobal(text, title, button) {
           text = String(text || '');
           
           if (!text) {
@@ -4070,6 +4055,21 @@
               await navigator.clipboard.writeText(text);
               console.log('Successfully copied to clipboard using Clipboard API'); // Debug log
               showShareToast('Link "' + title + '" telah disalin ke clipboard');
+              
+              // Visual feedback on button
+              if (button) {
+                const originalHTML = button.innerHTML;
+                const originalClasses = button.className;
+                button.innerHTML = '<i class="bi bi-check"></i> <span class="share-btn-text">Tersalin!</span>';
+                button.classList.add('btn-success');
+                button.classList.remove('btn-light', 'btn-outline-secondary', 'btn-outline-primary');
+                
+                setTimeout(() => {
+                  button.innerHTML = originalHTML;
+                  button.className = originalClasses;
+                }, 2000);
+              }
+              
               return; // Success, exit early
             } catch (err) {
               console.error('Clipboard API failed:', err);
@@ -4081,11 +4081,11 @@
           // Clipboard API not available or failed, use fallback immediately (synchronously)
           // Important: Must call synchronously to maintain user interaction context
           console.log('Using fallback copy method (Clipboard API not available or failed)'); // Debug log
-          fallbackCopyToClipboardGlobal(text, title);
+          fallbackCopyToClipboardGlobal(text, title, button);
         }
         
         // Global fallback copy function
-        function fallbackCopyToClipboardGlobal(text, title) {
+        function fallbackCopyToClipboardGlobal(text, title, button) {
           console.log('Using fallback copy method');
           
           text = String(text || '');
@@ -4161,6 +4161,20 @@
             if (copySuccess) {
               console.log('Fallback copy successful via execCommand');
               showShareToast('Link "' + title + '" telah disalin ke clipboard');
+              
+              // Visual feedback on button
+              if (button) {
+                const originalHTML = button.innerHTML;
+                const originalClasses = button.className;
+                button.innerHTML = '<i class="bi bi-check"></i> <span class="share-btn-text">Tersalin!</span>';
+                button.classList.add('btn-success');
+                button.classList.remove('btn-light', 'btn-outline-secondary', 'btn-outline-primary');
+                
+                setTimeout(() => {
+                  button.innerHTML = originalHTML;
+                  button.className = originalClasses;
+                }, 2000);
+              }
               
               // Clean up
               setTimeout(() => {

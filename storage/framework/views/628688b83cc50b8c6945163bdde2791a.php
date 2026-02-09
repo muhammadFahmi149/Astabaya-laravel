@@ -833,7 +833,7 @@
     }
 
     // Copy to clipboard directly from event handler (maintains user interaction context)
-    async function copyInfographicToClipboardDirect(text, title, event) {
+    async function copyInfographicToClipboardDirect(text, title, event, button) {
         text = String(text || '');
         
         if (!text) {
@@ -849,6 +849,20 @@
                 await navigator.clipboard.writeText(text);
                 console.log('Successfully copied to clipboard using Clipboard API'); // Debug log
                 showInfographicToast('Link infografis "' + title + '" telah disalin ke clipboard');
+                
+                // Visual feedback on button
+                if (button) {
+                    const originalHTML = button.innerHTML;
+                    const originalClasses = button.className;
+                    button.innerHTML = '<i class="bi bi-check"></i> <span>Tersalin!</span>';
+                    button.classList.add('btn-success');
+                    button.classList.remove('btn-outline-secondary', 'btn-light');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalHTML;
+                        button.className = originalClasses;
+                    }, 2000);
+                }
             } catch (err) {
                 console.error('Clipboard API failed:', err);
                 // Fallback for older browsers or when API fails
@@ -1027,12 +1041,12 @@
         console.log('Initializing share buttons for infographics'); // Debug
         // Share buttons in modal and actions - using event delegation
         document.addEventListener('click', async function(e) {
-            const shareBtn = e.target.closest('.share-infographic-modal-btn') || e.target.closest('.share-infographic-btn');
+            const shareBtn = e.target.closest('.share-infographic-modal-btn') || e.target.closest('.share-infographic-btn') || e.target.closest('.share-btn');
             if (shareBtn) {
                 e.preventDefault();
                 e.stopPropagation();
-                const title = shareBtn.dataset.infographicTitle || 'Infografis';
-                let url = shareBtn.dataset.infographicUrl || window.location.href;
+                const title = shareBtn.dataset.infographicTitle || shareBtn.dataset.shareTitle || 'Infografis';
+                let url = shareBtn.dataset.infographicUrl || shareBtn.dataset.shareUrl || window.location.href;
                 
                 // Ensure URL is complete (add origin if relative)
                 if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
@@ -1041,27 +1055,8 @@
                 
                 console.log('Share button clicked:', { title, url, button: shareBtn, dataset: shareBtn.dataset }); // Debug log
                 
-                // Try Web Share API first
-                if (navigator.share) {
-                    try {
-                        await navigator.share({
-                            title: title,
-                            text: 'Lihat infografis ini: ' + title,
-                            url: url
-                        });
-                        console.log('Share successful');
-                        return;
-                    } catch (err) {
-                        if (err.name !== 'AbortError') {
-                            console.log('Error sharing or user cancelled:', err);
-                            // Fallback to copy to clipboard
-                            await copyInfographicToClipboardDirect(url, title, e);
-                        }
-                    }
-                } else {
-                    // Fallback: copy to clipboard directly from event handler
-                    await copyInfographicToClipboardDirect(url, title, e);
-                }
+                // Directly copy to clipboard (no Web Share API)
+                await copyInfographicToClipboardDirect(url, title, e, shareBtn);
             }
         });
 

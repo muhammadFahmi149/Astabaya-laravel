@@ -408,15 +408,20 @@
             </div>
             <div class="modal-footer">
                 <div class="d-flex gap-2 w-100 flex-wrap">
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-primary btn-sm share-news-modal-btn" id="modalNewsShareBtn" data-news-title="" data-news-url="" onclick="handleNewsShareClick(this); return false;">
-                            <i class="bi bi-share"></i> <span class="d-none d-md-inline share-btn-text">Bagikan</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm bookmark-btn" id="modalNewsBookmarkBtn" data-content-type="news" data-object-id="" data-bookmark-id="" onclick="handleNewsBookmark(this)">
-                            <i class="bi bi-bookmark"></i> <span class="d-none d-md-inline">Bookmark</span>
-                        </button>
-                    </div>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm bookmark-btn" id="modalNewsBookmarkBtn" data-content-type="news" data-object-id="" data-bookmark-id="" onclick="handleNewsBookmark(this)">
+                        <i class="bi bi-bookmark"></i> <span>Bookmark</span>
+                    </button>
+                    <?php echo $__env->make('components.share-button', [
+                        'title' => '',
+                        'url' => '',
+                        'contentType' => 'news',
+                        'size' => 'sm',
+                        'variant' => 'outline-secondary',
+                        'showText' => true,
+                        'class' => 'share-news-modal-btn',
+                        'id' => 'modalNewsShareBtn'
+                    ], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -673,59 +678,6 @@
     
     // Make showNewsModal globally available
     window.showNewsModal = showNewsModal;
-
-    // Handle share button click
-    function handleNewsShareClick(button) {
-        console.log('handleNewsShareClick called:', button);
-        console.log('Button dataset:', {
-            newsTitle: button.dataset.newsTitle,
-            newsUrl: button.dataset.newsUrl
-        });
-        
-        const title = button.dataset.newsTitle || 'Berita';
-        const url = button.dataset.newsUrl || window.location.href;
-        
-        console.log('Calling showShareModal with:', { title, url });
-        console.log('window.showShareModal available?', typeof window.showShareModal === 'function');
-        
-        // Always use window.showShareModal for consistency
-        if (typeof window.showShareModal === 'function') {
-            window.showShareModal(title, url);
-        } else {
-            // Wait a bit and try again (in case script is still loading)
-            console.log('showShareModal not found, waiting...');
-            setTimeout(() => {
-                if (typeof window.showShareModal === 'function') {
-                    console.log('showShareModal found on retry, calling...');
-                    window.showShareModal(title, url);
-                } else {
-                    console.error('showShareModal function not found after retry!');
-                    // Fallback: try to show modal manually
-                    const shareModal = document.getElementById('shareModal');
-                    if (shareModal) {
-                        const modalTitle = document.getElementById('shareModalTitle');
-                        const modalInput = document.getElementById('shareModalInput');
-                        if (modalTitle) modalTitle.textContent = 'Bagikan: ' + title;
-                        if (modalInput) modalInput.value = url;
-                        const modal = new bootstrap.Modal(shareModal);
-                        modal.show();
-                        // Select text when shown
-                        shareModal.addEventListener('shown.bs.modal', function() {
-                            if (modalInput) {
-                                modalInput.select();
-                                modalInput.focus();
-                            }
-                        }, { once: true });
-                    } else {
-                        alert('Modal share tidak ditemukan. Silakan refresh halaman.');
-                    }
-                }
-            }, 200);
-        }
-    }
-    
-    // Make handleNewsShareClick globally available
-    window.handleNewsShareClick = handleNewsShareClick;
 
     // Share news functionality - menggunakan fungsi global dari main.blade.php
     // Fungsi shareNews, copyNewsToClipboard, fallbackCopyNewsToClipboard, dan showNewsToast

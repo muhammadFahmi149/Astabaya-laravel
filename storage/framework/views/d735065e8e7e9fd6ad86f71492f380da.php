@@ -243,7 +243,9 @@
             </div>
           </div>
         </div>
-        <div id="inflasiMtoMChart" style="width: 100%; height: 400px;"></div>
+        <div class="chart-scroll-container">
+          <div id="inflasiMtoMChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+        </div>
       </div>
     </div>
 
@@ -284,7 +286,9 @@
             </div>
           </div>
         </div>
-        <div id="inflasiYonYChart" style="width: 100%; height: 400px;"></div>
+        <div class="chart-scroll-container">
+          <div id="inflasiYonYChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -398,7 +402,9 @@
             </div>
           </div>
         </div>
-        <div id="inflasiPerKomoditasChart" style="width: 100%; height: 450px;"></div>
+        <div class="chart-scroll-container">
+          <div id="inflasiPerKomoditasChart" class="chart-responsive" style="width: 100%; height: 450px;"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -566,6 +572,78 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Update chart instances reference for export functions
   updateChartInstances();
+  
+  // Auto-resize charts when window size changes
+  window.addEventListener('resize', function() {
+    if (mtoMChart) {
+      mtoMChart.resize();
+    }
+    if (yonYChart) {
+      yonYChart.resize();
+    }
+    if (perKomoditasChart) {
+      perKomoditasChart.resize();
+    }
+  });
+
+  // Listen for sidebar toggle to resize charts
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function() {
+      // Wait for sidebar transition to complete (usually 300ms)
+      setTimeout(function() {
+        if (mtoMChart) {
+          mtoMChart.resize();
+        }
+        if (yonYChart) {
+          yonYChart.resize();
+        }
+        if (perKomoditasChart) {
+          perKomoditasChart.resize();
+        }
+      }, 350);
+    });
+  }
+  
+  // Use ResizeObserver for more accurate container size detection
+  // This will handle sidebar toggle, responsive changes, etc.
+  if (typeof ResizeObserver !== 'undefined') {
+    // Observe MtoM Chart
+    if (mtoMChartElement) {
+      const mtoMObserver = new ResizeObserver(function() {
+        if (mtoMChart) {
+          setTimeout(function() {
+            mtoMChart.resize();
+          }, 100);
+        }
+      });
+      mtoMObserver.observe(mtoMChartElement.parentElement);
+    }
+    
+    // Observe YonY Chart
+    if (yonYChartElement) {
+      const yonYObserver = new ResizeObserver(function() {
+        if (yonYChart) {
+          setTimeout(function() {
+            yonYChart.resize();
+          }, 100);
+        }
+      });
+      yonYObserver.observe(yonYChartElement.parentElement);
+    }
+    
+    // Observe Komoditas Chart
+    if (perKomoditasChartElement) {
+      const komoditasObserver = new ResizeObserver(function() {
+        if (perKomoditasChart) {
+          setTimeout(function() {
+            perKomoditasChart.resize();
+          }, 100);
+        }
+      });
+      komoditasObserver.observe(perKomoditasChartElement.parentElement);
+    }
+  }
   
   // Load data first, then setup filters
   loadInflasiSummary();
@@ -2558,13 +2636,43 @@ document.addEventListener('DOMContentLoaded', function() {
   overflow: hidden;
 }
 
+/* Chart scroll container - default no scroll for desktop */
+.chart-scroll-container {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.chart-scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 10px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 10px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
 /* Ensure chart containers don't overlap dropdown */
 .dashboard-card #inflasiMtoMChart,
-.dashboard-card #inflasiYonYChart {
+.dashboard-card #inflasiYonYChart,
+.dashboard-card #inflasiPerKomoditasChart {
   position: relative;
   z-index: 1;
   box-sizing: border-box;
   width: 100% !important;
+}
+
+.chart-responsive {
+  width: 100% !important;
+  box-sizing: border-box;
 }
 
 .dashboard-card:hover {
@@ -2602,6 +2710,20 @@ document.addEventListener('DOMContentLoaded', function() {
   #downloadKomoditasExcel span, #downloadKomoditasPNG span {
     display: none;
   }
+
+  /* Enable scroll on tablet and mobile only */
+  .chart-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+    padding-bottom: 10px;
+  }
+  
+  .chart-responsive {
+    min-width: 600px !important;
+  }
 }
 
 @media (max-width: 576px) {
@@ -2617,6 +2739,19 @@ document.addEventListener('DOMContentLoaded', function() {
   #downloadKomoditasExcel i, #downloadKomoditasPNG i {
     font-size: 12px !important;
     margin: 0 !important;
+  }
+
+  /* Make charts more scrollable on mobile phones */
+  .chart-scroll-container {
+    padding-bottom: 12px;
+  }
+  
+  .chart-responsive {
+    min-width: 700px !important;
+  }
+
+  .dashboard-card {
+    padding: 15px !important;
   }
 }
 

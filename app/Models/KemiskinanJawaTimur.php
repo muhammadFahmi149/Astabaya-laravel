@@ -18,10 +18,11 @@ class KemiskinanJawaTimur extends Model
     ];
 
     protected $casts = [
-        'jumlah_penduduk_miskin' => 'decimal:3',
-        'persentase_penduduk_miskin' => 'decimal:2',
-        'indeks_kedalaman_kemiskinan_p1' => 'decimal:2',
-        'indeks_keparahan_kemiskinan_p2' => 'decimal:2',
-        'garis_kemiskinan' => 'decimal:2',
+        'year' => 'integer',
+        'jumlah_penduduk_miskin' => 'float',
+        'persentase_penduduk_miskin' => 'float',
+        'indeks_kedalaman_kemiskinan_p1' => 'float',
+        'indeks_keparahan_kemiskinan_p2' => 'float',
+        'garis_kemiskinan' => 'float',
     ];
 }
