@@ -4,7 +4,7 @@
 <style>
   /* Welcome Section */
   .welcome-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #234C6A;
     color: white;
     padding: 2rem;
     border-radius: 12px;
@@ -34,6 +34,30 @@
     width: 100%;
     height: 400px;
     object-fit: cover;
+  }
+
+  /* Carousel image wrapper for publications and infographics */
+  .carousel-item .carousel-image-wrapper {
+    width: 100%;
+    height: 400px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow: hidden;
+  }
+
+  .carousel-item img.carousel-publication-image,
+  .carousel-item img.carousel-infographic-image {
+    width: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    border-radius: 0.375rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   }
 
   .carousel-overlay {
@@ -81,15 +105,15 @@
   }
 
   .category-btn:hover {
-    border-color: #667eea;
+    border-color: #234C6A;
     background: #f8f9ff;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
   }
 
   .category-btn.active {
-    border-color: #667eea;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #234C6A;
+    background: #234C6A;
     color: white;
   }
 
@@ -212,6 +236,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
+    align-items: stretch;
   }
 
   .content-card {
@@ -221,6 +246,9 @@
     background: white;
     transition: all 0.3s ease;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 
   .content-card:hover {
@@ -233,10 +261,58 @@
     width: 100%;
     height: 200px;
     object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .content-card .publication-image-wrapper {
+    width: 100%;
+    min-height: 200px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow: hidden;
+  }
+
+  .content-card img.publication-image {
+    width: auto;
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    border-radius: 0.375rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+
+  .content-card .infographic-image-wrapper {
+    width: 100%;
+    min-height: 200px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow: hidden;
+  }
+
+  .content-card img.infographic-image {
+    width: auto;
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    border-radius: 0.375rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
   }
 
   .content-card-body {
     padding: 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .content-card-title {
@@ -268,6 +344,7 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    flex: 1;
   }
 
   .content-card-footer {
@@ -276,6 +353,8 @@
     border-top: 1px solid #e9ecef;
     display: flex;
     gap: 0.5rem;
+    margin-top: auto;
+    flex-shrink: 0;
   }
 
   .content-card-footer .btn {
@@ -297,6 +376,10 @@
     }
 
     .carousel-item img {
+      height: 300px;
+    }
+
+    .carousel-item .carousel-image-wrapper {
       height: 300px;
     }
 
@@ -354,7 +437,7 @@
       <?php else: ?>
         Selamat Datang Pengguna!<br>
       <?php endif; ?>
-      <small style="font-size: 1rem; opacity: 0.9;">Aastabaya Website untuk melihat indikator strategis!</small>
+      <small style="font-size: 1rem; opacity: 0.9;">Astabaya Website untuk melihat indikator strategis!</small>
     </h2>
   </div>
 
@@ -563,8 +646,11 @@
         <?php $__empty_1 = true; $__currentLoopData = $latestPublications; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $publication): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
         <div class="content-card" onclick="showPublicationModal(<?php echo e($publication->id); ?>)">
           <?php if($publication->image): ?>
-          <img src="<?php echo e($publication->image); ?>" alt="<?php echo e($publication->title); ?>"
-               onerror="this.src='<?php echo e(asset('images/default-placeholder.jpg')); ?>'">
+          <div class="publication-image-wrapper">
+            <img src="<?php echo e($publication->image); ?>" alt="<?php echo e($publication->title); ?>"
+                 class="publication-image"
+                 onerror="this.src='<?php echo e(asset('images/default-placeholder.jpg')); ?>'">
+          </div>
           <?php else: ?>
           <div style="width: 100%; height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
             <i class="bi bi-book" style="font-size: 3rem; color: #ccc;"></i>
@@ -595,12 +681,12 @@
             <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); showPublicationModal(<?php echo e($publication->id); ?>)">
               <i class="bi bi-eye"></i> Detail
             </button>
-            <a href="<?php echo e(route('download-publication', $publication->pub_id ?? $publication->id)); ?>" 
-               class="btn btn-sm btn-primary" 
-               onclick="event.stopPropagation();"
-               target="_blank">
-              <i class="bi bi-download"></i> Download PDF
-            </a>
+            <button class="btn btn-sm btn-primary download-publication-btn" 
+                    data-pub-id="<?php echo e($publication->pub_id ?? $publication->id); ?>"
+                    data-pub-title="<?php echo e(e($publication->title ?? 'Publikasi')); ?>"
+                    onclick="event.stopPropagation(); handlePublicationDownload(this)">
+              <i class="bi bi-download"></i> Unduh PDF
+            </button>
           </div>
         </div>
         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
@@ -617,8 +703,11 @@
         <?php $__empty_1 = true; $__currentLoopData = $latestInfographics; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $infographic): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
         <div class="content-card" onclick="showInfographicDetail(<?php echo e($infographic->id); ?>)">
           <?php if($infographic->image): ?>
-          <img src="<?php echo e($infographic->image); ?>" alt="<?php echo e($infographic->title); ?>"
-               onerror="this.src='<?php echo e(asset('images/default-placeholder.jpg')); ?>'">
+          <div class="infographic-image-wrapper">
+            <img src="<?php echo e($infographic->image); ?>" alt="<?php echo e($infographic->title); ?>"
+                 class="infographic-image"
+                 onerror="this.src='<?php echo e(asset('images/default-placeholder.jpg')); ?>'">
+          </div>
           <?php else: ?>
           <div style="width: 100%; height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
             <i class="bi bi-bar-chart-line" style="font-size: 3rem; color: #ccc;"></i>
@@ -631,8 +720,14 @@
             </div>
           </div>
           <div class="content-card-footer">
-            <button class="btn btn-sm btn-outline-primary flex-fill" onclick="event.stopPropagation(); showInfographicDetail(<?php echo e($infographic->id); ?>)">
+            <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); showInfographicDetail(<?php echo e($infographic->id); ?>)">
               <i class="bi bi-eye"></i> Lihat
+            </button>
+            <button class="btn btn-sm btn-primary download-infographic-btn" 
+                    data-infographic-id="<?php echo e($infographic->id); ?>"
+                    data-infographic-title="<?php echo e(e($infographic->title ?? 'Infografis')); ?>"
+                    onclick="event.stopPropagation(); handleInfographicDownload(this)">
+              <i class="bi bi-download"></i> Unduh
             </button>
           </div>
         </div>
@@ -713,20 +808,46 @@
     if (items && items.length > 0) {
       carouselInner.innerHTML = items.map((item, index) => {
         const dateStr = item.date ? new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-        return `
-        <div class="carousel-item ${index === 0 ? 'active' : ''}">
-          <img src="${item.image || '<?php echo e(asset("images/default-placeholder.jpg")); ?>'}" 
-               alt="${item.title || 'Item'}"
-               onerror="this.src='<?php echo e(asset("images/default-placeholder.jpg")); ?>'">
-          <div class="carousel-overlay">
-            <h5>${item.title || 'Item'}</h5>
-            <p>
-              <span class="badge bg-primary">${(item.type || 'item').charAt(0).toUpperCase() + (item.type || 'item').slice(1)}</span>
-              ${dateStr ? `<span class="ms-2">${dateStr}</span>` : ''}
-            </p>
+        const isPublication = type === 'publication';
+        const isInfographic = type === 'infographic';
+        const imageClass = isPublication ? 'carousel-publication-image' : (isInfographic ? 'carousel-infographic-image' : '');
+        
+        // For publications and infographics, wrap image in container
+        if (isPublication || isInfographic) {
+          return `
+          <div class="carousel-item ${index === 0 ? 'active' : ''}">
+            <div class="carousel-image-wrapper">
+              <img src="${item.image || '<?php echo e(asset("images/default-placeholder.jpg")); ?>'}" 
+                   alt="${item.title || 'Item'}"
+                   class="${imageClass}"
+                   onerror="this.src='<?php echo e(asset("images/default-placeholder.jpg")); ?>'">
+            </div>
+            <div class="carousel-overlay">
+              <h5>${item.title || 'Item'}</h5>
+              <p>
+                <span class="badge bg-primary">${(item.type || 'item').charAt(0).toUpperCase() + (item.type || 'item').slice(1)}</span>
+                ${dateStr ? `<span class="ms-2">${dateStr}</span>` : ''}
+              </p>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+        } else {
+          // For news, use original styling
+          return `
+          <div class="carousel-item ${index === 0 ? 'active' : ''}">
+            <img src="${item.image || '<?php echo e(asset("images/default-placeholder.jpg")); ?>'}" 
+                 alt="${item.title || 'Item'}"
+                 onerror="this.src='<?php echo e(asset("images/default-placeholder.jpg")); ?>'">
+            <div class="carousel-overlay">
+              <h5>${item.title || 'Item'}</h5>
+              <p>
+                <span class="badge bg-primary">${(item.type || 'item').charAt(0).toUpperCase() + (item.type || 'item').slice(1)}</span>
+                ${dateStr ? `<span class="ms-2">${dateStr}</span>` : ''}
+              </p>
+            </div>
+          </div>
+        `;
+        }
       }).join('');
       
       // Dispose existing carousel instance if any
@@ -792,6 +913,52 @@
     window.location.href = '<?php echo e(route("infographics")); ?>?infographic=' + id;
   }
 
+  // Handle publication download
+  function handlePublicationDownload(button) {
+    <?php if(auth()->guard()->guest()): ?>
+    // User not logged in, show login required modal
+    const pubTitle = button.dataset.pubTitle || 'publikasi ini';
+    if (typeof showLoginRequiredModal === 'function') {
+      showLoginRequiredModal(pubTitle, 'Ingin mengunduh ' + pubTitle + '? Silakan login terlebih dahulu.');
+    } else {
+      // Fallback: redirect to login page
+      window.location.href = '<?php echo e(route("login")); ?>';
+    }
+    return;
+    <?php endif; ?>
+
+    // User is authenticated, proceed with download
+    const pubId = button.dataset.pubId || '';
+    if (pubId) {
+      window.open('<?php echo e(route("download-publication", ":id")); ?>'.replace(':id', pubId), '_blank');
+    }
+  }
+
+  // Handle infographic download
+  function handleInfographicDownload(button) {
+    <?php if(auth()->guard()->guest()): ?>
+    // User not logged in, show login required modal
+    const infographicTitle = button.dataset.infographicTitle || 'infografis ini';
+    if (typeof showLoginRequiredModal === 'function') {
+      showLoginRequiredModal(infographicTitle, 'Ingin mengunduh ' + infographicTitle + '? Silakan login terlebih dahulu.');
+    } else {
+      // Fallback: redirect to login page
+      window.location.href = '<?php echo e(route("login")); ?>';
+    }
+    return;
+    <?php endif; ?>
+
+    // User is authenticated, proceed with download
+    const infographicId = button.dataset.infographicId || '';
+    if (infographicId) {
+      window.open('<?php echo e(route("download-infographic", ":id")); ?>'.replace(':id', infographicId), '_blank');
+    }
+  }
+
+  // Make functions globally available
+  window.handlePublicationDownload = handlePublicationDownload;
+  window.handleInfographicDownload = handleInfographicDownload;
+
   // Initialize on page load
   document.addEventListener('DOMContentLoaded', function() {
     updateScrollButtons();
@@ -806,6 +973,6 @@
 </script>
 <?php $__env->stopPush(); ?>
 
-<?php $__env->stopSection(); ?>
 
+<?php $__env->stopSection(); ?>
 <?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\astabaya\resources\views/dashboard/dashboard.blade.php ENDPATH**/ ?>

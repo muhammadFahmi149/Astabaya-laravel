@@ -3090,7 +3090,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body text-center">
-            <p id="login-required-message">Ingin mengunduh <span id="download-item-name"></span> ini? Silakan login terlebih dahulu.</p>
+            <p id="login-required-message">
+              <span id="login-item-name"></span>
+            </p>
             <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
           </div>
         </div>
@@ -3168,11 +3170,32 @@
       });
 
       // Function to show login required modal
-      function showLoginRequiredModal(itemName) {
-        document.getElementById('download-item-name').textContent = itemName;
-        const modal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
-        modal.show();
+      function showLoginRequiredModal(itemName, customMessage) {
+        const modal = document.getElementById('loginRequiredModal');
+        if (!modal) {
+          console.error('Login required modal not found');
+          // Fallback: redirect to login page
+          window.location.href = '{{ route("login") }}';
+          return;
+        }
+
+        const messageElement = document.getElementById('login-required-message');
+        const itemNameElement = document.getElementById('login-item-name');
+        
+        if (customMessage) {
+          messageElement.innerHTML = customMessage;
+        } else if (itemName && itemNameElement) {
+          messageElement.innerHTML = 'Ingin mengakses <span id="login-item-name">' + itemName + '</span>? Silakan login terlebih dahulu.';
+        } else {
+          messageElement.textContent = 'Silakan login terlebih dahulu untuk mengakses fitur ini.';
+        }
+
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
       }
+
+      // Make function globally available
+      window.showLoginRequiredModal = showLoginRequiredModal;
 
       // Global function to check authentication before download
       function checkAuthBeforeDownload(callback, itemName = 'data') {

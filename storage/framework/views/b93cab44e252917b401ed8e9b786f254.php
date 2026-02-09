@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Kependudukan - Aastabaya'); ?>
 
 <?php $__env->startPush('styles'); ?>

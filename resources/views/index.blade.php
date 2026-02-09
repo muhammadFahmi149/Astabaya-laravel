@@ -70,7 +70,7 @@
                                 <h6 class="mt-3">Aplikasi Statistik Kota Surabaya</h6>
                                 <p>Aastabaya merupakan platform yang menyajikan data dan indikator strategis Kota Surabaya, meliputi inflasi, IPM, kemiskinan, gini ratio, ketenagakerjaan, PDRB, dan ekonomi daerah secara akurat dan terkini.</p>
                             </div>
-                            <a class="start-btn align-self-start mt-3" href="{{ route('dashboard') }}" style="background-color: #03a4ed; display: inline-block;">Lihat Selengkapnya</a>
+                            <a class="start-btn align-self-start mt-3" href="{{ route('dashboard') }}" style="background-color: #234C6A; display: inline-block;">Lihat Selengkapnya</a>
                         </div>
                         
                         <!-- KOLOM KANAN -->

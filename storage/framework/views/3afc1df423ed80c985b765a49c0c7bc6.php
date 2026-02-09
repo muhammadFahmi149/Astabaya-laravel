@@ -68,7 +68,7 @@
                                 <h6 class="mt-3">Aplikasi Statistik Kota Surabaya</h6>
                                 <p>Aastabaya merupakan platform yang menyajikan data dan indikator strategis Kota Surabaya, meliputi inflasi, IPM, kemiskinan, gini ratio, ketenagakerjaan, PDRB, dan ekonomi daerah secara akurat dan terkini.</p>
                             </div>
-                            <a class="start-btn align-self-start mt-3" href="<?php echo e(route('dashboard')); ?>" style="background-color: #03a4ed; display: inline-block;">Lihat Selengkapnya</a>
+                            <a class="start-btn align-self-start mt-3" href="<?php echo e(route('dashboard')); ?>" style="background-color: #234C6A; display: inline-block;">Lihat Selengkapnya</a>
                         </div>
                         
                         <!-- KOLOM KANAN -->
@@ -170,7 +170,7 @@
     <div id="services" class="our-services section" style="padding: 110px 0px">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6 align-self-start wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
+                <div class="col-lg-6 align-self-center wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
                     <div class="left-image">
                         <img src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/tab_kemiskinan.png')); ?>" alt="">
                     </div>

@@ -186,8 +186,8 @@
               <!-- Actions -->
               <div class="col-md-3 col-lg-3">
                 <div class="d-flex flex-column gap-2">
-                  <button class="btn btn-outline-primary btn-sm" data-pub-id="{{ e($publication->pub_id ?? '') }}" data-index="{{ $index }}" onclick="showModal(this.dataset.pubId, this.dataset.index)"><i class="bi bi-eye"></i> Detail</button>
-                  <a href="{{ route('download-publication', $publication->pub_id ?? $publication->id) }}" target="_blank" class="btn btn-primary btn-sm download-publication-btn" data-pub-id="{{ $publication->pub_id ?? $publication->id }}" data-pub-title="{{ e($publication->title ?? '') }}"> <i class="bi bi-download"></i> Download PDF </a>
+                  <button class="btn btn-outline-primary btn-sm" data-pub-id="{{ e($publication->pub_id ?? '') }}" data-index="{{ $index }}" onclick="showModal(this.dataset.pubId, this.dataset.index)"><i class="bi bi-eye"></i> Rincian</button>
+                  <a href="{{ route('download-publication', $publication->pub_id ?? $publication->id) }}" target="_blank" class="btn btn-primary btn-sm download-publication-btn" data-pub-id="{{ $publication->pub_id ?? $publication->id }}" data-pub-title="{{ e($publication->title ?? '') }}"> <i class="bi bi-download"></i> Unduh PDF </a>
                   <button class="btn btn-outline-secondary btn-sm bookmark-btn" data-content-type="publication" data-object-id="{{ $publication->id }}" data-bookmark-id="" onclick="handlePublicationBookmark(this)">
                     <i class="bi bi-bookmark"></i> <span>Bookmark</span>
                   </button>

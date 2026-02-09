@@ -538,100 +538,102 @@
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
             <li class="nav-item">
-              <a class="nav-link" href="<?php echo e(route('dashboard')); ?>">
+              <a class="nav-link <?php echo e(request()->routeIs('dashboard') ? 'active' : ''); ?>" href="<?php echo e(route('dashboard')); ?>">
                 <i class="icon-grid menu-icon"></i>
                 <span class="menu-title">Dashboard</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="<?php echo e(route('inflasi')); ?>">
+              <a class="nav-link <?php echo e(request()->routeIs('inflasi') ? 'active' : ''); ?>" href="<?php echo e(route('inflasi')); ?>">
                 <i class="bi bi-graph-up-arrow menu-icon"></i>
                 <span class="menu-title">Inflasi</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#PDRB" aria-expanded="false" aria-controls="PDRB">
+            <li class="nav-item <?php echo e(request()->routeIs(['pdrb-pengeluaran', 'pdrb-lapangan-usaha']) ? 'active' : ''); ?>">
+              <a class="nav-link <?php echo e(request()->routeIs(['pdrb-pengeluaran', 'pdrb-lapangan-usaha']) ? 'active' : ''); ?>" data-bs-toggle="collapse" href="#PDRB" aria-expanded="<?php echo e(request()->routeIs(['pdrb-pengeluaran', 'pdrb-lapangan-usaha']) ? 'true' : 'false'); ?>" aria-controls="PDRB">
                 <i class="bi bi-cash-stack menu-icon"></i>
                 <span class="menu-title">PDRB</span>
                 <i class="menu-arrow"></i>
               </a>
-              <div class="collapse" id="PDRB">
+              <div class="collapse <?php echo e(request()->routeIs(['pdrb-pengeluaran', 'pdrb-lapangan-usaha']) ? 'show' : ''); ?>" id="PDRB">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('pdrb-pengeluaran')); ?>">PDRB Pengeluaran</a></li>
-                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('pdrb-lapangan-usaha')); ?>">PDRB Lapangan Usaha</a></li>
+                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('pdrb-pengeluaran') ? 'active' : ''); ?>" href="<?php echo e(route('pdrb-pengeluaran')); ?>">PDRB Pengeluaran</a></li>
+                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('pdrb-lapangan-usaha') ? 'active' : ''); ?>" href="<?php echo e(route('pdrb-lapangan-usaha')); ?>">PDRB Lapangan Usaha</a></li>
                 </ul>
               </div>
 
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="<?php echo e(route('kemiskinan')); ?>">
+              <a class="nav-link <?php echo e(request()->routeIs('kemiskinan') ? 'active' : ''); ?>" href="<?php echo e(route('kemiskinan')); ?>">
                 <i class="bi bi-heart-pulse menu-icon"></i>
                 <span class="menu-title">Kemiskinan</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="<?php echo e(route('kependudukan')); ?>">
+              <a class="nav-link <?php echo e(request()->routeIs('kependudukan') ? 'active' : ''); ?>" href="<?php echo e(route('kependudukan')); ?>">
                 <i class="bi bi-people menu-icon"></i>
                 <span class="menu-title">Kependudukan</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="<?php echo e(route('ketenagakerjaan')); ?>">
+              <a class="nav-link <?php echo e(request()->routeIs('ketenagakerjaan') ? 'active' : ''); ?>" href="<?php echo e(route('ketenagakerjaan')); ?>">
                 <i class="bi bi-briefcase menu-icon"></i>
                 <span class="menu-title">Ketenagakerjaan</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="<?php echo e(route('hotel-occupancy')); ?>" >
+              <a class="nav-link <?php echo e(request()->routeIs('hotel-occupancy') ? 'active' : ''); ?>" href="<?php echo e(route('hotel-occupancy')); ?>" >
                 <i class="bi bi-luggage menu-icon"></i>
                 <span class="menu-title">Tingkat Hunian Hotel</span>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#pembangunan-manusia" aria-expanded="false" aria-controls="pembangunan-manusia">
+            <li class="nav-item <?php echo e(request()->routeIs(['indeks-pembangunan-manusia', 'ipm-uhh-sp', 'ipm-hls', 'ipm-rls', 'ipm-pengeluaran-per-kapita', 'ipm-indeks-kesehatan', 'ipm-indeks-hidup-layak', 'ipm-indeks-pendidikan']) ? 'active' : ''); ?>">
+              <a class="nav-link <?php echo e(request()->routeIs(['indeks-pembangunan-manusia', 'ipm-uhh-sp', 'ipm-hls', 'ipm-rls', 'ipm-pengeluaran-per-kapita', 'ipm-indeks-kesehatan', 'ipm-indeks-hidup-layak', 'ipm-indeks-pendidikan']) ? 'active' : ''); ?>" data-bs-toggle="collapse" href="#pembangunan-manusia" aria-expanded="<?php echo e(request()->routeIs(['indeks-pembangunan-manusia', 'ipm-uhh-sp', 'ipm-hls', 'ipm-rls', 'ipm-pengeluaran-per-kapita', 'ipm-indeks-kesehatan', 'ipm-indeks-hidup-layak', 'ipm-indeks-pendidikan']) ? 'true' : 'false'); ?>" aria-controls="pembangunan-manusia">
                 <i class="bi bi-buildings menu-icon"></i>
                 <span class="menu-title">Pembangunan Manusia</span>
                 <i class="menu-arrow"></i>
               </a>
-              <div class="collapse" id="pembangunan-manusia">
+              <div class="collapse <?php echo e(request()->routeIs(['indeks-pembangunan-manusia', 'ipm-uhh-sp', 'ipm-hls', 'ipm-rls', 'ipm-pengeluaran-per-kapita', 'ipm-indeks-kesehatan', 'ipm-indeks-hidup-layak', 'ipm-indeks-pendidikan']) ? 'show' : ''); ?>" id="pembangunan-manusia">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('indeks-pembangunan-manusia')); ?>">IPM</a></li>
-                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-uhh-sp')); ?>">UHH SP</a></li>
-                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-hls')); ?>">HLS</a></li>
-                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-rls')); ?>">RLS</a></li>
-                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-pengeluaran-per-kapita')); ?>">Pengeluaran per Kapita</a></li>
-                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-indeks-kesehatan')); ?>">Indeks Kesehatan</a></li>
-                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-indeks-hidup-layak')); ?>">Indeks Hidup Layak</a></li>
-                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-indeks-pendidikan')); ?>">Indeks Pendidikan</a></li>
+                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('indeks-pembangunan-manusia') ? 'active' : ''); ?>" href="<?php echo e(route('indeks-pembangunan-manusia')); ?>">IPM</a></li>
+                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-uhh-sp') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-uhh-sp')); ?>">UHH SP</a></li>
+                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-hls') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-hls')); ?>">HLS</a></li>
+                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-rls') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-rls')); ?>">RLS</a></li>
+                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-pengeluaran-per-kapita') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-pengeluaran-per-kapita')); ?>">Pengeluaran per Kapita</a></li>
+                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-indeks-kesehatan') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-indeks-kesehatan')); ?>">Indeks Kesehatan</a></li>
+                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-indeks-hidup-layak') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-indeks-hidup-layak')); ?>">Indeks Hidup Layak</a></li>
+                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-indeks-pendidikan') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-indeks-pendidikan')); ?>">Indeks Pendidikan</a></li>
                 </ul>
               </div>
             </li>
               <li class="nav-item">
-                <a class="nav-link" href="<?php echo e(route('gini-ratio')); ?>">
+                <a class="nav-link <?php echo e(request()->routeIs('gini-ratio') ? 'active' : ''); ?>" href="<?php echo e(route('gini-ratio')); ?>">
                   <i class="bi bi-percent menu-icon"></i>
                   <span class="menu-title">Gini ratio</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="<?php echo e(route('publications')); ?>">
+                <a class="nav-link <?php echo e(request()->routeIs('publications') ? 'active' : ''); ?>" href="<?php echo e(route('publications')); ?>">
                   <i class="icon-book menu-icon"></i>
                   <span class="menu-title">Publikasi</span>
                 </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="<?php echo e(route('infographics')); ?>">
+              <a class="nav-link <?php echo e(request()->routeIs('infographics') ? 'active' : ''); ?>" href="<?php echo e(route('infographics')); ?>">
                 <i class="bi bi-bar-chart-line menu-icon"></i>
                 <span class="menu-title">Infografis</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="<?php echo e(route('news')); ?>">
+              <a class="nav-link <?php echo e(request()->routeIs('news') ? 'active' : ''); ?>" href="<?php echo e(route('news')); ?>">
                 <i class="bi bi-file-earmark-text menu-icon"></i>
                 <span class="menu-title">Berita</span>
               </a>
             </li>
           </ul>
         </nav>
+        <!-- Sidebar backdrop for mobile -->
+        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
         <div class="main-panel">
           <div class="content-wrapper">
             <?php echo $__env->yieldContent('content'); ?>
@@ -1424,6 +1426,9 @@
               }
               // Remove active class on mobile resize if sidebar should be hidden
               sidebar.classList.remove('active');
+              if (sidebarBackdrop) {
+                sidebarBackdrop.classList.remove('show');
+              }
             } else {
               // When switching to desktop view, maintain collapsed state
               // Don't automatically expand, keep current state
@@ -1449,6 +1454,8 @@
         const brandLogoMiniMoved = navbarMenuWrapper?.querySelector('.brand-logo-mini-moved');
         const navbarBrandMoved = navbarMenuWrapper?.querySelector('.navbar-brand-moved');
 
+        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+        
         if (sidebarToggle && sidebar) {
           sidebarToggle.addEventListener('click', function() {
             const isCollapsed = sidebar.classList.contains('collapsed');
@@ -1458,6 +1465,10 @@
               // On mobile, toggle active class (show/hide sidebar overlay)
               // Sidebar always shows full width with text on mobile
               sidebar.classList.toggle('active');
+              // Toggle backdrop
+              if (sidebarBackdrop) {
+                sidebarBackdrop.classList.toggle('show');
+              }
               // Remove collapsed state on mobile - always show full sidebar
               sidebar.classList.remove('collapsed');
               body.classList.remove('sidebar-icon-only');
@@ -1467,6 +1478,10 @@
               body.classList.toggle('sidebar-icon-only');
               // Remove active class on desktop
               sidebar.classList.remove('active');
+              // Hide backdrop on desktop
+              if (sidebarBackdrop) {
+                sidebarBackdrop.classList.remove('show');
+              }
             }
 
             // Handle logo visibility based on collapsed state (only for desktop)
@@ -1542,9 +1557,15 @@
               
               // Remove active class on mobile resize to hide sidebar overlay initially
               sidebar.classList.remove('active');
+              if (sidebarBackdrop) {
+                sidebarBackdrop.classList.remove('show');
+              }
             } else if (!isMobile && wasMobile) {
               // Switching from mobile to desktop - restore previous state
               sidebar.classList.remove('active');
+              if (sidebarBackdrop) {
+                sidebarBackdrop.classList.remove('show');
+              }
               
               // Restore collapsed state if it was collapsed before
               if (sidebarStateBeforeMobile === true) {
@@ -1588,6 +1609,9 @@
           sidebar.classList.remove('collapsed');
           body.classList.remove('sidebar-icon-only');
           sidebar.classList.remove('active');
+          if (sidebarBackdrop) {
+            sidebarBackdrop.classList.remove('show');
+          }
         } else {
           // On desktop, save initial state
           sidebarStateBeforeMobile = sidebar.classList.contains('collapsed');
@@ -1595,6 +1619,16 @@
         
         // Initialize previousWidth
         previousWidth = window.innerWidth;
+
+        // Handle backdrop click to close sidebar on mobile
+        if (sidebarBackdrop) {
+          sidebarBackdrop.addEventListener('click', function() {
+            if (window.innerWidth <= 991) {
+              sidebar.classList.remove('active');
+              sidebarBackdrop.classList.remove('show');
+            }
+          });
+        }
 
         // Handle sidebar menu item clicks when sidebar is collapsed
         const sidebarNavLinks = sidebar.querySelectorAll('.nav-link');
@@ -2817,7 +2851,7 @@
       }
 
       /* Sidebar animation from left to right for mobile */
-      @media screen && (max-width: 991px) {
+      @media screen and (max-width: 991px) {
         .sidebar-offcanvas {
           position: fixed;
           height: calc(100vh - 60px);
@@ -2834,6 +2868,8 @@
           transition: left 0.25s ease-out;
           z-index: 1045;
           width: 235px !important;
+          background-color: #fff;
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar-offcanvas.active {
@@ -2847,6 +2883,25 @@
         /* On mobile, collapsed state still shows full sidebar when active */
         .sidebar-offcanvas.collapsed.active {
           width: 235px !important;
+        }
+
+        /* Sidebar backdrop overlay for mobile */
+        .sidebar-backdrop {
+          display: none;
+          position: fixed;
+          top: 60px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 1040;
+          opacity: 0;
+          transition: opacity 0.25s ease-out;
+        }
+
+        .sidebar-backdrop.show {
+          display: block;
+          opacity: 1;
         }
       }
 
@@ -2967,6 +3022,42 @@
 
       .sidebar .nav.sub-menu .nav-item .nav-link {
         font-size: 0.8125rem !important;
+      }
+
+      /* Active state styling for sidebar menu items */
+      .sidebar .nav .nav-item .nav-link.active,
+      .sidebar .nav.sub-menu .nav-item .nav-link.active {
+        background-color: rgba(35, 76, 106, 0.15) !important;
+        color: #234C6A !important;
+        font-weight: 600;
+        border-left: 3px solid #234C6A;
+        padding-left: calc(1.5rem - 3px);
+      }
+
+      .sidebar .nav .nav-item.active > .nav-link {
+        background-color: rgba(35, 76, 106, 0.15) !important;
+        color: #234C6A !important;
+        font-weight: 600;
+        border-left: 3px solid #234C6A;
+        padding-left: calc(1.5rem - 3px);
+      }
+
+      .sidebar .nav .nav-item .nav-link.active .menu-icon,
+      .sidebar .nav.sub-menu .nav-item .nav-link.active .menu-icon {
+        color: #234C6A !important;
+      }
+
+      /* Hover state for sidebar menu items */
+      .sidebar .nav .nav-item .nav-link:hover:not(.active),
+      .sidebar .nav.sub-menu .nav-item .nav-link:hover:not(.active) {
+        background-color: rgba(35, 76, 106, 0.08) !important;
+        color: #234C6A !important;
+      }
+
+      /* Ensure active state is visible even on hover */
+      .sidebar .nav .nav-item .nav-link.active:hover,
+      .sidebar .nav.sub-menu .nav-item .nav-link.active:hover {
+        background-color: rgba(35, 76, 106, 0.2) !important;
       }
     </style>
     <!-- Login Modal -->
@@ -3092,7 +3183,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body text-center">
-            <p id="login-required-message">Ingin mengunduh <span id="download-item-name"></span> ini? Silakan login terlebih dahulu.</p>
+            <p id="login-required-message">
+              <span id="login-item-name"></span>
+            </p>
             <a href="<?php echo e(route('login')); ?>" class="btn btn-primary">Login</a>
           </div>
         </div>
@@ -3170,11 +3263,32 @@
       });
 
       // Function to show login required modal
-      function showLoginRequiredModal(itemName) {
-        document.getElementById('download-item-name').textContent = itemName;
-        const modal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
-        modal.show();
+      function showLoginRequiredModal(itemName, customMessage) {
+        const modal = document.getElementById('loginRequiredModal');
+        if (!modal) {
+          console.error('Login required modal not found');
+          // Fallback: redirect to login page
+          window.location.href = '<?php echo e(route("login")); ?>';
+          return;
+        }
+
+        const messageElement = document.getElementById('login-required-message');
+        const itemNameElement = document.getElementById('login-item-name');
+        
+        if (customMessage) {
+          messageElement.innerHTML = customMessage;
+        } else if (itemName && itemNameElement) {
+          messageElement.innerHTML = 'Ingin mengakses <span id="login-item-name">' + itemName + '</span>? Silakan login terlebih dahulu.';
+        } else {
+          messageElement.textContent = 'Silakan login terlebih dahulu untuk mengakses fitur ini.';
+        }
+
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
       }
+
+      // Make function globally available
+      window.showLoginRequiredModal = showLoginRequiredModal;
 
       // Global function to check authentication before download
       function checkAuthBeforeDownload(callback, itemName = 'data') {

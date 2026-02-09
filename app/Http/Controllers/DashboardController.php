@@ -18,9 +18,9 @@ class DashboardController extends Controller
     {
         try {
             // Get latest news, publications, and infographics for carousel and cards
-            $latestNews = News::orderBy('release_date', 'desc')->limit(5)->get();
-            $latestPublications = Publication::orderBy('date', 'desc')->limit(5)->get();
-            $latestInfographics = Infographic::orderBy('created_at', 'desc')->limit(4)->get();
+            $latestNews = News::orderBy('release_date', 'desc')->limit(6)->get();
+            $latestPublications = Publication::orderBy('date', 'desc')->limit(6)->get();
+            $latestInfographics = Infographic::orderBy('created_at', 'desc')->limit(6)->get();
             
             // Get carousel items for each type
             $carouselNews = $latestNews->map(function($news) {
