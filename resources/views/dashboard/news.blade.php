@@ -250,7 +250,7 @@
                                     <button class="btn btn-sm btn-primary" onclick="showNewsModal({{ $index }})">
                                         <i class="bi bi-book"></i> Baca Selengkapnya
                                     </button>
-                                    <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="{{ $item->id }}" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)">
+                                    <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="{{ $item->news_id }}" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)">
                                         <i class="bi bi-bookmark"></i> Bookmark
                                     </button>
                                 </div>
@@ -291,7 +291,7 @@
                                             <button class="btn btn-sm btn-primary" onclick="showNewsModal({{ $index }})" style="font-size: 0.8rem;">
                                                 <i class="bi bi-book"></i> Baca
                                             </button>
-                                            <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="{{ $item->id }}" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)" style="font-size: 0.8rem;">
+                                            <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="{{ $item->news_id }}" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)" style="font-size: 0.8rem;">
                                                 <i class="bi bi-bookmark"></i> Bookmark
                                             </button>
                                         </div>
@@ -364,7 +364,7 @@
     @if(isset($dataNews) && $dataNews->count() > 0)
         @foreach($dataNews as $item)
         <div class="news-data"
-             data-id="{{ $item->id }}"
+             data-id="{{ $item->news_id }}"
              data-title="{{ e($item->title ?? '') }}"
              data-content="{{ e($item->content ?? '') }}"
              data-category="{{ e($item->category_name ?? '') }}"
@@ -405,15 +405,20 @@
             </div>
             <div class="modal-footer">
                 <div class="d-flex gap-2 w-100 flex-wrap">
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-primary btn-sm share-news-modal-btn" id="modalNewsShareBtn" data-news-title="" data-news-url="" onclick="handleNewsShareClick(this); return false;">
-                            <i class="bi bi-share"></i> <span class="d-none d-md-inline share-btn-text">Bagikan</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm bookmark-btn" id="modalNewsBookmarkBtn" data-content-type="news" data-object-id="" data-bookmark-id="" onclick="handleNewsBookmark(this)">
-                            <i class="bi bi-bookmark"></i> <span class="d-none d-md-inline">Bookmark</span>
-                        </button>
-                    </div>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm bookmark-btn" id="modalNewsBookmarkBtn" data-content-type="news" data-object-id="" data-bookmark-id="" onclick="handleNewsBookmark(this)">
+                        <i class="bi bi-bookmark"></i> <span>Bookmark</span>
+                    </button>
+                    @include('components.share-button', [
+                        'title' => '',
+                        'url' => '',
+                        'contentType' => 'news',
+                        'size' => 'sm',
+                        'variant' => 'outline-secondary',
+                        'showText' => true,
+                        'class' => 'share-news-modal-btn',
+                        'id' => 'modalNewsShareBtn'
+                    ])
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -623,13 +628,15 @@
         @auth
         const modalBookmarkBtn = document.getElementById('modalNewsBookmarkBtn');
         if (modalBookmarkBtn) {
+            // Use news_id for News model (custom primary key)
+            const newsId = item.news_id || item.id;
             // Find the news in the list to get bookmark_id
-            const newsElement = document.querySelector(`.bookmark-btn[data-content-type="news"][data-object-id="${item.id}"]`);
+            const newsElement = document.querySelector(`.bookmark-btn[data-content-type="news"][data-object-id="${newsId}"]`);
             if (newsElement) {
                 const bookmarkId = newsElement.dataset.bookmarkId || '';
                 const isBookmarked = newsElement.classList.contains('bookmarked');
                 
-                modalBookmarkBtn.dataset.objectId = String(item.id);
+                modalBookmarkBtn.dataset.objectId = String(newsId);
                 modalBookmarkBtn.dataset.bookmarkId = bookmarkId;
                 
                 const icon = modalBookmarkBtn.querySelector('i');
@@ -648,7 +655,8 @@
                 }
             } else {
                 // Set default values
-                modalBookmarkBtn.dataset.objectId = String(item.id);
+                const newsId = item.news_id || item.id;
+                modalBookmarkBtn.dataset.objectId = String(newsId);
                 modalBookmarkBtn.dataset.bookmarkId = '';
                 modalBookmarkBtn.classList.remove('bookmarked');
                 const icon = modalBookmarkBtn.querySelector('i');
@@ -667,59 +675,6 @@
     
     // Make showNewsModal globally available
     window.showNewsModal = showNewsModal;
-
-    // Handle share button click
-    function handleNewsShareClick(button) {
-        console.log('handleNewsShareClick called:', button);
-        console.log('Button dataset:', {
-            newsTitle: button.dataset.newsTitle,
-            newsUrl: button.dataset.newsUrl
-        });
-        
-        const title = button.dataset.newsTitle || 'Berita';
-        const url = button.dataset.newsUrl || window.location.href;
-        
-        console.log('Calling showShareModal with:', { title, url });
-        console.log('window.showShareModal available?', typeof window.showShareModal === 'function');
-        
-        // Always use window.showShareModal for consistency
-        if (typeof window.showShareModal === 'function') {
-            window.showShareModal(title, url);
-        } else {
-            // Wait a bit and try again (in case script is still loading)
-            console.log('showShareModal not found, waiting...');
-            setTimeout(() => {
-                if (typeof window.showShareModal === 'function') {
-                    console.log('showShareModal found on retry, calling...');
-                    window.showShareModal(title, url);
-                } else {
-                    console.error('showShareModal function not found after retry!');
-                    // Fallback: try to show modal manually
-                    const shareModal = document.getElementById('shareModal');
-                    if (shareModal) {
-                        const modalTitle = document.getElementById('shareModalTitle');
-                        const modalInput = document.getElementById('shareModalInput');
-                        if (modalTitle) modalTitle.textContent = 'Bagikan: ' + title;
-                        if (modalInput) modalInput.value = url;
-                        const modal = new bootstrap.Modal(shareModal);
-                        modal.show();
-                        // Select text when shown
-                        shareModal.addEventListener('shown.bs.modal', function() {
-                            if (modalInput) {
-                                modalInput.select();
-                                modalInput.focus();
-                            }
-                        }, { once: true });
-                    } else {
-                        alert('Modal share tidak ditemukan. Silakan refresh halaman.');
-                    }
-                }
-            }, 200);
-        }
-    }
-    
-    // Make handleNewsShareClick globally available
-    window.handleNewsShareClick = handleNewsShareClick;
 
     // Share news functionality - menggunakan fungsi global dari main.blade.php
     // Fungsi shareNews, copyNewsToClipboard, fallbackCopyNewsToClipboard, dan showNewsToast
@@ -766,17 +721,21 @@
 
     // Load bookmarks for authenticated users
     document.addEventListener('DOMContentLoaded', function() {
+        @auth
         if (isAuthenticated) {
             // Check if toggleBookmark function exists, if not, load it
             if (typeof toggleBookmark === 'undefined') {
                 // Load bookmarks and sync bookmark buttons
-                fetch('/api/bookmarks/')
+                fetch('/bookmarks')
                     .then(response => response.json())
                     .then(data => {
-                        const bookmarks = data.bookmarks || data || [];
+                        const bookmarks = data || [];
+                        console.log('[News] Loaded bookmarks:', bookmarks.length);
                         bookmarks.forEach(bookmark => {
-                            if (bookmark.content_type === 'news') {
+                            // Use content_type_model (new field name from backend)
+                            if (bookmark.content_type_model === 'news') {
                                 const buttons = document.querySelectorAll(`.bookmark-btn[data-content-type="news"][data-object-id="${bookmark.object_id}"]`);
+                                console.log('[News] Found', buttons.length, 'buttons for bookmark', bookmark.id);
                                 buttons.forEach(btn => {
                                     btn.classList.add('bookmarked');
                                     const icon = btn.querySelector('i');
@@ -794,6 +753,7 @@
                     });
             }
         }
+        @endauth
     });
 
     // Toast notification animations

@@ -1678,18 +1678,15 @@
       return;
     }
 
-    // Try to get CSRF token from cookie first, then from meta tag
-    let csrftoken = getCookie("XSRF-TOKEN");
-    if (!csrftoken) {
-      const metaTag = document.querySelector('meta[name="csrf-token"]');
-      if (metaTag) {
-        csrftoken = metaTag.getAttribute("content");
-      }
-    }
+    // Get CSRF token from meta tag (Laravel standard)
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    const csrftoken = metaTag ? metaTag.getAttribute('content') : null;
+    
+    console.log("[Publications Bookmark] CSRF Token:", csrftoken ? "Found" : "NOT FOUND");
 
     if (!csrftoken) {
-      console.error("CSRF token not found");
-      alert("Sesi Anda telah berakhir. Silakan refresh halaman dan login kembali.");
+      console.error("CSRF token not found! Silakan refresh halaman (Ctrl+F5).");
+      alert("Token CSRF tidak ditemukan. Silakan refresh halaman (Ctrl+F5).");
       button.disabled = false;
       return;
     }
@@ -1704,7 +1701,7 @@
         }
 
         console.log("Deleting bookmark:", { bookmarkId, contentType, objectId });
-        const response = await fetch(`/api/bookmarks/delete/${bookmarkId}/`, {
+        const response = await fetch(`/bookmarks/${bookmarkId}`, {
           method: "DELETE",
           headers: { 
             "X-CSRF-TOKEN": csrftoken,
@@ -1748,7 +1745,7 @@
         
         console.log("Adding bookmark:", requestBody);
         
-        const response = await fetch(`/api/bookmarks/add/`, {
+        const response = await fetch(`/bookmarks/add`, {
           method: "POST",
           headers: { 
             "Content-Type": "application/json", 
@@ -1786,7 +1783,7 @@
           if (response.status === 409) {
             // Bookmark already exists, fetch and update UI
             try {
-              const existingBookmarks = await fetch(`/api/bookmarks/`, {
+              const existingBookmarks = await fetch(`/bookmarks`, {
                 headers: { 
                   "X-CSRF-TOKEN": csrftoken,
                   "X-Requested-With": "XMLHttpRequest"
@@ -1958,7 +1955,7 @@
       }
       
       // Fetch user's bookmarks
-      const response = await fetch('/api/bookmarks/', {
+      const response = await fetch('/bookmarks', {
         headers: { 
           "X-CSRF-TOKEN": csrftoken,
           "X-Requested-With": "XMLHttpRequest"
@@ -2019,12 +2016,12 @@
     console.log('Initializing share buttons for publications'); // Debug
     // Use event delegation to handle all share buttons (including dynamically added ones)
     document.addEventListener('click', async function(e) {
-      const shareBtn = e.target.closest('.share-publication-modal-btn') || e.target.closest('.share-publication-btn');
+      const shareBtn = e.target.closest('.share-publication-modal-btn') || e.target.closest('.share-publication-btn') || e.target.closest('.share-btn');
       if (shareBtn) {
         e.preventDefault();
         e.stopPropagation();
-        const title = shareBtn.dataset.pubTitle || 'Publikasi';
-        let url = shareBtn.dataset.pubUrl || window.location.href;
+        const title = shareBtn.dataset.pubTitle || shareBtn.dataset.shareTitle || 'Publikasi';
+        let url = shareBtn.dataset.pubUrl || shareBtn.dataset.shareUrl || window.location.href;
         
         // Ensure URL is complete (add origin if relative)
         if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
@@ -2033,33 +2030,14 @@
         
         console.log('Share button clicked:', { title, url, button: shareBtn, dataset: shareBtn.dataset }); // Debug log
         
-        // Try Web Share API first
-        if (navigator.share) {
-          try {
-            await navigator.share({
-              title: title,
-              text: 'Lihat publikasi ini: ' + title,
-              url: url
-            });
-            console.log('Share successful');
-            return;
-          } catch (err) {
-            if (err.name !== 'AbortError') {
-              console.log('Error sharing or user cancelled:', err);
-              // Fallback to copy to clipboard
-              await copyToClipboardDirect(url, title, e);
-            }
-          }
-        } else {
-          // Fallback: copy to clipboard directly from event handler
-          await copyToClipboardDirect(url, title, e);
-        }
+        // Directly copy to clipboard (no Web Share API)
+        await copyToClipboardDirect(url, title, e, shareBtn);
       }
     });
   });
   
   // Copy to clipboard directly from event handler (maintains user interaction context)
-  async function copyToClipboardDirect(text, title, event) {
+  async function copyToClipboardDirect(text, title, event, button) {
     text = String(text || '');
     
     if (!text) {
@@ -2075,6 +2053,20 @@
         await navigator.clipboard.writeText(text);
         console.log('Successfully copied to clipboard using Clipboard API'); // Debug log
         showToast('Link publikasi "' + title + '" telah disalin ke clipboard');
+        
+        // Visual feedback on button
+        if (button) {
+          const originalHTML = button.innerHTML;
+          const originalClasses = button.className;
+          button.innerHTML = '<i class="bi bi-check"></i> <span>Tersalin!</span>';
+          button.classList.add('btn-success');
+          button.classList.remove('btn-light', 'btn-outline-secondary');
+          
+          setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.className = originalClasses;
+          }, 2000);
+        }
       } catch (err) {
         console.error('Clipboard API failed:', err);
         // Fallback for older browsers or when API fails

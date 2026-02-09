@@ -138,11 +138,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Generic data CRUD
     Route::apiResource('data', ApiDataController::class);
     
-    // Bookmarks
-    Route::get('/bookmarks', [ApiDataController::class, 'viewBookmarks'])->name('api.bookmarks');
-    Route::post('/bookmarks/add', [ApiDataController::class, 'addBookmark'])->name('api.bookmarks.add');
-    Route::delete('/bookmarks/{id}', [ApiDataController::class, 'deleteBookmark'])->name('api.bookmarks.delete');
-    
     // BPS Data Synchronization
     Route::post('/sync/news', [ApiSyncController::class, 'syncNews'])->name('api.sync.news');
     Route::post('/sync/infographics', [ApiSyncController::class, 'syncInfographic'])->name('api.sync.infographics');

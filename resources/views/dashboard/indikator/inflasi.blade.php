@@ -9,6 +9,9 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="{{ asset('js/share-utils.js') }}"></script>
+<link rel="stylesheet" href="{{ asset('css/share-styles.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 @endpush
 
 @section('content')
@@ -208,38 +211,48 @@
     <!-- Grafik Inflasi Bulan ke Bulan -->
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; margin-bottom: 20px; position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Perkembangan Inflasi Bulan ke Bulan (%)</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadMtoMDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadMtoMDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadMtoMExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadMtoMPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <x-chart-share-button chartId="inflasiMtoMChart" title="Perkembangan Inflasi Bulan ke Bulan" />
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadMtoMDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadMtoMDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadMtoMExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadMtoMPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
-        <div id="inflasiMtoMChart" style="width: 100%; height: 400px;"></div>
+        <div class="chart-scroll-container">
+          <div id="inflasiMtoMChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+        </div>
       </div>
     </div>
 
     <!-- Grafik Inflasi Tahun ke Tahun -->
     <div class="col-md-6 mb-3">
       <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; margin-bottom: 20px; position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0">Perkembangan Inflasi Tahun ke Tahun (%)</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadYonYDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadYonYDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadYonYExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadYonYPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <x-chart-share-button chartId="inflasiYonYChart" title="Perkembangan Inflasi Tahun ke Tahun" />
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadYonYDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadYonYDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadYonYExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadYonYPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
-        <div id="inflasiYonYChart" style="width: 100%; height: 400px;"></div>
+        <div class="chart-scroll-container">
+          <div id="inflasiYonYChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -319,19 +332,24 @@
   <div class="row mb-4" id="komoditasChartSection" style="display: none;">
     <div class="col-md-12">
       <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
           <h5 class="mb-0" id="komoditasChartTitle">Inflasi Per Komoditas</h5>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadKomoditasDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-              <i class="fas fa-download"></i> <span>Unduh</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="downloadKomoditasDropdown" style="border-radius: 8px; min-width: 100%;">
-              <li><a class="dropdown-item" href="#" id="downloadKomoditasExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-              <li><a class="dropdown-item" href="#" id="downloadKomoditasPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-            </ul>
+          <div class="chart-header-actions">
+            <x-chart-share-button chartId="inflasiPerKomoditasChart" title="Inflasi Per Komoditas" />
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadKomoditasDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadKomoditasDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadKomoditasExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadKomoditasPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
-        <div id="inflasiPerKomoditasChart" style="width: 100%; height: 450px;"></div>
+        <div class="chart-scroll-container">
+          <div id="inflasiPerKomoditasChart" class="chart-responsive" style="width: 100%; height: 450px;"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -499,6 +517,78 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Update chart instances reference for export functions
   updateChartInstances();
+  
+  // Auto-resize charts when window size changes
+  window.addEventListener('resize', function() {
+    if (mtoMChart) {
+      mtoMChart.resize();
+    }
+    if (yonYChart) {
+      yonYChart.resize();
+    }
+    if (perKomoditasChart) {
+      perKomoditasChart.resize();
+    }
+  });
+
+  // Listen for sidebar toggle to resize charts
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function() {
+      // Wait for sidebar transition to complete (usually 300ms)
+      setTimeout(function() {
+        if (mtoMChart) {
+          mtoMChart.resize();
+        }
+        if (yonYChart) {
+          yonYChart.resize();
+        }
+        if (perKomoditasChart) {
+          perKomoditasChart.resize();
+        }
+      }, 350);
+    });
+  }
+  
+  // Use ResizeObserver for more accurate container size detection
+  // This will handle sidebar toggle, responsive changes, etc.
+  if (typeof ResizeObserver !== 'undefined') {
+    // Observe MtoM Chart
+    if (mtoMChartElement) {
+      const mtoMObserver = new ResizeObserver(function() {
+        if (mtoMChart) {
+          setTimeout(function() {
+            mtoMChart.resize();
+          }, 100);
+        }
+      });
+      mtoMObserver.observe(mtoMChartElement.parentElement);
+    }
+    
+    // Observe YonY Chart
+    if (yonYChartElement) {
+      const yonYObserver = new ResizeObserver(function() {
+        if (yonYChart) {
+          setTimeout(function() {
+            yonYChart.resize();
+          }, 100);
+        }
+      });
+      yonYObserver.observe(yonYChartElement.parentElement);
+    }
+    
+    // Observe Komoditas Chart
+    if (perKomoditasChartElement) {
+      const komoditasObserver = new ResizeObserver(function() {
+        if (perKomoditasChart) {
+          setTimeout(function() {
+            perKomoditasChart.resize();
+          }, 100);
+        }
+      });
+      komoditasObserver.observe(perKomoditasChartElement.parentElement);
+    }
+  }
   
   // Load data first, then setup filters
   loadInflasiSummary();
@@ -2491,13 +2581,43 @@ document.addEventListener('DOMContentLoaded', function() {
   overflow: hidden;
 }
 
+/* Chart scroll container - default no scroll for desktop */
+.chart-scroll-container {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.chart-scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 10px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 10px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
 /* Ensure chart containers don't overlap dropdown */
 .dashboard-card #inflasiMtoMChart,
-.dashboard-card #inflasiYonYChart {
+.dashboard-card #inflasiYonYChart,
+.dashboard-card #inflasiPerKomoditasChart {
   position: relative;
   z-index: 1;
   box-sizing: border-box;
   width: 100% !important;
+}
+
+.chart-responsive {
+  width: 100% !important;
+  box-sizing: border-box;
 }
 
 .dashboard-card:hover {
@@ -2535,6 +2655,20 @@ document.addEventListener('DOMContentLoaded', function() {
   #downloadKomoditasExcel span, #downloadKomoditasPNG span {
     display: none;
   }
+
+  /* Enable scroll on tablet and mobile only */
+  .chart-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+    padding-bottom: 10px;
+  }
+  
+  .chart-responsive {
+    min-width: 600px !important;
+  }
 }
 
 @media (max-width: 576px) {
@@ -2550,6 +2684,19 @@ document.addEventListener('DOMContentLoaded', function() {
   #downloadKomoditasExcel i, #downloadKomoditasPNG i {
     font-size: 12px !important;
     margin: 0 !important;
+  }
+
+  /* Make charts more scrollable on mobile phones */
+  .chart-scroll-container {
+    padding-bottom: 12px;
+  }
+  
+  .chart-responsive {
+    min-width: 700px !important;
+  }
+
+  .dashboard-card {
+    padding: 15px !important;
   }
 }
 

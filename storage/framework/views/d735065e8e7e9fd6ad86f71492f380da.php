@@ -1,0 +1,2961 @@
+<?php $__env->startSection('title', 'Inflasi'); ?>
+
+<?php $__env->startPush('styles'); ?>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+<?php $__env->stopPush(); ?>
+
+<?php $__env->startPush('scripts'); ?>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="<?php echo e(asset('js/share-utils.js')); ?>"></script>
+<link rel="stylesheet" href="<?php echo e(asset('css/share-styles.css')); ?>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<?php $__env->stopPush(); ?>
+
+<?php $__env->startSection('content'); ?>
+<div class="container py-4">
+  <h3 class="font-weight-bold mb-4">Inflasi</h3>
+
+  <style>
+  /* --- Stacking Context Fixes --- */
+  .filter-layer {
+    position: relative;
+    z-index: 500 !important;
+  }
+  .content-layer {
+    position: relative;
+    z-index: 1 !important;
+  }
+  /* Ensure parents don't clip dropdowns */
+  .dashboard-card, .row, .container, .col-md-12, .col-md-6, .col-md-3 {
+    overflow: visible !important;
+  }
+  /* Navbar/Header should be 1000 */
+  .navbar, .header, header, [style*="position: sticky"], [style*="position: fixed"] {
+    z-index: 1000 !important;
+  }
+  /* Dropdown menus should be 900 to be above content but below navbar */
+  .dropdown-menu, #filterYearDropdown, #filterKomoditasTahunDropdown, #filterKomoditasDropdown {
+    z-index: 900 !important;
+  }
+  /* --- End Stacking Context Fixes --- */
+
+  /* Responsive adjustments for mobile only - Desktop tetap sama */
+  @media (max-width: 767.98px) {
+    /* Force row to flex wrap */
+    .row.mb-4 {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 0 !important;
+    }
+    
+    /* Untuk mobile: 2 kolom untuk card pertama dan kedua */
+    .row.mb-4 > div.col-12.col-md-4:nth-child(1),
+    .row.mb-4 > div.col-12.col-md-4:nth-child(2) {
+      flex: 0 0 50% !important;
+      max-width: 50% !important;
+      min-width: unset !important;
+      padding-left: 8px !important;
+      padding-right: 8px !important;
+      margin-bottom: 8px !important;
+    }
+    
+    /* Card ketiga full width di bawah */
+    .row.mb-4 > div.col-12.col-md-4:nth-child(3) {
+      flex: 0 0 50% !important;
+      max-width: 50% !important;
+      min-width: unset !important;
+      padding-left: 8px !important;
+      padding-right: 8px !important;
+      margin-top: 0 !important;
+      margin-bottom: 8px !important;
+    }
+    
+    .row.mb-4 .summary-card {
+      padding: 12px !important;
+      min-height: auto !important;
+      height: auto !important;
+      padding-bottom: 10px !important;
+    }
+    
+    .row.mb-4 .summary-card h6 {
+      font-size: 11px !important;
+      margin-bottom: 6px !important;
+    }
+    
+    .row.mb-4 .summary-card h3 {
+      font-size: 20px !important;
+      margin-bottom: 4px !important;
+      line-height: 1.1 !important;
+    }
+    
+    .row.mb-4 .summary-card small {
+      font-size: 10px !important;
+      margin-top: 4px !important;
+      margin-bottom: 0 !important;
+      line-height: 1.2 !important;
+    }
+    
+    .row.mb-4 .summary-card div[style*="display: flex"] {
+      margin-top: 4px !important;
+      gap: 4px !important;
+    }
+    
+    .row.mb-4 .summary-card div[style*="display: flex"] span {
+      font-size: 10px !important;
+    }
+    
+    .row.mb-4 .summary-card div[style*="display: flex"] span[style*="font-size: 11px"] {
+      font-size: 9px !important;
+    }
+    
+    .row.mb-4 .summary-card > div[style*="position: relative"] > *:last-child {
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+    }
+  }
+  </style>
+  
+  <!-- Summary Cards -->
+  <div class="row mb-4" style="display: flex; flex-wrap: wrap; gap: 15px;">
+    <!-- Inflasi Bulan ke Bulan (m-to-m) -->
+    <div class="col-12 col-md-4 mb-3" style="flex: 1; min-width: 250px;">
+      <div class="summary-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 12px; padding: 25px; min-height: 180px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+        <div style="position: relative; z-index: 2;">
+          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 13px; font-weight: 500; margin: 0 0 10px 0;">Inflasi Bulan ke Bulan</h6>
+          <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;" id="m-to-m-value">
+            -
+          </h3>
+          <div style="display: flex; align-items: center; gap: 5px; margin-top: 10px;" id="m-to-m-change">
+            <!-- Will be populated by JavaScript -->
+          </div>
+          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 10px; display: block;" id="m-to-m-date">
+            Memuat data...
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inflasi Tahun ke Tahun (y-on-y) -->
+    <div class="col-12 col-md-4 mb-3" style="flex: 1; min-width: 250px;">
+      <div class="summary-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 25px; min-height: 180px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+        <div style="position: relative; z-index: 2;">
+          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 13px; font-weight: 500; margin: 0 0 10px 0;">Inflasi Tahun ke Tahun</h6>
+          <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;" id="y-on-y-value">
+            -
+          </h3>
+          <div style="display: flex; align-items: center; gap: 5px; margin-top: 10px;" id="y-on-y-change">
+            <!-- Will be populated by JavaScript -->
+          </div>
+          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 10px; display: block;" id="y-on-y-date">
+            Memuat data...
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inflasi Kumulatif -->
+    <div class="col-12 col-md-4 mb-3" style="flex: 1; min-width: 250px;">
+      <div class="summary-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border-radius: 12px; padding: 25px; min-height: 180px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+        <div style="position: relative; z-index: 2;">
+          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 13px; font-weight: 500; margin: 0 0 10px 0;">Inflasi Kumulatif</h6>
+          <h3 style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;" id="kumulatif-value">
+            -
+          </h3>
+          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 10px; display: block;" id="kumulatif-date">
+            Memuat data...
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-layer"><!-- Filter Tahun untuk Grafik -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 20px; position: relative; z-index: 1;">
+        <div class="row align-items-center">
+          <div class="col-md-3">
+            <label for="filterYear" class="form-label mb-2" style="font-weight: 600; color: #333;">
+              <i class="fas fa-filter me-2"></i>Filter Tahun Grafik:
+            </label>
+          </div>
+          <div class="col-md-12">
+            <div class="custom-dropdown" style="position: relative; max-width: 300px; z-index: 500;">
+              <div class="dropdown-toggle" id="filterYearToggle" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd; background-color: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1;">
+                <span id="filterYearDisplay">Default</span>
+                
+              </div>
+              <div class="dropdown-menu" id="filterYearDropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background-color: white; border: 1px solid #ddd; border-radius: 8px; margin-top: 4px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); z-index: 900; max-height: 192px; overflow-y: auto; overflow-x: hidden;">
+                <div class="dropdown-item" data-value="" style="padding: 8px 12px; cursor: pointer; background-color: #f0f0f0;" data-selected="true">Default</div>
+                <!-- Will be populated by JavaScript -->
+              </div>
+              <select id="filterYear" style="display: none;">
+                <option value="" selected>Default</option>
+                <!-- Will be populated by JavaScript -->
+              </select>
+            </div>
+            <small class="text-muted" style="font-size: 11px; display: block; margin-top: 5px;">
+              <i class="fas fa-info-circle"></i> <span id="filterYearInfo">Default menampilkan tahun terbaru</span>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grafik Perkembangan Inflasi -->
+  <div class="row mb-4">
+    <!-- Grafik Inflasi Bulan ke Bulan -->
+    <div class="col-md-6 mb-3">
+      <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; margin-bottom: 20px; position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
+          <h5 class="mb-0">Perkembangan Inflasi Bulan ke Bulan (%)</h5>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'inflasiMtoMChart','title' => 'Perkembangan Inflasi Bulan ke Bulan']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'inflasiMtoMChart','title' => 'Perkembangan Inflasi Bulan ke Bulan']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadMtoMDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadMtoMDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadMtoMExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadMtoMPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="chart-scroll-container">
+          <div id="inflasiMtoMChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grafik Inflasi Tahun ke Tahun -->
+    <div class="col-md-6 mb-3">
+      <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; margin-bottom: 20px; position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
+          <h5 class="mb-0">Perkembangan Inflasi Tahun ke Tahun (%)</h5>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'inflasiYonYChart','title' => 'Perkembangan Inflasi Tahun ke Tahun']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'inflasiYonYChart','title' => 'Perkembangan Inflasi Tahun ke Tahun']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadYonYDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadYonYDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadYonYExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadYonYPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="chart-scroll-container">
+          <div id="inflasiYonYChart" class="chart-responsive" style="width: 100%; height: 400px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Komoditas (Fleksibel) -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="dashboard-card filter-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; min-height: auto; overflow: visible;">
+        <h5 class="mb-4">
+          <i class="fas fa-search me-2"></i>Filter Inflasi Per Komoditas
+        </h5>
+        <p class="text-muted mb-4" style="font-size: 14px;">
+          Pilih filter untuk melihat inflasi per komoditas. Anda dapat memilih dari tahun terlebih dahulu atau langsung memilih komoditas umum, sub komoditas, atau komoditas spesifik.
+        </p>
+        
+        <div class="row g-3">
+          <!-- Filter Tahun -->
+          <div class="col-md-6">
+            <label class="form-label" style="font-weight: 600; margin-bottom: 8px;">
+              <span class="badge bg-primary me-2">1</span>Tahun
+            </label>
+            <div id="filterKomoditasTahunWrapper" style="position: relative; overflow: visible; z-index: 900;">
+              <div id="filterKomoditasTahunInput" class="form-control" style="padding: 6px 12px; border-radius: 6px; min-height: 40px; height: auto; font-size: 14px; cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; background-color: #fff;">
+                <span id="filterKomoditasTahunPlaceholder" style="color: #6c757d;">Pilih Tahun</span>
+                <span id="filterKomoditasTahunSelected" style="display: none; color: #333; flex: 1;"></span>
+                <i class="fas fa-chevron-down" style="color: #6c757d; margin-left: auto; flex-shrink: 0;"></i>
+              </div>
+              <div id="filterKomoditasTahunDropdown" style="display: none; position: absolute; background: white; border: 1px solid #dee2e6; border-radius: 6px; margin-top: 4px; top: 100%; left: 0; right: 0; max-height: 300px; overflow-y: auto; z-index: 900; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                <!-- Will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter Komoditas (Multiple Selection - Umum, Sub, Spesifik) -->
+          <div class="col-md-6">
+            <label class="form-label" style="font-weight: 600; margin-bottom: 8px;">
+              <span class="badge bg-success me-2">2</span>Komoditas
+            </label>
+            <div id="filterKomoditasWrapper" style="position: relative; overflow: visible; z-index: 900;">
+              <div id="filterKomoditasInput" class="form-control" style="padding: 6px 12px; border-radius: 6px; min-height: 40px; height: auto; font-size: 14px; cursor: text; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; background-color: #fff;">
+                <span id="filterKomoditasPlaceholder" style="color: #6c757d; display: inline;">Cari komoditas...</span>
+                <div id="filterKomoditasTags" style="display: none; flex-wrap: wrap; gap: 6px; flex: 1; align-items: center;"></div>
+                <input type="text" id="filterKomoditasSearch" style="flex: 1; min-width: 150px; border: none; outline: none; font-size: 14px; padding: 0; text-align: left; display: none;" autocomplete="off">
+                <button type="button" id="filterKomoditasClear" style="display: none; background: none; border: none; color: #6c757d; cursor: pointer; padding: 4px 8px; font-size: 16px; line-height: 1;">×</button>
+                <i class="fas fa-chevron-down" id="filterKomoditasChevron" style="color: #6c757d; margin-left: auto; flex-shrink: 0; cursor: pointer; padding: 4px;"></i>
+              </div>
+              <div id="filterKomoditasDropdown" style="display: none; position: absolute; background: white; border: 1px solid #dee2e6; border-radius: 6px; margin-top: 4px; top: 100%; left: 0; right: 0; max-height: 400px; overflow-y: auto; z-index: 900; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                <!-- Will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <button id="btnCariKomoditas" class="btn btn-primary btn-lg w-100" style="padding: 12px; border-radius: 8px;" disabled>
+              <i class="fas fa-check me-2"></i>Terapkan
+            </button>
+          </div>
+        </div>
+
+        <div id="selectedKomoditasInfo" style="display: none; margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #3b82f6;">
+          <h6 class="mb-2">
+            <i class="fas fa-info-circle me-2"></i>Komoditas Terpilih:
+          </h6>
+          <p id="selectedKomoditasText" class="mb-2" style="font-size: 14px;"></p>
+          <button id="btnClearKomoditas" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-times me-1"></i>Hapus Pilihan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- end filter-layer -->
+<div class="content-layer"><!-- Grafik Inflasi Per Komoditas -->
+  <div class="row mb-4" id="komoditasChartSection" style="display: none;">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; position: relative;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
+          <h5 class="mb-0" id="komoditasChartTitle">Inflasi Per Komoditas</h5>
+          <div class="chart-header-actions">
+            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'inflasiPerKomoditasChart','title' => 'Inflasi Per Komoditas']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('chart-share-button'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['chartId' => 'inflasiPerKomoditasChart','title' => 'Inflasi Per Komoditas']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
+<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
+<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
+<?php endif; ?>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadKomoditasDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadKomoditasDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadKomoditasExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadKomoditasPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="chart-scroll-container">
+          <div id="inflasiPerKomoditasChart" class="chart-responsive" style="width: 100%; height: 450px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Penjelasan Komoditas -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background-color: #f8f9fa; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px;">
+        <h5 class="mb-4">
+          <i class="fas fa-book me-2"></i>Penjelasan Komoditas Umum
+        </h5>
+        <p class="text-muted mb-4" style="font-size: 14px;">
+          Berikut adalah penjelasan mengenai komoditas umum dan sub komoditas yang digunakan dalam perhitungan inflasi. Informasi ini membantu Anda memahami struktur komoditas yang tersedia.
+        </p>
+        <div id="komoditasExplanation" style="font-size: 14px;">
+          <!-- Will be populated by JavaScript -->
+          <div class="text-center text-muted">
+            <i class="fas fa-spinner fa-spin me-2"></i>Memuat penjelasan komoditas...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Info Card -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="dashboard-card" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang Inflasi</h5>
+        <p style="margin-bottom: 0; line-height: 1.8;">
+          <strong>Inflasi</strong> adalah kenaikan harga barang dan jasa secara umum dan terus-menerus dalam jangka waktu tertentu. 
+          Inflasi diukur menggunakan Indeks Harga Konsumen (IHK) yang mencakup berbagai komoditas yang dikonsumsi rumah tangga. 
+          Terdapat beberapa jenis inflasi yang dihitung:
+        </p>
+        <ul style="margin-top: 12px; margin-bottom: 0; line-height: 1.8; padding-left: 20px;">
+          <li style="margin-bottom: 8px;"><strong>Inflasi Bulan ke Bulan (Month-to-Month/MoM)</strong>: Perubahan IHK bulan berjalan dibandingkan dengan bulan sebelumnya, dinyatakan dalam persen. 
+            Menggambarkan perubahan harga jangka pendek.</li>
+          <li style="margin-bottom: 8px;"><strong>Inflasi Tahun ke Tahun (Year-on-Year/YoY)</strong>: Perubahan IHK bulan berjalan dibandingkan dengan bulan yang sama pada tahun sebelumnya, dinyatakan dalam persen. 
+            Menggambarkan tren inflasi jangka menengah.</li>
+          <li style="margin-bottom: 8px;"><strong>Inflasi Kumulatif</strong>: Akumulasi inflasi dari awal tahun (Januari) hingga bulan berjalan, dinyatakan dalam persen. 
+            Menggambarkan total kenaikan harga sejak awal tahun.</li>
+        </ul>
+        <p style="margin-top: 12px; margin-bottom: 0; line-height: 1.8;">
+          Inflasi yang terkendali (sekitar 2-4% per tahun) dianggap baik untuk perekonomian karena mendorong konsumsi dan investasi. 
+          Namun, inflasi yang terlalu tinggi dapat mengurangi daya beli masyarakat dan stabilitas ekonomi. 
+          Bank Indonesia menggunakan berbagai instrumen kebijakan moneter untuk menjaga inflasi dalam target yang ditetapkan.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- end content-layer -->
+
+<script>
+// Month mapping for display
+const monthNames = {
+  'JANUARI': 'Jan', 'FEBRUARI': 'Feb', 'MARET': 'Mar', 'APRIL': 'Apr',
+  'MEI': 'Mei', 'JUNI': 'Jun', 'JULI': 'Jul', 'AGUSTUS': 'Agu',
+  'SEPTEMBER': 'Sep', 'OKTOBER': 'Okt', 'NOPEMBER': 'Nov', 'DESEMBER': 'Des'
+};
+
+const monthNamesFull = {
+  'JANUARI': 'Januari', 'FEBRUARI': 'Februari', 'MARET': 'Maret', 'APRIL': 'April',
+  'MEI': 'Mei', 'JUNI': 'Juni', 'JULI': 'Juli', 'AGUSTUS': 'Agustus',
+  'SEPTEMBER': 'September', 'OKTOBER': 'Oktober', 'NOPEMBER': 'November', 'DESEMBER': 'Desember'
+};
+
+// Month order for sorting
+const monthOrder = ['JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 
+                    'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOPEMBER', 'DESEMBER'];
+
+// Helper function to get month display name
+function getMonthDisplay(month) {
+  const monthMap = {
+    'JANUARI': 'Januari', 'FEBRUARI': 'Februari', 'MARET': 'Maret', 'APRIL': 'April',
+    'MEI': 'Mei', 'JUNI': 'Juni', 'JULI': 'Juli', 'AGUSTUS': 'Agustus',
+    'SEPTEMBER': 'September', 'OKTOBER': 'Oktober', 'NOPEMBER': 'November', 'DESEMBER': 'Desember'
+  };
+  return monthMap[month] || month;
+}
+
+// API Routes
+const API_ROUTES = {
+  inflasi: '<?php echo e(route("api.inflasi")); ?>',
+  inflasiPerKomoditas: '<?php echo e(route("api.inflasi-perkomoditas")); ?>',
+  komoditasByFlag: '<?php echo e(route("api.komoditas-by-flag")); ?>',
+  inflasiSummary: '<?php echo e(route("api.inflasi-summary")); ?>',
+  inflasiYears: '<?php echo e(route("api.inflasi-years")); ?>',
+  komoditasYears: '<?php echo e(route("api.inflasi-komoditas-years")); ?>'
+};
+
+// Global variables
+let allInflasiData = [];
+let selectedYear = null; // Default to latest year
+let selectedKomoditas = {
+  tahun: null,
+  umum: null,
+  sub: null,
+  spesifik: null
+};
+
+// Initialize charts (will be initialized after DOM is ready)
+let mtoMChart = null;
+let yonYChart = null;
+let perKomoditasChart = null;
+
+// --- Dropdown Management JS ---
+document.addEventListener('click', function(event) {
+  const dropdowns = [
+    { toggleId: 'filterYearToggle', menuId: 'filterYearDropdown' },
+    { toggleId: 'filterKomoditasTahunInput', menuId: 'filterKomoditasTahunDropdown' },
+    { toggleId: 'filterKomoditasInput', menuId: 'filterKomoditasDropdown' }
+  ];
+
+  const clickedEl = event.target;
+  
+  // Check if clicked on a toggle
+  let activeToggle = null;
+  dropdowns.forEach(d => {
+    const toggle = document.getElementById(d.toggleId);
+    if (toggle && toggle.contains(clickedEl)) {
+      activeToggle = d;
+    }
+  });
+
+  if (activeToggle) {
+    // Close all other dropdowns
+    dropdowns.forEach(d => {
+      if (d.toggleId !== activeToggle.toggleId) {
+        const menu = document.getElementById(d.menuId);
+        if (menu) menu.style.display = 'none';
+      }
+    });
+  } else {
+    // If clicked outside, close all if not clicking inside a menu
+    dropdowns.forEach(d => {
+      const menu = document.getElementById(d.menuId);
+      if (menu && !menu.contains(clickedEl)) {
+        // Special case for filterYear which doesn't use the body-append logic
+        if (d.toggleId === 'filterYearToggle') {
+          menu.style.display = 'none';
+        }
+      }
+    });
+  }
+}, true); // Use capture phase to run before other listeners
+// --- End Dropdown Management JS ---
+
+// Load data on page load
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize charts only after DOM is ready
+  const mtoMChartElement = document.getElementById('inflasiMtoMChart');
+  const yonYChartElement = document.getElementById('inflasiYonYChart');
+  const perKomoditasChartElement = document.getElementById('inflasiPerKomoditasChart');
+  
+  if (mtoMChartElement) {
+    mtoMChart = echarts.init(mtoMChartElement);
+  }
+  if (yonYChartElement) {
+    yonYChart = echarts.init(yonYChartElement);
+  }
+  if (perKomoditasChartElement) {
+    perKomoditasChart = echarts.init(perKomoditasChartElement);
+  }
+  
+  // Update chart instances reference for export functions
+  updateChartInstances();
+  
+  // Auto-resize charts when window size changes
+  window.addEventListener('resize', function() {
+    if (mtoMChart) {
+      mtoMChart.resize();
+    }
+    if (yonYChart) {
+      yonYChart.resize();
+    }
+    if (perKomoditasChart) {
+      perKomoditasChart.resize();
+    }
+  });
+
+  // Listen for sidebar toggle to resize charts
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function() {
+      // Wait for sidebar transition to complete (usually 300ms)
+      setTimeout(function() {
+        if (mtoMChart) {
+          mtoMChart.resize();
+        }
+        if (yonYChart) {
+          yonYChart.resize();
+        }
+        if (perKomoditasChart) {
+          perKomoditasChart.resize();
+        }
+      }, 350);
+    });
+  }
+  
+  // Use ResizeObserver for more accurate container size detection
+  // This will handle sidebar toggle, responsive changes, etc.
+  if (typeof ResizeObserver !== 'undefined') {
+    // Observe MtoM Chart
+    if (mtoMChartElement) {
+      const mtoMObserver = new ResizeObserver(function() {
+        if (mtoMChart) {
+          setTimeout(function() {
+            mtoMChart.resize();
+          }, 100);
+        }
+      });
+      mtoMObserver.observe(mtoMChartElement.parentElement);
+    }
+    
+    // Observe YonY Chart
+    if (yonYChartElement) {
+      const yonYObserver = new ResizeObserver(function() {
+        if (yonYChart) {
+          setTimeout(function() {
+            yonYChart.resize();
+          }, 100);
+        }
+      });
+      yonYObserver.observe(yonYChartElement.parentElement);
+    }
+    
+    // Observe Komoditas Chart
+    if (perKomoditasChartElement) {
+      const komoditasObserver = new ResizeObserver(function() {
+        if (perKomoditasChart) {
+          setTimeout(function() {
+            perKomoditasChart.resize();
+          }, 100);
+        }
+      });
+      komoditasObserver.observe(perKomoditasChartElement.parentElement);
+    }
+  }
+  
+  // Load data first, then setup filters
+  loadInflasiSummary();
+  loadInflasiData();
+  loadYears();
+  setupYearFilter();
+  setupKomoditasFilter();
+  loadKomoditasExplanation();
+
+  // Debounce function for resize events
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  // Handle window resize for all charts with debounce
+  const debouncedResize = debounce(function() {
+    if (mtoMChart) mtoMChart.resize();
+    if (yonYChart) yonYChart.resize();
+    if (perKomoditasChart) perKomoditasChart.resize();
+  }, 250);
+
+  window.addEventListener('resize', debouncedResize);
+});
+
+// Load inflasi summary data
+function loadInflasiSummary() {
+  fetch(API_ROUTES.inflasiSummary)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.status === 'success' && data.data) {
+        const summary = data.data;
+        updateSummaryCards(summary);
+      } else {
+        console.warn('No inflasi summary data available');
+      }
+    })
+    .catch(error => {
+      console.error('Error loading inflasi summary:', error);
+    });
+}
+
+// Update summary cards
+function updateSummaryCards(summary) {
+  const latest = summary.latest;
+  const previousMonth = summary.previous_month;
+  const previousYear = summary.previous_year;
+  const mToMChange = summary.m_to_m_change;
+  const yOnYChange = summary.y_on_y_change;
+
+  // Update M-to-M card
+  if (latest) {
+    const bulanan = latest.bulanan !== null ? parseFloat(latest.bulanan).toFixed(2) + '%' : '-';
+    document.getElementById('m-to-m-value').textContent = bulanan;
+    
+    const monthDisplay = getMonthDisplay(latest.month);
+    document.getElementById('m-to-m-date').textContent = `${monthDisplay} ${latest.year}`;
+    
+    // Update change indicator
+    const changeEl = document.getElementById('m-to-m-change');
+    changeEl.innerHTML = '';
+    if (mToMChange !== null) {
+      if (mToMChange > 0) {
+        changeEl.innerHTML = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">▲</span>
+          <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">+${mToMChange.toFixed(2)}%</span>`;
+        if (previousMonth) {
+          const prevMonthDisplay = getMonthDisplay(previousMonth.month).toLowerCase();
+          changeEl.innerHTML += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari bulan ${prevMonthDisplay}</span>`;
+        }
+      } else if (mToMChange < 0) {
+        changeEl.innerHTML = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">▼</span>
+          <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">${mToMChange.toFixed(2)}%</span>`;
+        if (previousMonth) {
+          const prevMonthDisplay = getMonthDisplay(previousMonth.month).toLowerCase();
+          changeEl.innerHTML += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari bulan ${prevMonthDisplay}</span>`;
+        }
+      } else {
+        changeEl.innerHTML = '<span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">-</span>';
+      }
+    }
+  } else {
+    document.getElementById('m-to-m-value').textContent = '-';
+    document.getElementById('m-to-m-date').textContent = 'Data tidak tersedia';
+  }
+
+  // Update Y-on-Y card
+  if (latest) {
+    const yoy = latest.yoy !== null ? parseFloat(latest.yoy).toFixed(2) + '%' : '-';
+    document.getElementById('y-on-y-value').textContent = yoy;
+    
+    const monthDisplay = getMonthDisplay(latest.month);
+    document.getElementById('y-on-y-date').textContent = `${monthDisplay} ${latest.year}`;
+    
+    // Update change indicator
+    const changeEl = document.getElementById('y-on-y-change');
+    changeEl.innerHTML = '';
+    if (yOnYChange !== null) {
+      if (yOnYChange > 0) {
+        changeEl.innerHTML = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">▲</span>
+          <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">+${yOnYChange.toFixed(2)}%</span>`;
+        if (previousYear) {
+          const prevMonthDisplay = getMonthDisplay(previousYear.month).toLowerCase();
+          changeEl.innerHTML += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari bulan ${prevMonthDisplay} ${previousYear.year}</span>`;
+        }
+      } else if (yOnYChange < 0) {
+        changeEl.innerHTML = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">▼</span>
+          <span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">${yOnYChange.toFixed(2)}%</span>`;
+        if (previousYear) {
+          const prevMonthDisplay = getMonthDisplay(previousYear.month).toLowerCase();
+          changeEl.innerHTML += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari bulan ${prevMonthDisplay} ${previousYear.year}</span>`;
+        }
+      } else {
+        changeEl.innerHTML = '<span style="color: rgba(255, 255, 255, 0.9); font-size: 13px;">-</span>';
+      }
+    }
+  } else {
+    document.getElementById('y-on-y-value').textContent = '-';
+    document.getElementById('y-on-y-date').textContent = 'Data tidak tersedia';
+  }
+
+  // Update Kumulatif card
+  if (latest) {
+    const kumulatif = latest.kumulatif !== null ? parseFloat(latest.kumulatif).toFixed(2) + '%' : '-';
+    document.getElementById('kumulatif-value').textContent = kumulatif;
+    
+    const monthDisplay = getMonthDisplay(latest.month);
+    document.getElementById('kumulatif-date').textContent = `Januari - ${monthDisplay} ${latest.year}`;
+  } else {
+    document.getElementById('kumulatif-value').textContent = '-';
+    document.getElementById('kumulatif-date').textContent = 'Data tidak tersedia';
+  }
+}
+
+// Load years for filter
+function loadYears() {
+  fetch(API_ROUTES.inflasiYears)
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success' && data.data && data.data.length > 0) {
+        const years = data.data;
+        const latestYear = years[0];
+        selectedYear = latestYear;
+        
+        // Update filter year dropdown
+        const dropdown = document.getElementById('filterYearDropdown');
+        const select = document.getElementById('filterYear');
+        
+        // Clear existing options except Default
+        const defaultItem = dropdown.querySelector('[data-value=""]');
+        dropdown.innerHTML = '';
+        if (defaultItem) {
+          dropdown.appendChild(defaultItem);
+        } else {
+          const defaultDiv = document.createElement('div');
+          defaultDiv.className = 'dropdown-item';
+          defaultDiv.setAttribute('data-value', '');
+          defaultDiv.style.cssText = 'padding: 8px 12px; cursor: pointer; background-color: #f0f0f0;';
+          defaultDiv.setAttribute('data-selected', 'true');
+          defaultDiv.textContent = 'Default';
+          dropdown.appendChild(defaultDiv);
+        }
+        
+        // Add year options
+        years.slice(0, 5).forEach(year => {
+          if (year != latestYear) {
+            const div = document.createElement('div');
+            div.className = 'dropdown-item';
+            div.setAttribute('data-value', year);
+            div.style.cssText = 'padding: 8px 12px; cursor: pointer;';
+            div.textContent = year;
+            dropdown.appendChild(div);
+            
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            select.appendChild(option);
+          }
+        });
+        
+        if (years.length > 5) {
+          years.slice(5).forEach(year => {
+            const div = document.createElement('div');
+            div.className = 'dropdown-item';
+            div.setAttribute('data-value', year);
+            div.style.cssText = 'padding: 8px 12px; cursor: pointer;';
+            div.textContent = year;
+            dropdown.appendChild(div);
+            
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            select.appendChild(option);
+          });
+        }
+        
+        // Update info text
+        document.getElementById('filterYearInfo').textContent = `Default menampilkan tahun terbaru (${latestYear})`;
+      }
+    })
+    .catch(error => {
+      console.error('Error loading years:', error);
+    });
+}
+
+// Load inflasi general data
+function loadInflasiData() {
+  const url = selectedYear ? `${API_ROUTES.inflasi}?year=${selectedYear}` : API_ROUTES.inflasi;
+  
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.status === 'success' && data.data && data.data.length > 0) {
+        allInflasiData = data.data;
+        updateChartData();
+        // Render charts after data is loaded
+        if (mtoMChart) {
+          renderMtoMChart();
+        }
+        if (yonYChart) {
+          renderYonYChart();
+        }
+      } else {
+        console.warn('No inflasi data available');
+        // Show empty charts
+        if (mtoMChart) {
+          mtoMChart.setOption({
+            title: {
+              text: 'Data tidak tersedia',
+              left: 'center',
+              top: 'center',
+              textStyle: { color: '#999', fontSize: 14 }
+            }
+          });
+        }
+        if (yonYChart) {
+          yonYChart.setOption({
+            title: {
+              text: 'Data tidak tersedia',
+              left: 'center',
+              top: 'center',
+              textStyle: { color: '#999', fontSize: 14 }
+            }
+          });
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Error loading inflasi data:', error);
+      // Show error message in charts
+      if (mtoMChart) {
+        mtoMChart.setOption({
+          title: {
+            text: 'Error memuat data',
+            left: 'center',
+            top: 'center',
+            textStyle: { color: '#dc3545', fontSize: 14 }
+          }
+        });
+      }
+      if (yonYChart) {
+        yonYChart.setOption({
+          title: {
+            text: 'Error memuat data',
+            left: 'center',
+            top: 'center',
+            textStyle: { color: '#dc3545', fontSize: 14 }
+          }
+        });
+      }
+    });
+}
+
+// Setup year filter
+function setupYearFilter() {
+  const filterYear = document.getElementById('filterYear');
+  const filterYearToggle = document.getElementById('filterYearToggle');
+  const filterYearDropdown = document.getElementById('filterYearDropdown');
+  const filterYearDisplay = document.getElementById('filterYearDisplay');
+  const dropdownItems = filterYearDropdown.querySelectorAll('.dropdown-item');
+
+  // Toggle dropdown
+  filterYearToggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const isOpen = filterYearDropdown.style.display === 'block';
+    filterYearDropdown.style.display = isOpen ? 'none' : 'block';
+    
+    // Rotate chevron icon
+    const chevron = filterYearToggle.querySelector('i');
+    if (chevron) {
+      chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+      chevron.style.transition = 'transform 0.3s ease';
+    }
+  });
+
+  // Handle item selection using event delegation
+  filterYearDropdown.addEventListener('click', function(e) {
+    const item = e.target.closest('.dropdown-item');
+    if (!item) return;
+    
+    e.stopPropagation();
+    const value = item.getAttribute('data-value');
+    const text = item.textContent.trim();
+    
+    // Update hidden select
+    filterYear.value = value || '';
+    selectedYear = value || null;
+    
+    // Update display
+    filterYearDisplay.textContent = text;
+    
+    // Update selected state - remove selection from all items first
+    filterYearDropdown.querySelectorAll('.dropdown-item').forEach(i => {
+      const wasSelected = i.getAttribute('data-selected') === 'true';
+      if (wasSelected) {
+        i.style.setProperty('background-color', '', 'important');
+        i.setAttribute('data-selected', 'false');
+      }
+    });
+    // Set new selection
+    item.style.setProperty('background-color', '#f0f0f0', 'important');
+    item.setAttribute('data-selected', 'true');
+    
+    // Close dropdown
+    filterYearDropdown.style.display = 'none';
+    const chevron = filterYearToggle.querySelector('i');
+    if (chevron) {
+      chevron.style.transform = 'rotate(0deg)';
+    }
+    
+    // Update charts
+    loadInflasiData();
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!filterYearToggle.contains(e.target) && !filterYearDropdown.contains(e.target)) {
+      filterYearDropdown.style.display = 'none';
+      const chevron = filterYearToggle.querySelector('i');
+      if (chevron) {
+        chevron.style.transform = 'rotate(0deg)';
+      }
+    }
+  });
+
+  // Also handle change on hidden select for compatibility
+  filterYear.addEventListener('change', function() {
+    selectedYear = this.value || null;
+    loadInflasiData();
+  });
+}
+
+// Render Month-to-Month Chart
+function renderMtoMChart() {
+  if (!mtoMChart) {
+    console.error('mtoMChart is not initialized');
+    return;
+  }
+  
+  // Check if data is available
+  if (!allInflasiData || allInflasiData.length === 0) {
+    console.warn('No data available for MtoM chart');
+    return;
+  }
+  
+  // Filter by selectedYear if set, otherwise use all data
+  let filteredData = allInflasiData;
+  if (selectedYear) {
+    filteredData = allInflasiData.filter(d => d.year == selectedYear);
+  } else {
+    // If no year selected, use latest year
+    const latestYear = Math.max(...allInflasiData.map(d => d.year));
+    filteredData = allInflasiData.filter(d => d.year == latestYear);
+  }
+  
+  if (filteredData.length === 0) {
+    console.warn('No data available for selected year');
+    mtoMChart.setOption({
+      title: {
+        text: 'Data tidak tersedia',
+        left: 'center',
+        top: 'center',
+        textStyle: { color: '#999', fontSize: 14 }
+      }
+    });
+    return;
+  }
+
+  const sortedData = filteredData.sort((a, b) => {
+    if (a.year !== b.year) return a.year - b.year;
+    return monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month);
+  });
+
+  const labels = sortedData.map(d => `${monthNames[d.month]} ${d.year}`);
+  const values = sortedData.map(d => d.bulanan ? parseFloat(d.bulanan) : null);
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      formatter: function(params) {
+        const param = params[0];
+        return `${param.axisValue}<br/>${param.seriesName}: ${param.value !== null ? param.value.toFixed(2) + '%' : '-'}`;
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '8%',
+      bottom: '15%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: labels,
+      axisLabel: {
+        rotate: labels.length > 6 ? 45 : 0,
+        interval: labels.length <= 12 ? 0 : Math.max(0, Math.floor(labels.length / 12)),
+        margin: 8,
+        formatter: function(value) {
+          // Show only month abbreviation since we always filter by year
+          return value.split(' ')[0]; // Only month
+        }
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Inflasi (%)',
+      axisLabel: {
+        formatter: '{value}%'
+      }
+    },
+    series: [{
+      name: 'Inflasi Bulanan',
+      type: 'line',
+      smooth: false,
+      data: values,
+      itemStyle: {
+        color: '#3b82f6'
+      },
+      areaStyle: {
+        color: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [{
+            offset: 0, color: 'rgba(59, 130, 246, 0.3)'
+          }, {
+            offset: 1, color: 'rgba(59, 130, 246, 0.05)'
+          }]
+        }
+      }
+    }]
+  };
+
+  mtoMChart.setOption(option, true); // Use notMerge=true to replace existing option
+  
+  // Resize chart to ensure proper rendering
+  setTimeout(() => {
+    if (mtoMChart) {
+      mtoMChart.resize();
+    }
+  }, 100);
+}
+
+// Render Year-on-Year Chart
+function renderYonYChart() {
+  if (!yonYChart) {
+    console.error('yonYChart is not initialized');
+    return;
+  }
+  
+  // Check if data is available
+  if (!allInflasiData || allInflasiData.length === 0) {
+    console.warn('No data available for YoY chart');
+    return;
+  }
+  
+  // Filter by selectedYear if set, otherwise use all data
+  let filteredData = allInflasiData;
+  if (selectedYear) {
+    filteredData = allInflasiData.filter(d => d.year == selectedYear);
+  } else {
+    // If no year selected, use latest year
+    const latestYear = Math.max(...allInflasiData.map(d => d.year));
+    filteredData = allInflasiData.filter(d => d.year == latestYear);
+  }
+  
+  if (filteredData.length === 0) {
+    console.warn('No data available for selected year');
+    yonYChart.setOption({
+      title: {
+        text: 'Data tidak tersedia',
+        left: 'center',
+        top: 'center',
+        textStyle: { color: '#999', fontSize: 14 }
+      }
+    });
+    return;
+  }
+
+  const sortedData = filteredData.sort((a, b) => {
+    if (a.year !== b.year) return a.year - b.year;
+    return monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month);
+  });
+
+  const labels = sortedData.map(d => `${monthNames[d.month]} ${d.year}`);
+  const values = sortedData.map(d => d.yoy ? parseFloat(d.yoy) : null);
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      formatter: function(params) {
+        const param = params[0];
+        return `${param.axisValue}<br/>${param.seriesName}: ${param.value !== null ? param.value.toFixed(2) + '%' : '-'}`;
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '8%',
+      bottom: '15%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: labels,
+      axisLabel: {
+        rotate: labels.length > 6 ? 45 : 0,
+        interval: labels.length <= 12 ? 0 : Math.max(0, Math.floor(labels.length / 12)),
+        margin: 8,
+        formatter: function(value) {
+          // Show only month abbreviation since we always filter by year
+          return value.split(' ')[0]; // Only month
+        }
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Inflasi (%)',
+      axisLabel: {
+        formatter: '{value}%'
+      }
+    },
+    series: [{
+      name: 'Inflasi YoY',
+      type: 'line',
+      smooth: false,
+      data: values,
+      itemStyle: {
+        color: '#10b981'
+      },
+      areaStyle: {
+        color: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [{
+            offset: 0, color: 'rgba(16, 185, 129, 0.3)'
+          }, {
+            offset: 1, color: 'rgba(16, 185, 129, 0.05)'
+          }]
+        }
+      }
+    }]
+  };
+
+  yonYChart.setOption(option, true); // Use notMerge=true to replace existing option
+  updateChartData(); // Update data for export
+  
+  // Resize chart to ensure proper rendering
+  setTimeout(() => {
+    if (yonYChart) {
+      yonYChart.resize();
+    }
+  }, 100);
+}
+
+// Setup komoditas filter (multiple selection - semua komoditas dalam satu filter)
+function setupKomoditasFilter() {
+  // Get all filter elements
+  const filterTahunInput = document.getElementById('filterKomoditasTahunInput');
+  const filterTahunPlaceholder = document.getElementById('filterKomoditasTahunPlaceholder');
+  const filterTahunSelected = document.getElementById('filterKomoditasTahunSelected');
+  const filterTahunDropdown = document.getElementById('filterKomoditasTahunDropdown');
+  const filterTahunWrapper = document.getElementById('filterKomoditasTahunWrapper');
+  
+  const filterKomoditasInput = document.getElementById('filterKomoditasInput');
+  const filterKomoditasPlaceholder = document.getElementById('filterKomoditasPlaceholder');
+  const filterKomoditasSearch = document.getElementById('filterKomoditasSearch');
+  const filterKomoditasTags = document.getElementById('filterKomoditasTags');
+  const filterKomoditasDropdown = document.getElementById('filterKomoditasDropdown');
+  const filterKomoditasWrapper = document.getElementById('filterKomoditasWrapper');
+  const filterKomoditasClear = document.getElementById('filterKomoditasClear');
+  const filterKomoditasChevron = document.getElementById('filterKomoditasChevron');
+  
+  const btnCari = document.getElementById('btnCariKomoditas');
+  const btnClear = document.getElementById('btnClearKomoditas');
+
+  // Check if all required elements exist
+  if (!filterTahunInput || !filterTahunDropdown || !filterKomoditasInput || !filterKomoditasDropdown || !btnCari || !btnClear || !filterKomoditasSearch || !filterKomoditasPlaceholder) {
+    console.error('Required filter elements not found');
+    return;
+  }
+
+  // Store selected commodities (array of {code, name, flag})
+  let selectedKomoditasList = [];
+  let allCommoditiesList = []; // Store all commodities for search
+
+  // Load komoditas years
+  fetch(API_ROUTES.komoditasYears)
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success' && data.data && data.data.length > 0) {
+        const years = data.data;
+        filterTahunDropdown.innerHTML = '';
+        years.forEach(year => {
+          const div = document.createElement('div');
+          div.className = 'filter-option-tahun';
+          div.setAttribute('data-value', year);
+          div.style.cssText = 'padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0;';
+          div.textContent = year;
+          filterTahunDropdown.appendChild(div);
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error loading komoditas years:', error);
+    });
+
+  // Setup toggle for tahun dropdown
+  function initTahunDropdownToggle() {
+    filterTahunInput.addEventListener('click', function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      
+      const isVisible = filterTahunDropdown.style.display === 'block';
+      
+      if (!isVisible) {
+        if (filterTahunDropdown.parentNode !== filterTahunWrapper) {
+          filterTahunWrapper.appendChild(filterTahunDropdown);
+        }
+        
+        filterTahunDropdown.style.position = 'absolute';
+        filterTahunDropdown.style.top = '100%';
+        filterTahunDropdown.style.left = '0';
+        filterTahunDropdown.style.right = '0';
+        filterTahunDropdown.style.marginTop = '4px';
+        filterTahunDropdown.style.display = 'block';
+        filterTahunDropdown.style.zIndex = '900';
+      } else {
+        filterTahunDropdown.style.display = 'none';
+      }
+    });
+  }
+
+  // Setup toggle for komoditas dropdown
+  function initKomoditasDropdownToggle() {
+    filterKomoditasInput.addEventListener('click', function(e) {
+      if (e.target === filterKomoditasSearch || e.target.closest('#filterKomoditasTags') || e.target === filterKomoditasClear || e.target === filterKomoditasChevron) {
+        return;
+      }
+      
+      e.stopPropagation();
+      e.preventDefault();
+      
+      const isVisible = filterKomoditasDropdown.style.display === 'block';
+      
+      if (!isVisible) {
+        showKomoditasDropdown();
+      } else {
+        hideKomoditasDropdown();
+      }
+    });
+
+    filterKomoditasPlaceholder.addEventListener('click', function(e) {
+      e.stopPropagation();
+      showSearchInput();
+      if (allCommoditiesList.length > 0) {
+        showKomoditasDropdown();
+      }
+    });
+  }
+
+  // Show komoditas dropdown
+  function showKomoditasDropdown() {
+    if (filterKomoditasDropdown.parentNode !== filterKomoditasWrapper) {
+      filterKomoditasWrapper.appendChild(filterKomoditasDropdown);
+    }
+    
+    filterKomoditasDropdown.style.position = 'absolute';
+    filterKomoditasDropdown.style.top = '100%';
+    filterKomoditasDropdown.style.left = '0';
+    filterKomoditasDropdown.style.right = '0';
+    filterKomoditasDropdown.style.marginTop = '4px';
+    filterKomoditasDropdown.style.display = 'block';
+    filterKomoditasDropdown.style.zIndex = '900';
+    filterKomoditasDropdown.style.maxHeight = '300px';
+    filterKomoditasDropdown.style.overflowY = 'auto';
+    
+    showSearchInput();
+    
+    const searchTerm = filterKomoditasSearch.value.trim();
+    if (allCommoditiesList.length > 0) {
+      renderKomoditasDropdown(allCommoditiesList, searchTerm);
+    }
+  }
+
+  // Hide komoditas dropdown
+  function hideKomoditasDropdown() {
+    filterKomoditasDropdown.style.display = 'none';
+  }
+
+  // Setup click outside handler for tahun dropdown
+  function setupTahunClickOutside() {
+    document.addEventListener('click', function(e) {
+      if (filterTahunDropdown && filterTahunWrapper && filterTahunDropdown.style.display === 'block') {
+        const clickedInsideWrapper = filterTahunWrapper.contains(e.target);
+        const clickedInsideDropdown = filterTahunDropdown.contains(e.target);
+        
+        if (!clickedInsideWrapper && !clickedInsideDropdown) {
+          filterTahunDropdown.style.display = 'none';
+        }
+      }
+    });
+  }
+
+  // Setup click outside handler for komoditas dropdown - FIXED VERSION
+  function setupKomoditasClickOutside() {
+    document.addEventListener('click', function(e) {
+      if (filterKomoditasDropdown && filterKomoditasWrapper && filterKomoditasDropdown.style.display === 'block') {
+        const clickedInsideWrapper = filterKomoditasWrapper.contains(e.target);
+        const clickedInsideDropdown = filterKomoditasDropdown.contains(e.target);
+        
+        if (!clickedInsideWrapper && !clickedInsideDropdown) {
+          hideKomoditasDropdown();
+        }
+      }
+    });
+  }
+
+  // Setup search input handler
+  function setupSearchInput() {
+    // Search on input
+    filterKomoditasSearch.addEventListener('input', function(e) {
+      const searchTerm = e.target.value.trim();
+      updateClearButton();
+      
+      // Show dropdown if not visible
+      if (filterKomoditasDropdown.style.display !== 'block') {
+        showKomoditasDropdown();
+      }
+      
+      // Filter and render dropdown
+      if (allCommoditiesList.length > 0) {
+        renderKomoditasDropdown(allCommoditiesList, searchTerm);
+      }
+    });
+
+    // Focus on search input
+    filterKomoditasSearch.addEventListener('focus', function() {
+      if (allCommoditiesList.length > 0) {
+        showKomoditasDropdown();
+      }
+    });
+
+    // Prevent input click from closing dropdown
+    filterKomoditasSearch.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (allCommoditiesList.length > 0 && filterKomoditasDropdown.style.display !== 'block') {
+        showKomoditasDropdown();
+      }
+    });
+
+    // Hide search input when blur if empty
+    filterKomoditasSearch.addEventListener('blur', function() {
+      setTimeout(() => {
+        if (filterKomoditasSearch.value.trim() === '' && selectedKomoditasList.length === 0) {
+          hideSearchInput();
+        }
+      }, 200);
+    });
+
+    // Handle keyboard navigation
+    filterKomoditasSearch.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const firstOption = filterKomoditasDropdown.querySelector('.filter-option-komoditas');
+        if (firstOption) {
+          firstOption.focus();
+        }
+      } else if (e.key === 'Escape') {
+        hideKomoditasDropdown();
+        filterKomoditasSearch.blur();
+      }
+    });
+
+    // Clear button handler
+    filterKomoditasClear.addEventListener('click', function(e) {
+      e.stopPropagation();
+      filterKomoditasSearch.value = '';
+      updateClearButton();
+      
+      // Re-render dropdown without filter
+      if (allCommoditiesList.length > 0) {
+        renderKomoditasDropdown(allCommoditiesList, '');
+      }
+      
+      // Hide search input if no tags
+      if (selectedKomoditasList.length === 0) {
+        hideSearchInput();
+      } else {
+        filterKomoditasSearch.focus();
+      }
+    });
+
+    // Chevron click handler
+    filterKomoditasChevron.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const isVisible = filterKomoditasDropdown.style.display === 'block';
+      if (isVisible) {
+        hideKomoditasDropdown();
+      } else {
+        showKomoditasDropdown();
+      }
+    });
+  }
+
+  // Function to load all komoditas (umum, sub, spesifik) in one dropdown
+  function loadAllKomoditas(year = null) {
+    filterKomoditasDropdown.innerHTML = '<div style="padding: 10px 12px; color: #6c757d;">Memuat...</div>';
+    
+    // Load all flags in parallel
+    const promises = [];
+    
+    // Load Flag 1 (Umum)
+    let url1 = `${API_ROUTES.komoditasByFlag}?flag=1`;
+    if (year) url1 += `&year=${year}`;
+    promises.push(fetch(url1).then(r => r.json()).then(d => ({ flag: '1', data: d })).catch(e => ({ flag: '1', data: { status: 'error', data: [] } })));
+    
+    // Load Flag 2 (Sub) - load all sub komoditas
+    let url2 = `${API_ROUTES.komoditasByFlag}?flag=2`;
+    if (year) url2 += `&year=${year}`;
+    promises.push(fetch(url2).then(r => r.json()).then(d => ({ flag: '2', data: d })).catch(e => ({ flag: '2', data: { status: 'error', data: [] } })));
+    
+    // Load Flag 3 (Spesifik)
+    let url3 = `${API_ROUTES.komoditasByFlag}?flag=3`;
+    if (year) url3 += `&year=${year}`;
+    promises.push(fetch(url3).then(r => r.json()).then(d => ({ flag: '3', data: d })).catch(e => ({ flag: '3', data: { status: 'error', data: [] } })));
+    
+    Promise.all(promises)
+      .then(results => {
+        filterKomoditasDropdown.innerHTML = '';
+        
+        const allCommodities = [];
+        
+        // Process Flag 1 (Umum)
+        if (results[0].data.status === 'success' && results[0].data.data && results[0].data.data.length > 0) {
+          const uniqueUmum = {};
+          results[0].data.data.forEach(k => {
+            if (!uniqueUmum[k.commodity_code]) {
+              uniqueUmum[k.commodity_code] = k.commodity_name;
+            }
+          });
+          Object.entries(uniqueUmum).forEach(([code, name]) => {
+            allCommodities.push({ code, name, flag: '1', type: 'Umum' });
+          });
+        }
+        
+        // Process Flag 2 (Sub)
+        if (results[1].data.status === 'success' && results[1].data.data && results[1].data.data.length > 0) {
+          results[1].data.data.forEach(k => {
+            allCommodities.push({ code: k.commodity_code, name: k.commodity_name, flag: '2', type: 'Sub' });
+          });
+        }
+        
+        // Process Flag 3 (Spesifik)
+        if (results[2].data.status === 'success' && results[2].data.data && results[2].data.data.length > 0) {
+          results[2].data.data.forEach(k => {
+            allCommodities.push({ code: k.commodity_code, name: k.commodity_name, flag: '3', type: 'Spesifik' });
+          });
+        }
+        
+        // Store all commodities for search
+        allCommoditiesList = allCommodities;
+        
+        // Render dropdown with current search term
+        renderKomoditasDropdown(allCommodities, filterKomoditasSearch.value.trim());
+      })
+      .catch(error => {
+        console.error('Error loading komoditas:', error);
+        filterKomoditasDropdown.innerHTML = '<div style="padding: 10px 12px; color: #dc3545;">Error memuat data</div>';
+        allCommoditiesList = [];
+      });
+  }
+
+  // Function to render dropdown with search filter
+  function renderKomoditasDropdown(commodities, searchTerm = '') {
+    filterKomoditasDropdown.innerHTML = '';
+    
+    // Filter commodities based on search term
+    let filteredCommodities = commodities;
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      filteredCommodities = commodities.filter(c => 
+        c.code.toLowerCase().includes(searchLower) || 
+        c.name.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    if (filteredCommodities.length === 0) {
+      filterKomoditasDropdown.innerHTML = '<div style="padding: 10px 12px; color: #6c757d;">Tidak ada hasil ditemukan</div>';
+      return;
+    }
+    
+    // Sort by code
+    filteredCommodities.sort((a, b) => a.code.localeCompare(b.code));
+    
+    // Group by type for better organization
+    const grouped = {
+      'Umum': filteredCommodities.filter(c => c.type === 'Umum'),
+      'Sub': filteredCommodities.filter(c => c.type === 'Sub'),
+      'Spesifik': filteredCommodities.filter(c => c.type === 'Spesifik')
+    };
+    
+    // Add section headers and options
+    ['Umum', 'Sub', 'Spesifik'].forEach(type => {
+      if (grouped[type].length > 0) {
+        // Add section header
+        const header = document.createElement('div');
+        header.className = 'komoditas-section-header';
+        header.style.cssText = 'padding: 8px 12px; background-color: #f8f9fa; font-weight: 600; font-size: 12px; color: #666; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 10;';
+        header.textContent = `Komoditas ${type}`;
+        filterKomoditasDropdown.appendChild(header);
+        
+        // Add options
+        grouped[type].forEach(commodity => {
+          const option = document.createElement('div');
+          option.className = 'filter-option-komoditas';
+          option.setAttribute('data-value', commodity.code);
+          option.setAttribute('data-name', commodity.name);
+          option.setAttribute('data-flag', commodity.flag);
+          option.setAttribute('data-type', commodity.type);
+          option.style.cssText = 'padding: 10px 12px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0; padding-left: 24px;';
+          
+          // Format: [CODE] Name
+          option.innerHTML = `<span style="color: #666; font-weight: 500;">[${commodity.code}]</span> <span>${commodity.name}</span>`;
+          
+          // Check if already selected
+          if (selectedKomoditasList.find(c => c.code === commodity.code)) {
+            option.classList.add('selected');
+          }
+          
+          filterKomoditasDropdown.appendChild(option);
+        });
+      }
+    });
+  }
+
+  // Update tags display
+  function updateKomoditasTags() {
+    filterKomoditasTags.innerHTML = '';
+    
+    // Show/hide placeholder and tags based on selection
+    if (selectedKomoditasList.length > 0) {
+      filterKomoditasPlaceholder.style.display = 'none';
+      filterKomoditasTags.style.display = 'flex';
+    } else {
+      // Only show placeholder if search input is hidden
+      if (filterKomoditasSearch.style.display === 'none' || filterKomoditasSearch.value.trim() === '') {
+        filterKomoditasPlaceholder.style.display = 'inline';
+      } else {
+        filterKomoditasPlaceholder.style.display = 'none';
+      }
+      filterKomoditasTags.style.display = 'none';
+    }
+    
+    selectedKomoditasList.forEach(commodity => {
+      const tag = document.createElement('span');
+      tag.className = 'filter-tag';
+      tag.style.cssText = 'display: inline-flex; align-items: center; background-color: #e7f3ff; color: #0066cc; padding: 4px 8px; border-radius: 4px; font-size: 12px; gap: 6px; white-space: nowrap;';
+      tag.innerHTML = `
+        <span>[${commodity.code}] ${commodity.name}</span>
+        <button type="button" class="tag-remove" data-value="${commodity.code}" style="background: none; border: none; color: #0066cc; cursor: pointer; font-size: 16px; line-height: 1; padding: 0; margin-left: 4px;">×</button>
+      `;
+      
+      // Handle tag removal
+      const removeBtn = tag.querySelector('.tag-remove');
+      removeBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const code = this.getAttribute('data-value');
+        selectedKomoditasList = selectedKomoditasList.filter(c => c.code !== code);
+        
+        // Update option selection state
+        const option = filterKomoditasDropdown.querySelector(`[data-value="${code}"]`);
+        if (option) {
+          option.classList.remove('selected');
+        }
+        
+        updateKomoditasTags();
+        updateClearButton();
+        checkFilterValidity();
+      });
+      
+      filterKomoditasTags.appendChild(tag);
+    });
+  }
+
+  // Update clear button visibility
+  function updateClearButton() {
+    if (selectedKomoditasList.length > 0 || filterKomoditasSearch.value.trim() !== '') {
+      filterKomoditasClear.style.display = 'block';
+    } else {
+      filterKomoditasClear.style.display = 'none';
+    }
+  }
+
+  // Show search input and hide placeholder
+  function showSearchInput() {
+    if (selectedKomoditasList.length === 0) {
+      filterKomoditasPlaceholder.style.display = 'none';
+    }
+    filterKomoditasSearch.style.display = 'block';
+    setTimeout(() => {
+      filterKomoditasSearch.focus();
+    }, 10);
+  }
+
+  // Hide search input and show placeholder if no tags
+  function hideSearchInput() {
+    if (selectedKomoditasList.length === 0 && filterKomoditasSearch.value.trim() === '') {
+      filterKomoditasPlaceholder.style.display = 'inline';
+      filterKomoditasSearch.style.display = 'none';
+      filterKomoditasSearch.value = '';
+    }
+  }
+
+  // Check if filter is valid and enable/disable button
+  function checkFilterValidity() {
+    const hasCommodity = selectedKomoditasList.length > 0;
+    btnCari.disabled = !hasCommodity;
+  }
+
+  // Initialize dropdown toggles (only once)
+  initTahunDropdownToggle();
+  initKomoditasDropdownToggle();
+
+  // Setup click outside handlers
+  setupTahunClickOutside();
+  setupKomoditasClickOutside();
+
+  // Setup search input
+  setupSearchInput();
+
+  // Setup Tahun dropdown options
+  setupOptionHandlers(filterTahunDropdown, 'filter-option-tahun', filterTahunPlaceholder, filterTahunSelected, filterTahunWrapper, function(value, text, element) {
+    selectedKomoditas.tahun = value;
+    // Reload all komoditas for this year
+    loadAllKomoditas(value);
+    checkFilterValidity();
+  });
+
+  // Setup Komoditas dropdown options (multiple selection)
+  filterKomoditasDropdown.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const option = e.target.closest('.filter-option-komoditas');
+    if (!option) return;
+    
+    e.stopPropagation();
+    const code = option.getAttribute('data-value');
+    const name = option.getAttribute('data-name');
+    const flag = option.getAttribute('data-flag');
+    const type = option.getAttribute('data-type');
+    
+    // Toggle selection
+    const existingIndex = selectedKomoditasList.findIndex(c => c.code === code);
+    if (existingIndex >= 0) {
+      // Remove from selection
+      selectedKomoditasList.splice(existingIndex, 1);
+      option.classList.remove('selected');
+    } else {
+      // Add to selection
+      selectedKomoditasList.push({ code, name, flag, type });
+      option.classList.add('selected');
+    }
+    
+    updateKomoditasTags();
+    updateClearButton();
+    checkFilterValidity();
+    
+    // Clear search and keep dropdown open
+    filterKomoditasSearch.value = '';
+    updateClearButton();
+    renderKomoditasDropdown(allCommoditiesList, '');
+  });
+
+  // Initially load all komoditas (all years) - use setTimeout to ensure DOM is ready
+  setTimeout(function() {
+    loadAllKomoditas();
+  }, 100);
+
+  // Apply button
+  btnCari.addEventListener('click', function() {
+    if (selectedKomoditasList.length > 0) {
+      loadMultipleKomoditasChart(selectedKomoditasList, selectedKomoditas.tahun);
+      showSelectedKomoditasInfo();
+    }
+  });
+
+  // Clear button
+  btnClear.addEventListener('click', function() {
+    // Reset all selections
+    selectedKomoditas.tahun = null;
+    selectedKomoditasList = [];
+    
+    // Reset UI
+    filterTahunPlaceholder.style.display = 'inline';
+    filterTahunSelected.style.display = 'none';
+    filterTahunDropdown.querySelectorAll('.filter-option-tahun').forEach(opt => opt.classList.remove('selected'));
+    
+    filterKomoditasTags.innerHTML = '';
+    filterKomoditasSearch.value = '';
+    filterKomoditasDropdown.querySelectorAll('.filter-option-komoditas').forEach(opt => opt.classList.remove('selected'));
+    updateClearButton();
+    hideKomoditasDropdown();
+    hideSearchInput();
+    
+    btnCari.disabled = true;
+    document.getElementById('selectedKomoditasInfo').style.display = 'none';
+    document.getElementById('komoditasChartSection').style.display = 'none';
+    
+    // Reload all komoditas (all years)
+    loadAllKomoditas();
+    
+    // Pastikan dropdown tetap di wrapper
+    if (filterTahunDropdown.parentNode !== filterTahunWrapper) {
+      filterTahunWrapper.appendChild(filterTahunDropdown);
+    }
+    if (filterKomoditasDropdown.parentNode !== filterKomoditasWrapper) {
+      filterKomoditasWrapper.appendChild(filterKomoditasDropdown);
+    }
+  });
+
+  function showSelectedKomoditasInfo() {
+    let text = '';
+    if (selectedKomoditas.tahun) text += `Tahun: ${selectedKomoditas.tahun}`;
+    if (selectedKomoditasList.length > 0) {
+      text += ` | Komoditas: ${selectedKomoditasList.map(c => c.name).join(', ')}`;
+    }
+    
+    document.getElementById('selectedKomoditasText').textContent = text;
+    document.getElementById('selectedKomoditasInfo').style.display = 'block';
+  }
+}
+
+// Load multiple komoditas chart
+function loadMultipleKomoditasChart(commodities, year) {
+  if (!commodities || commodities.length === 0) {
+    alert('Pilih komoditas terlebih dahulu.');
+    return;
+  }
+
+  // Load data for all commodities in parallel
+  const promises = commodities.map(commodity => {
+    let url = `${API_ROUTES.inflasiPerKomoditas}?commodity_code=${commodity.code}`;
+    if (year) {
+      url += `&year=${year}`;
+    }
+    return fetch(url)
+      .then(response => response.json())
+      .then(data => ({
+        commodity: commodity,
+        data: data.status === 'success' ? data.data : []
+      }))
+      .catch(error => {
+        console.error(`Error loading data for ${commodity.name}:`, error);
+        return { commodity: commodity, data: [] };
+      });
+  });
+
+  Promise.all(promises)
+    .then(results => {
+      // Filter out commodities with no data
+      const validResults = results.filter(r => r.data.length > 0);
+      
+      if (validResults.length === 0) {
+        alert('Data untuk komoditas yang dipilih tidak tersedia.');
+        return;
+      }
+
+      renderMultipleKomoditasChart(validResults, year);
+      document.getElementById('komoditasChartSection').style.display = 'block';
+    })
+    .catch(error => {
+      console.error('Error loading multiple komoditas chart:', error);
+      alert('Terjadi kesalahan saat memuat data.');
+    });
+}
+
+// Load single komoditas chart (kept for backward compatibility)
+function loadKomoditasChart(commodityCode, commodityName, year) {
+  let url = `${API_ROUTES.inflasiPerKomoditas}?commodity_code=${commodityCode}`;
+  if (year) {
+    url += `&year=${year}`;
+  }
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success' && data.data.length > 0) {
+        renderKomoditasChart(data.data, commodityName);
+        document.getElementById('komoditasChartSection').style.display = 'block';
+      } else {
+        alert('Data untuk komoditas ini tidak tersedia.');
+      }
+    })
+    .catch(error => {
+      console.error('Error loading komoditas chart:', error);
+      alert('Terjadi kesalahan saat memuat data.');
+    });
+}
+
+// Render Multiple Komoditas Chart
+function renderMultipleKomoditasChart(results, year) {
+  if (!perKomoditasChart) {
+    console.error('perKomoditasChart is not initialized');
+    return;
+  }
+
+  // Process all data
+  const allData = {};
+  const commodityNames = [];
+  const colors = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#ec4899', '#84cc16', '#6366f1', '#14b8a6'];
+  
+  results.forEach((result, index) => {
+    const commodity = result.commodity;
+    const data = result.data;
+    
+    if (data.length > 0) {
+      commodityNames.push(commodity.name);
+      
+      // Sort data
+      const sortedData = data.sort((a, b) => {
+        if (a.year !== b.year) return a.year - b.year;
+        return monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month);
+      });
+      
+      // Create key for each month-year combination
+      sortedData.forEach(d => {
+        const key = `${d.year}-${d.month}`;
+        if (!allData[key]) {
+          allData[key] = { year: d.year, month: d.month, monthName: monthNames[d.month] };
+        }
+        if (!allData[key][commodity.code]) {
+          allData[key][commodity.code] = d.value ? parseFloat(d.value) : null;
+        }
+      });
+    }
+  });
+
+  if (commodityNames.length === 0) {
+    console.warn('No valid data for chart');
+    return;
+  }
+
+  // Get all unique month-year combinations and sort
+  const labels = Object.keys(allData)
+    .sort((a, b) => {
+      const [yearA, monthA] = a.split('-');
+      const [yearB, monthB] = b.split('-');
+      if (yearA !== yearB) return yearA - yearB;
+      return monthOrder.indexOf(monthA) - monthOrder.indexOf(monthB);
+    })
+    .map(key => {
+      const data = allData[key];
+      return `${data.monthName} ${data.year}`;
+    });
+
+  // Create series for each commodity
+  const series = results.map((result, index) => {
+    const commodity = result.commodity;
+    const values = labels.map((label, labelIndex) => {
+      const key = Object.keys(allData).sort((a, b) => {
+        const [yearA, monthA] = a.split('-');
+        const [yearB, monthB] = b.split('-');
+        if (yearA !== yearB) return yearA - yearB;
+        return monthOrder.indexOf(monthA) - monthOrder.indexOf(monthB);
+      })[labelIndex];
+      return allData[key] && allData[key][commodity.code] !== undefined ? allData[key][commodity.code] : null;
+    });
+
+    return {
+      name: commodity.name,
+      type: 'line',
+      smooth: false,
+      data: values,
+      symbol: 'circle',
+      symbolSize: 6,
+      lineStyle: {
+        width: 2,
+        color: colors[index % colors.length]
+      },
+      itemStyle: {
+        color: colors[index % colors.length],
+        borderWidth: 2,
+        borderColor: '#fff'
+      },
+      emphasis: {
+        itemStyle: {
+          borderWidth: 3,
+          shadowBlur: 10,
+          shadowColor: 'rgba(0, 0, 0, 0.3)'
+        },
+        lineStyle: {
+          width: 3
+        }
+      }
+    };
+  });
+
+  // Store data for export
+  const exportData = [];
+  labels.forEach((label, index) => {
+    const key = Object.keys(allData).sort((a, b) => {
+      const [yearA, monthA] = a.split('-');
+      const [yearB, monthB] = b.split('-');
+      if (yearA !== yearB) return yearA - yearB;
+      return monthOrder.indexOf(monthA) - monthOrder.indexOf(monthB);
+    })[index];
+    const row = { label, year: allData[key].year, month: allData[key].month };
+    results.forEach(result => {
+      row[result.commodity.name] = allData[key][result.commodity.code];
+    });
+    exportData.push(row);
+  });
+
+  window.chartData.komoditas = {
+    data: exportData,
+    name: commodityNames.join(', '),
+    year: year,
+    commodities: results.map(r => r.commodity)
+  };
+
+  const chartTitle = commodityNames.length === 1 
+    ? `Inflasi ${commodityNames[0]}` 
+    : `Inflasi Multiple Komoditas (${commodityNames.length})`;
+  document.getElementById('komoditasChartTitle').textContent = chartTitle;
+
+  const needsRotation = labels.length > 6;
+  const bottomPadding = needsRotation ? '15%' : '10%';
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: 'rgba(50, 50, 50, 0.9)',
+      borderColor: '#8b5cf6',
+      borderWidth: 1,
+      textStyle: {
+        color: '#fff',
+        fontSize: 12
+      }
+    },
+    legend: {
+      data: commodityNames,
+      top: '5%',
+      textStyle: {
+        fontSize: 11
+      }
+    },
+    grid: {
+      left: '8%',
+      right: '4%',
+      top: '15%',
+      bottom: bottomPadding,
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: labels,
+      axisLine: {
+        lineStyle: {
+          color: '#e0e0e0'
+        }
+      },
+      axisLabel: {
+        rotate: needsRotation ? 45 : 0,
+        interval: labels.length <= 12 ? 0 : Math.max(0, Math.floor(labels.length / 12)),
+        fontSize: 11,
+        color: '#666',
+        margin: needsRotation ? 15 : 8
+      },
+      splitLine: {
+        show: false
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Inflasi (%)',
+      nameLocation: 'middle',
+      nameGap: 50,
+      nameTextStyle: {
+        fontSize: 12,
+        color: '#666'
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#e0e0e0'
+        }
+      },
+      axisLabel: {
+        formatter: '{value}%',
+        fontSize: 11,
+        color: '#666'
+      },
+      splitLine: {
+        lineStyle: {
+          color: '#f0f0f0',
+          type: 'dashed'
+        }
+      }
+    },
+    series: series
+  };
+
+  setTimeout(() => {
+    if (perKomoditasChart) {
+      perKomoditasChart.resize();
+      perKomoditasChart.setOption(option, true);
+    }
+  }, 100);
+}
+
+// Render Komoditas Chart (single)
+function renderKomoditasChart(data, komoditasName) {
+  if (!perKomoditasChart) {
+    console.error('perKomoditasChart is not initialized');
+    return;
+  }
+  
+  if (!data || data.length === 0) {
+    console.warn('No data available for komoditas chart');
+    return;
+  }
+  
+  const sortedData = data.sort((a, b) => {
+    if (a.year !== b.year) return a.year - b.year;
+    return monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month);
+  });
+
+  // Check if data is from single year
+  const uniqueYears = [...new Set(sortedData.map(d => d.year))];
+  const isSingleYear = uniqueYears.length === 1;
+
+  const labels = sortedData.map(d => `${monthNames[d.month]} ${d.year}`);
+  const values = sortedData.map(d => d.value ? parseFloat(d.value) : null);
+
+  // Store data for export
+  window.chartData.komoditas = {
+    data: sortedData,
+    name: komoditasName,
+    year: uniqueYears.length > 0 ? uniqueYears[0] : null
+  };
+
+  document.getElementById('komoditasChartTitle').textContent = `Inflasi ${komoditasName}`;
+
+  // Calculate dynamic bottom padding based on label rotation
+  const needsRotation = labels.length > 6;
+  const bottomPadding = needsRotation ? '15%' : '10%';
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: 'rgba(50, 50, 50, 0.9)',
+      borderColor: '#8b5cf6',
+      borderWidth: 1,
+      textStyle: {
+        color: '#fff',
+        fontSize: 12
+      },
+      formatter: function(params) {
+        const param = params[0];
+        const monthFull = sortedData[param.dataIndex] ? sortedData[param.dataIndex].month : '';
+        const year = sortedData[param.dataIndex] ? sortedData[param.dataIndex].year : '';
+        return `<strong>${monthFull} ${year}</strong><br/>${param.seriesName}: ${param.value !== null ? param.value.toFixed(2) + '%' : '-'}`;
+      }
+    },
+    grid: {
+      left: '8%',
+      right: '4%',
+      top: '10%',
+      bottom: bottomPadding,
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: labels,
+      axisLine: {
+        lineStyle: {
+          color: '#e0e0e0'
+        }
+      },
+      axisLabel: {
+        rotate: needsRotation ? 45 : 0,
+        interval: labels.length <= 12 ? 0 : Math.max(0, Math.floor(labels.length / 12)),
+        fontSize: 11,
+        color: '#666',
+        formatter: function(value) {
+          // Show only month abbreviation if single year, or month + year if multiple years
+          if (isSingleYear) {
+            return value.split(' ')[0]; // Only month
+          }
+          return value;
+        },
+        margin: needsRotation ? 15 : 8
+      },
+      splitLine: {
+        show: false
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: 'Inflasi (%)',
+      nameLocation: 'middle',
+      nameGap: 50,
+      nameTextStyle: {
+        fontSize: 12,
+        color: '#666'
+      },
+      axisLine: {
+        lineStyle: {
+          color: '#e0e0e0'
+        }
+      },
+      axisLabel: {
+        formatter: '{value}%',
+        fontSize: 11,
+        color: '#666'
+      },
+      splitLine: {
+        lineStyle: {
+          color: '#f0f0f0',
+          type: 'dashed'
+        }
+      }
+    },
+    series: [{
+      name: `Inflasi ${komoditasName}`,
+      type: 'line',
+      smooth: false,
+      data: values,
+      symbol: 'circle',
+      symbolSize: 6,
+      lineStyle: {
+        width: 2,
+        color: '#8b5cf6'
+      },
+      itemStyle: {
+        color: '#8b5cf6',
+        borderWidth: 2,
+        borderColor: '#fff'
+      },
+      emphasis: {
+        itemStyle: {
+          color: '#7c3aed',
+          borderColor: '#8b5cf6',
+          borderWidth: 3,
+          shadowBlur: 10,
+          shadowColor: 'rgba(139, 92, 246, 0.5)'
+        },
+        lineStyle: {
+          width: 3
+        }
+      },
+      areaStyle: {
+        color: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [{
+            offset: 0, color: 'rgba(139, 92, 246, 0.3)'
+          }, {
+            offset: 1, color: 'rgba(139, 92, 246, 0.05)'
+          }]
+        }
+      }
+    }]
+  };
+
+  // Resize chart to ensure proper rendering
+  setTimeout(() => {
+    if (perKomoditasChart) {
+      perKomoditasChart.resize();
+      perKomoditasChart.setOption(option, true);
+    }
+  }, 100);
+}
+
+// Load komoditas explanation
+function loadKomoditasExplanation() {
+  // Get all unique komoditas umum (flag 1) from all years
+  fetch(`${API_ROUTES.inflasiPerKomoditas}?flag=1`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success' && data.data.length > 0) {
+        // Get unique komoditas umum and sort by code
+        const uniqueUmum = {};
+        data.data.forEach(k => {
+          if (!uniqueUmum[k.commodity_code]) {
+            uniqueUmum[k.commodity_code] = {
+              code: k.commodity_code,
+              name: k.commodity_name
+            };
+          }
+        });
+        
+        // Sort komoditas umum by code (numeric sort)
+        const komoditasUmumList = Object.values(uniqueUmum).sort((a, b) => {
+          const codeA = parseInt(a.code) || a.code;
+          const codeB = parseInt(b.code) || b.code;
+          return codeA - codeB;
+        });
+        
+        // Get latest year for filtering sub komoditas
+        const latestYear = Math.max(...data.data.map(k => k.year));
+        
+        // For each komoditas umum, get its sub komoditas (flag 2) using the correct API
+        Promise.all(komoditasUmumList.map(k => {
+          return fetch(`${API_ROUTES.komoditasByFlag}?flag=2&year=${latestYear}&parent_code=${k.code}`)
+            .then(res => res.json())
+            .then(subData => {
+              // Get unique sub komoditas and sort by name
+              const uniqueSub = {};
+              if (subData.status === 'success' && subData.data.length > 0) {
+                subData.data.forEach(s => {
+                  if (!uniqueSub[s.commodity_code]) {
+                    uniqueSub[s.commodity_code] = s.commodity_name;
+                  }
+                });
+              }
+              
+              // Convert to array and sort by name
+              const subList = Object.values(uniqueSub).sort((a, b) => a.localeCompare(b));
+              
+              return {
+                umum: k,
+                sub: subList
+              };
+            })
+            .catch(error => {
+              console.error(`Error loading sub komoditas for ${k.code}:`, error);
+              return {
+                umum: k,
+                sub: []
+              };
+            });
+        })).then(results => {
+          let html = '<div class="row">';
+          
+          results.forEach((result, index) => {
+            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16'];
+            const colorIndex = index % colors.length;
+            const borderColor = colors[colorIndex];
+            
+            html += `
+              <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm" style="border-left: 4px solid ${borderColor}; border-radius: 8px; transition: transform 0.2s, box-shadow 0.2s;" 
+                     onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.15)';" 
+                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">
+                  <div class="card-body" style="padding: 20px;">
+                    <h6 style="color: ${borderColor}; font-weight: 600; margin-bottom: 15px; font-size: 15px; line-height: 1.4;">
+                      <i class="fas fa-box me-2" style="font-size: 14px;"></i>${result.umum.name}
+                    </h6>
+                    ${result.sub.length > 0 ? `
+                      <div style="margin-bottom: 12px;">
+                        <span style="font-size: 12px; color: #666; font-weight: 500; background: #f8f9fa; padding: 4px 10px; border-radius: 12px; display: inline-block;">
+                          <i class="fas fa-list me-1"></i>${result.sub.length} Sub Komoditas
+                        </span>
+                      </div>
+                      <div style="max-height: 200px; overflow-y: auto; padding-right: 5px;">
+                        <ul style="font-size: 13px; color: #555; margin-left: 20px; margin-bottom: 0; line-height: 1.8;">
+                          ${result.sub.map(s => `<li style="margin-bottom: 4px;">${s}</li>`).join('')}
+                        </ul>
+                      </div>
+                    ` : `
+                      <p style="font-size: 12px; color: #999; margin-bottom: 0; font-style: italic;">
+                        <i class="fas fa-info-circle me-1"></i>Tidak ada sub komoditas
+                      </p>
+                    `}
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+          
+          html += '</div>';
+          document.getElementById('komoditasExplanation').innerHTML = html || 
+            '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Data komoditas belum tersedia.</div>';
+        }).catch(error => {
+          console.error('Error loading sub komoditas:', error);
+          document.getElementById('komoditasExplanation').innerHTML = 
+            '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>Terjadi kesalahan saat memuat penjelasan komoditas.</div>';
+        });
+      } else {
+        document.getElementById('komoditasExplanation').innerHTML = 
+          '<div class="alert alert-info"><i class="fas fa-info-circle me-2"></i>Data komoditas belum tersedia. Silakan sinkronisasi data terlebih dahulu.</div>';
+      }
+    })
+    .catch(error => {
+      console.error('Error loading komoditas explanation:', error);
+      document.getElementById('komoditasExplanation').innerHTML = 
+        '<div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i>Terjadi kesalahan saat memuat penjelasan komoditas.</div>';
+    });
+}
+
+// ========== Export Functions ==========
+
+// Store chart instances and data globally for export functions
+window.chartInstances = {
+  mtoM: null,
+  yonY: null,
+  komoditas: null
+};
+
+window.chartData = {
+  mtoM: [],
+  yonY: [],
+  komoditas: { data: [], name: '', year: null }
+};
+
+// Update chart data when charts are rendered
+function updateChartData() {
+  if (allInflasiData && allInflasiData.length > 0) {
+    // If no year selected, use latest year from data
+    let yearToFilter = selectedYear;
+    if (!yearToFilter && allInflasiData.length > 0) {
+      yearToFilter = Math.max(...allInflasiData.map(d => d.year));
+    }
+    const filteredData = yearToFilter ? allInflasiData.filter(d => d.year == yearToFilter) : allInflasiData;
+    const sortedData = filteredData.sort((a, b) => {
+      if (a.year !== b.year) return a.year - b.year;
+      return monthOrder.indexOf(a.month) - monthOrder.indexOf(b.month);
+    });
+    
+    window.chartData.mtoM = sortedData.map(d => ({
+      year: d.year,
+      month: d.month,
+      value: d.bulanan ? parseFloat(d.bulanan) : null
+    }));
+    
+    window.chartData.yonY = sortedData.map(d => ({
+      year: d.year,
+      month: d.month,
+      value: d.yoy ? parseFloat(d.yoy) : null
+    }));
+  }
+}
+
+// Update chart instances reference after initialization
+function updateChartInstances() {
+  if (window.chartInstances) {
+    window.chartInstances.mtoM = mtoMChart;
+    window.chartInstances.yonY = yonYChart;
+    window.chartInstances.komoditas = perKomoditasChart;
+  }
+}
+
+// Export MtoM Chart to Excel
+function exportMtoMToExcel() {
+  if (!window.chartData.mtoM || window.chartData.mtoM.length === 0) {
+    alert('Data belum tersedia. Silakan tunggu hingga grafik dimuat.');
+    return;
+  }
+  
+  const exportData = [['Bulan', 'Tahun', 'Inflasi Bulan ke Bulan (%)']];
+  const monthNamesFull = {
+    'JANUARI': 'Januari', 'FEBRUARI': 'Februari', 'MARET': 'Maret', 'APRIL': 'April',
+    'MEI': 'Mei', 'JUNI': 'Juni', 'JULI': 'Juli', 'AGUSTUS': 'Agustus',
+    'SEPTEMBER': 'September', 'OKTOBER': 'Oktober', 'NOPEMBER': 'November', 'DESEMBER': 'Desember'
+  };
+  
+  window.chartData.mtoM.forEach(item => {
+    const monthName = monthNamesFull[item.month] || item.month;
+    const value = item.value !== null ? item.value.toFixed(2) : 'Data tidak tersedia';
+    exportData.push([monthName, item.year.toString(), value]);
+  });
+  
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(exportData);
+  ws['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 25 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Data Inflasi MtoM');
+  XLSX.writeFile(wb, `Inflasi_Bulan_ke_Bulan_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.xlsx`);
+}
+
+// Export YoY Chart to Excel
+function exportYonYToExcel() {
+  if (!window.chartData.yonY || window.chartData.yonY.length === 0) {
+    alert('Data belum tersedia. Silakan tunggu hingga grafik dimuat.');
+    return;
+  }
+  
+  const exportData = [['Bulan', 'Tahun', 'Inflasi Tahun ke Tahun (%)']];
+  const monthNamesFull = {
+    'JANUARI': 'Januari', 'FEBRUARI': 'Februari', 'MARET': 'Maret', 'APRIL': 'April',
+    'MEI': 'Mei', 'JUNI': 'Juni', 'JULI': 'Juli', 'AGUSTUS': 'Agustus',
+    'SEPTEMBER': 'September', 'OKTOBER': 'Oktober', 'NOPEMBER': 'November', 'DESEMBER': 'Desember'
+  };
+  
+  window.chartData.yonY.forEach(item => {
+    const monthName = monthNamesFull[item.month] || item.month;
+    const value = item.value !== null ? item.value.toFixed(2) : 'Data tidak tersedia';
+    exportData.push([monthName, item.year.toString(), value]);
+  });
+  
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(exportData);
+  ws['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 25 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Data Inflasi YoY');
+  XLSX.writeFile(wb, `Inflasi_Tahun_ke_Tahun_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.xlsx`);
+}
+
+// Export Komoditas Chart to Excel
+function exportKomoditasToExcel() {
+  if (!window.chartData.komoditas || !window.chartData.komoditas.data || window.chartData.komoditas.data.length === 0) {
+    alert('Data belum tersedia. Silakan pilih komoditas terlebih dahulu.');
+    return;
+  }
+  
+  const monthNamesFull = {
+    'JANUARI': 'Januari', 'FEBRUARI': 'Februari', 'MARET': 'Maret', 'APRIL': 'April',
+    'MEI': 'Mei', 'JUNI': 'Juni', 'JULI': 'Juli', 'AGUSTUS': 'Agustus',
+    'SEPTEMBER': 'September', 'OKTOBER': 'Oktober', 'NOPEMBER': 'November', 'DESEMBER': 'Desember'
+  };
+  
+  // Check if multiple commodities
+  if (window.chartData.komoditas.commodities && window.chartData.komoditas.commodities.length > 1) {
+    // Multiple commodities export
+    const headers = ['Bulan', 'Tahun'];
+    window.chartData.komoditas.commodities.forEach(c => {
+      headers.push(`Inflasi ${c.name} (%)`);
+    });
+    const exportData = [headers];
+    
+    window.chartData.komoditas.data.forEach(item => {
+      const monthName = monthNamesFull[item.month] || item.month;
+      const row = [monthName, item.year.toString()];
+      window.chartData.komoditas.commodities.forEach(c => {
+        const value = item[c.name] !== null && item[c.name] !== undefined 
+          ? parseFloat(item[c.name]).toFixed(2) 
+          : 'Data tidak tersedia';
+        row.push(value);
+      });
+      exportData.push(row);
+    });
+    
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(exportData);
+    ws['!cols'] = [{ wch: 15 }, { wch: 10 }, ...window.chartData.komoditas.commodities.map(() => ({ wch: 30 }))];
+    const safeName = 'Multiple_Komoditas';
+    XLSX.utils.book_append_sheet(wb, ws, 'Data Inflasi Komoditas');
+    XLSX.writeFile(wb, `Inflasi_${safeName}_${window.chartData.komoditas.year || ''}_${new Date().toISOString().split('T')[0]}.xlsx`);
+  } else {
+    // Single commodity export (backward compatibility)
+    const exportData = [['Bulan', 'Tahun', `Inflasi ${window.chartData.komoditas.name} (%)`]];
+    
+    window.chartData.komoditas.data.forEach(item => {
+      const monthName = monthNamesFull[item.month] || item.month;
+      const value = item.value !== null ? parseFloat(item.value).toFixed(2) : 'Data tidak tersedia';
+      exportData.push([monthName, item.year.toString(), value]);
+    });
+    
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(exportData);
+    ws['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 30 }];
+    const safeName = window.chartData.komoditas.name.replace(/[^a-zA-Z0-9]/g, '_');
+    XLSX.utils.book_append_sheet(wb, ws, 'Data Inflasi Komoditas');
+    XLSX.writeFile(wb, `Inflasi_${safeName}_${window.chartData.komoditas.year || ''}_${new Date().toISOString().split('T')[0]}.xlsx`);
+  }
+}
+
+// Export chart to PNG
+function exportChartToPNG(chartInstance, filename) {
+  if (!chartInstance) {
+    alert('Grafik belum tersedia. Silakan tunggu hingga grafik dimuat.');
+    return;
+  }
+  const url = chartInstance.getDataURL({
+    type: 'png',
+    pixelRatio: 2,
+    backgroundColor: '#fff'
+  });
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = url;
+  link.click();
+}
+
+// Helper function to check authentication before download
+function checkAuthBeforeDownload(callback, itemName = 'data') {
+  // Check if user is authenticated via meta tag or global variable
+  <?php if(auth()->guard()->check()): ?>
+  const isAuthenticated = true;
+  <?php else: ?>
+  const isAuthenticated = false;
+  <?php endif; ?>
+  
+  if (!isAuthenticated) {
+    // User not authenticated, show login modal
+    if (typeof showLoginRequiredModal === 'function') {
+      showLoginRequiredModal(itemName);
+    } else {
+      alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+      const loginModal = document.getElementById('loginModal');
+      if (loginModal) {
+        const modal = new bootstrap.Modal(loginModal);
+        modal.show();
+      } else {
+        window.location.href = '<?php echo e(route("login")); ?>';
+      }
+    }
+    return false;
+  } else {
+    // User authenticated, proceed with download
+    callback();
+    return true;
+  }
+}
+
+// Add event listeners for download buttons
+document.addEventListener('DOMContentLoaded', function() {
+  // MtoM Chart
+  document.getElementById('downloadMtoMExcel')?.addEventListener('click', function() {
+    checkAuthBeforeDownload(exportMtoMToExcel, 'data inflasi bulan ke bulan');
+  });
+  document.getElementById('downloadMtoMPNG')?.addEventListener('click', function() {
+    checkAuthBeforeDownload(() => {
+      exportChartToPNG(window.chartInstances.mtoM, `Inflasi_Bulan_ke_Bulan_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.png`);
+    }, 'grafik inflasi bulan ke bulan');
+  });
+  
+  // YoY Chart
+  document.getElementById('downloadYonYExcel')?.addEventListener('click', function() {
+    checkAuthBeforeDownload(exportYonYToExcel, 'data inflasi tahun ke tahun');
+  });
+  document.getElementById('downloadYonYPNG')?.addEventListener('click', function() {
+    checkAuthBeforeDownload(() => {
+      exportChartToPNG(window.chartInstances.yonY, `Inflasi_Tahun_ke_Tahun_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.png`);
+    }, 'grafik inflasi tahun ke tahun');
+  });
+  
+  // Komoditas Chart
+  document.getElementById('downloadKomoditasExcel')?.addEventListener('click', function() {
+    checkAuthBeforeDownload(exportKomoditasToExcel, 'data inflasi komoditas');
+  });
+  document.getElementById('downloadKomoditasPNG')?.addEventListener('click', function() {
+    checkAuthBeforeDownload(() => {
+      const safeName = window.chartData.komoditas.name ? window.chartData.komoditas.name.replace(/[^a-zA-Z0-9]/g, '_') : 'Komoditas';
+      exportChartToPNG(window.chartInstances.komoditas, `Inflasi_${safeName}_${window.chartData.komoditas.year || ''}_${new Date().toISOString().split('T')[0]}.png`);
+    }, 'grafik inflasi komoditas');
+  });
+});
+</script>
+
+<style>
+.dashboard-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Chart scroll container - default no scroll for desktop */
+.chart-scroll-container {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.chart-scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 10px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 10px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Ensure chart containers don't overlap dropdown */
+.dashboard-card #inflasiMtoMChart,
+.dashboard-card #inflasiYonYChart,
+.dashboard-card #inflasiPerKomoditasChart {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  width: 100% !important;
+}
+
+.chart-responsive {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.form-select:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+/* Download button responsive */
+@media (max-width: 768px) {
+  #downloadMtoMExcel, #downloadMtoMPNG,
+  #downloadYonYExcel, #downloadYonYPNG,
+  #downloadKomoditasExcel, #downloadKomoditasPNG {
+    padding: 3px 8px !important;
+    font-size: 11px !important;
+  }
+  
+  #downloadMtoMExcel i, #downloadMtoMPNG i,
+  #downloadYonYExcel i, #downloadYonYPNG i,
+  #downloadKomoditasExcel i, #downloadKomoditasPNG i {
+    font-size: 10px !important;
+  }
+  
+  #downloadMtoMExcel span, #downloadMtoMPNG span,
+  #downloadYonYExcel span, #downloadYonYPNG span,
+  #downloadKomoditasExcel span, #downloadKomoditasPNG span {
+    display: none;
+  }
+
+  /* Enable scroll on tablet and mobile only */
+  .chart-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+    padding-bottom: 10px;
+  }
+  
+  .chart-responsive {
+    min-width: 600px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  #downloadMtoMExcel, #downloadMtoMPNG,
+  #downloadYonYExcel, #downloadYonYPNG,
+  #downloadKomoditasExcel, #downloadKomoditasPNG {
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+  }
+  
+  #downloadMtoMExcel i, #downloadMtoMPNG i,
+  #downloadYonYExcel i, #downloadYonYPNG i,
+  #downloadKomoditasExcel i, #downloadKomoditasPNG i {
+    font-size: 12px !important;
+    margin: 0 !important;
+  }
+
+  /* Make charts more scrollable on mobile phones */
+  .chart-scroll-container {
+    padding-bottom: 12px;
+  }
+  
+  .chart-responsive {
+    min-width: 700px !important;
+  }
+
+  .dashboard-card {
+    padding: 15px !important;
+  }
+}
+
+/* Custom Dropdown Styles */
+.custom-dropdown {
+  position: relative;
+  z-index: 500;
+}
+
+.custom-dropdown .dropdown-toggle:hover {
+  border-color: #999;
+}
+
+.custom-dropdown .dropdown-menu {
+  max-height: 192px; /* 6 items * 32px (8px padding * 2 + 16px line height) */
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: absolute !important;
+  z-index: 500 !important;
+}
+
+.custom-dropdown .dropdown-item {
+  line-height: 1.5;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: background-color 0.2s ease;
+  z-index: 500;
+}
+
+.custom-dropdown .dropdown-item:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.custom-dropdown .dropdown-item:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.custom-dropdown .dropdown-item[data-selected="true"] {
+  background-color: #f0f0f0 !important;
+  font-weight: 500;
+}
+
+.custom-dropdown .dropdown-item[data-selected="true"]:hover {
+  background-color: #f0f0f0 !important;
+}
+
+/* Scrollbar styling for dropdown */
+.custom-dropdown .dropdown-menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-dropdown .dropdown-menu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.custom-dropdown .dropdown-menu::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.custom-dropdown .dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Filter card exception - allow dropdown to overflow */
+.dashboard-card.filter-card {
+  overflow: visible !important;
+}
+
+/* Filter wrapper styles for Inflasi Komoditas - FIXED VERSION */
+#filterKomoditasTahunWrapper,
+#filterKomoditasWrapper {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* Dropdown styles - FIXED VERSION */
+#filterKomoditasTahunDropdown,
+#filterKomoditasDropdown {
+  z-index: 1000 !important;
+  position: absolute !important;
+  display: none !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-width: 100% !important;
+}
+
+#filterKomoditasTahunDropdown[style*="display: block"],
+#filterKomoditasDropdown[style*="display: block"] {
+  display: block !important;
+}
+
+/* Filter option styles */
+.filter-option-tahun {
+  transition: background-color 0.2s;
+}
+
+.filter-option-tahun:hover {
+  background-color: #f0f8ff !important;
+}
+
+.filter-option-tahun.selected {
+  background-color: #e7f3ff;
+}
+
+/* Input focus styles */
+#filterKomoditasTahunInput,
+#filterKomoditasUmumInput,
+#filterSubKomoditasInput,
+#filterKomoditasSpesifikInput {
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#filterKomoditasTahunInput:focus,
+#filterKomoditasTahunInput:focus-within,
+#filterKomoditasInput:focus,
+#filterKomoditasInput:focus-within {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+/* Filter tag styles */
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e7f3ff;
+  color: #0066cc;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  gap: 6px;
+}
+
+.filter-tag .tag-remove {
+  background: none;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  margin-left: 4px;
+  transition: color 0.2s;
+}
+
+.filter-tag .tag-remove:hover {
+  color: #004499;
+}
+
+.filter-option-komoditas.selected {
+  background-color: #e7f3ff;
+}
+
+.filter-option-komoditas:hover {
+  background-color: #f0f8ff !important;
+}
+
+/* Komoditas search input styles */
+#filterKomoditasSearch:focus {
+  outline: none;
+}
+
+#filterKomoditasSearch::placeholder {
+  text-align: left;
+  color: #6c757d;
+}
+
+#filterKomoditasInput:focus-within {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+#filterKomoditasClear:hover {
+  color: #333 !important;
+}
+
+#filterKomoditasChevron:hover {
+  color: #333 !important;
+}
+
+/* Komoditas dropdown option with code and name */
+.filter-option-komoditas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-option-komoditas span:first-child {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+/* Ensure dropdown is visible when open */
+#filterKomoditasDropdown[style*="display: block"] {
+  display: block !important;
+}
+</style>
+
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\Astabaya-laravel\resources\views/dashboard/indikator/inflasi.blade.php ENDPATH**/ ?>

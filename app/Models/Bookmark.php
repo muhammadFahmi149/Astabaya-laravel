@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Bookmark extends Model
 {
+    /**
+     * Indicates if the model should use updated_at timestamp.
+     * Since we only use created_at, disable updated_at.
+     */
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'user_id',
         'bookmarkable_type',
