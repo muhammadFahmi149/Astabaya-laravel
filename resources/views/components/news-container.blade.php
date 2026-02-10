@@ -371,6 +371,81 @@
             }
         }
 
+        // Update share button in modal
+        const modalShareBtn = document.querySelector('.share-news-modal-btn');
+        if (modalShareBtn) {
+            const newsId = item.news_id || item.id;
+            const newsTitle = item.title || 'Berita';
+            const newsUrl = `{{ route('news') }}?news=${newsId}`;
+            
+            modalShareBtn.setAttribute('data-news-title', newsTitle);
+            modalShareBtn.setAttribute('data-news-url', newsUrl);
+            
+            console.log('Share button updated:', { newsTitle, newsUrl }); // Debug
+            
+            // Remove any existing event listeners
+            const newShareBtn = modalShareBtn.cloneNode(true);
+            modalShareBtn.parentNode.replaceChild(newShareBtn, modalShareBtn);
+            
+            // Add click handler for share button
+            newShareBtn.addEventListener('click', async function(e) {
+                console.log('Share button clicked!'); // Debug
+                e.preventDefault();
+                const url = window.location.origin + newsUrl;
+                const title = newsTitle;
+                
+                try {
+                    // Try Clipboard API first
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(url);
+                        // Visual feedback
+                        const originalHTML = this.innerHTML;
+                        const originalClasses = this.className;
+                        this.innerHTML = '<i class="bi bi-check"></i> <span class="share-btn-text">Tersalin!</span>';
+                        this.classList.add('btn-success');
+                        this.classList.remove('btn-outline-secondary');
+                        setTimeout(() => {
+                            this.innerHTML = originalHTML;
+                            this.className = originalClasses;
+                        }, 2000);
+                        // Show toast
+                        if (typeof showShareToast === 'function') {
+                            showShareToast('Link "' + title + '" telah disalin ke clipboard');
+                        }
+                    } else {
+                        // Fallback method
+                        const textArea = document.createElement('textarea');
+                        textArea.value = url;
+                        textArea.style.position = 'fixed';
+                        textArea.style.left = '-9999px';
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        const success = document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        
+                        if (success) {
+                            // Visual feedback
+                            const originalHTML = this.innerHTML;
+                            const originalClasses = this.className;
+                            this.innerHTML = '<i class="bi bi-check"></i> <span class="share-btn-text">Tersalin!</span>';
+                            this.classList.add('btn-success');
+                            this.classList.remove('btn-outline-secondary');
+                            setTimeout(() => {
+                                this.innerHTML = originalHTML;
+                                this.className = originalClasses;
+                            }, 2000);
+                            if (typeof showShareToast === 'function') {
+                                showShareToast('Link "' + title + '" telah disalin ke clipboard');
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error copying to clipboard:', err);
+                    alert('Gagal menyalin link');
+                }
+            });
+        }
+
         // Show modal
         const modal = new bootstrap.Modal(document.getElementById('newsCardModal'));
         modal.show();

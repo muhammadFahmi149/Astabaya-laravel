@@ -415,8 +415,7 @@
                         'size' => 'sm',
                         'variant' => 'outline-secondary',
                         'showText' => true,
-                        'class' => 'share-news-modal-btn',
-                        'id' => 'modalNewsShareBtn'
+                        'class' => 'share-news-modal-btn'
                     ])
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
                 </div>
@@ -491,6 +490,7 @@
     const dataElements = document.querySelectorAll('.news-data');
     dataElements.forEach((el) => {
         newsData.push({
+            news_id: el.dataset.id || '',
             id: el.dataset.id || '',
             title: el.dataset.title || '',
             content: el.dataset.content || '',
@@ -604,26 +604,6 @@
             }
         }
 
-        // Update share button in modal
-        const modalShareBtn = document.getElementById('modalNewsShareBtn');
-        if (modalShareBtn) {
-            const newsTitle = item.title || 'Berita';
-            const newsUrl = window.location.href;
-            
-            modalShareBtn.dataset.newsTitle = newsTitle;
-            modalShareBtn.dataset.newsUrl = newsUrl;
-            
-            console.log('Share button updated:', {
-                title: newsTitle,
-                url: newsUrl,
-                button: modalShareBtn,
-                hasShowShareModal: typeof showShareModal !== 'undefined',
-                hasWindowShowShareModal: typeof window.showShareModal !== 'undefined'
-            });
-        } else {
-            console.error('Share button not found in modal!');
-        }
-
         // Update bookmark button in modal
         @auth
         const modalBookmarkBtn = document.getElementById('modalNewsBookmarkBtn');
@@ -667,6 +647,92 @@
             }
         }
         @endauth
+
+        // Update share button in modal
+        const modalShareBtn = document.querySelector('.share-news-modal-btn');
+        if (modalShareBtn) {
+            const newsId = item.news_id || item.id;
+            const newsTitle = item.title || 'Berita';
+            const newsUrl = `{{ route('news') }}?news=${newsId}`;
+            
+            modalShareBtn.setAttribute('data-news-title', newsTitle);
+            modalShareBtn.setAttribute('data-news-url', newsUrl);
+            
+            console.log('Share button updated:', { newsTitle, newsUrl }); // Debug
+            
+            // Remove any existing event listeners
+            const newShareBtn = modalShareBtn.cloneNode(true);
+            modalShareBtn.parentNode.replaceChild(newShareBtn, modalShareBtn);
+            
+            // Add click handler for share button
+            newShareBtn.addEventListener('click', async function(e) {
+                console.log('Share button clicked!'); // Debug
+                e.preventDefault();
+                const url = window.location.origin + newsUrl;
+                const title = newsTitle;
+                console.log('URL to copy:', url); // Debug
+                console.log('Button element:', this); // Debug
+                
+                try {
+                    console.log('Trying Clipboard API...'); // Debug
+                    // Try Clipboard API first
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        console.log('Clipboard API available'); // Debug
+                        await navigator.clipboard.writeText(url);
+                        console.log('Text copied successfully!'); // Debug
+                        // Visual feedback
+                        const originalHTML = this.innerHTML;
+                        const originalClasses = this.className;
+                        console.log('Original HTML:', originalHTML); // Debug
+                        console.log('Original classes:', originalClasses); // Debug
+                        this.innerHTML = '<i class="bi bi-check"></i> <span class="share-btn-text">Tersalin!</span>';
+                        this.classList.add('btn-success');
+                        this.classList.remove('btn-outline-secondary');
+                        console.log('Visual feedback applied'); // Debug
+                        setTimeout(() => {
+                            this.innerHTML = originalHTML;
+                            this.className = originalClasses;
+                            console.log('Visual feedback reset'); // Debug
+                        }, 2000);
+                        // Show toast
+                        if (typeof showShareToast === 'function') {
+                            showShareToast('Link "' + title + '" telah disalin ke clipboard');
+                        }
+                    } else {
+                        console.log('Using fallback method...'); // Debug
+                        // Fallback method
+                        const textArea = document.createElement('textarea');
+                        textArea.value = url;
+                        textArea.style.position = 'fixed';
+                        textArea.style.left = '-9999px';
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        const success = document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        console.log('Fallback copy result:', success); // Debug
+                        
+                        if (success) {
+                            // Visual feedback
+                            const originalHTML = this.innerHTML;
+                            const originalClasses = this.className;
+                            this.innerHTML = '<i class="bi bi-check"></i> <span class="share-btn-text">Tersalin!</span>';
+                            this.classList.add('btn-success');
+                            this.classList.remove('btn-outline-secondary');
+                            setTimeout(() => {
+                                this.innerHTML = originalHTML;
+                                this.className = originalClasses;
+                            }, 2000);
+                            if (typeof showShareToast === 'function') {
+                                showShareToast('Link "' + title + '" telah disalin ke clipboard');
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error copying to clipboard:', err);
+                    alert('Gagal menyalin link');
+                }
+            });
+        }
 
         // Show modal
         const modal = new bootstrap.Modal(document.getElementById('newsCardModal'));
