@@ -353,6 +353,13 @@
             
             renderInfographics();
             renderPagination();
+            
+            // Sync bookmark state after rendering (use setTimeout to ensure DOM is ready)
+            if (isAuthenticated) {
+                setTimeout(() => {
+                    syncInfographicBookmarks();
+                }, 100);
+            }
         } catch (error) {
             console.error('Error loading infographics:', error);
             const container = document.getElementById('infographicsContainer');
@@ -473,6 +480,13 @@
             buttons[view === 'grid' ? 0 : 1].classList.add('active');
         }
         renderInfographics();
+        
+        // Sync bookmark state after view change (use setTimeout to ensure DOM is ready)
+        if (isAuthenticated) {
+            setTimeout(() => {
+                syncInfographicBookmarks();
+            }, 100);
+        }
     }
 
     async function showInfographicDetail(id) {
@@ -1062,36 +1076,63 @@
             }
         });
 
-        // Load bookmarks for authenticated users
+        // Load bookmarks for authenticated users on initial page load
         if (isAuthenticated) {
-            // Check if toggleBookmark function exists, if not, load it
-            if (typeof toggleBookmark === 'undefined') {
-                // Load bookmarks and sync bookmark buttons
-                fetch('/bookmarks')
-                    .then(response => response.json())
-                    .then(data => {
-                        const bookmarks = data.bookmarks || data || [];
-                        bookmarks.forEach(bookmark => {
-                            if (bookmark.content_type === 'infographic') {
-                                const buttons = document.querySelectorAll(`.bookmark-btn[data-content-type="infographic"][data-object-id="${bookmark.object_id}"]`);
-                                buttons.forEach(btn => {
-                                    btn.classList.add('bookmarked');
-                                    const icon = btn.querySelector('i');
-                                    if (icon) {
-                                        icon.classList.remove('bi-bookmark');
-                                        icon.classList.add('bi-bookmark-fill');
-                                    }
-                                    btn.dataset.bookmarkId = String(bookmark.id);
-                                });
-                            }
-                        });
-                    })
-                    .catch(err => {
-                        console.error('Error loading bookmarks:', err);
-                    });
-            }
+            syncInfographicBookmarks();
         }
     });
+
+    // Sync infographic bookmarks after rendering
+    async function syncInfographicBookmarks() {
+        try {
+            console.log('[Bookmark Sync] Starting sync...');
+            const response = await fetch('/bookmarks', {
+                cache: 'no-cache',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            });
+            if (!response.ok) {
+                console.error('[Bookmark Sync] Failed to load bookmarks:', response.status);
+                return;
+            }
+            const data = await response.json();
+            // Note: API returns array directly, not wrapped in 'bookmarks' property
+            const bookmarks = Array.isArray(data) ? data : (data.bookmarks || []);
+            
+            // Filter for infographic bookmarks - use 'content_type_model' field from API response
+            const infographicBookmarks = bookmarks.filter(b => b.content_type_model === 'infographic');
+            console.log('[Bookmark Sync] Total infographic bookmarks:', infographicBookmarks.length);
+            console.log('[Bookmark Sync] Bookmarks:', infographicBookmarks);
+            
+            // Get all bookmark buttons in the page
+            const allButtons = document.querySelectorAll('.bookmark-btn[data-content-type="infographic"]');
+            console.log('[Bookmark Sync] Total bookmark buttons found:', allButtons.length);
+            
+            bookmarks.forEach(bookmark => {
+                // Use 'content_type_model' field from API response
+                if (bookmark.content_type_model === 'infographic') {
+                    const buttons = document.querySelectorAll(`.bookmark-btn[data-content-type="infographic"][data-object-id="${bookmark.object_id}"]`);
+                    console.log(`[Bookmark Sync] Found ${buttons.length} button(s) for infographic ID ${bookmark.object_id}`);
+                    buttons.forEach(btn => {
+                        console.log('[Bookmark Sync] Updating button:', btn);
+                        btn.classList.add('bookmarked');
+                        const icon = btn.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('bi-bookmark');
+                            icon.classList.add('bi-bookmark-fill');
+                            console.log('[Bookmark Sync] Icon updated to filled');
+                        }
+                        btn.dataset.bookmarkId = String(bookmark.id);
+                    });
+                }
+            });
+            console.log('[Bookmark Sync] Sync completed!');
+        } catch (err) {
+            console.error('[Bookmark Sync] Error syncing bookmarks:', err);
+        }
+    }
 
     // Get total all infographics (without filter)
     async function getTotalAllInfographics() {
