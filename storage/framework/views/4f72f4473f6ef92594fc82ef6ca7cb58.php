@@ -88,4 +88,4 @@ unset($__defined_vars, $__key, $__value); ?>
     <i class="fas fa-share-alt"></i>
     <span>Bagikan</span>
 </button>
-<?php /**PATH C:\xampp\htdocs\Astabaya-laravel\resources\views/components/chart-share-button.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\laragon\www\astabaya\resources\views/components/chart-share-button.blade.php ENDPATH**/ ?>

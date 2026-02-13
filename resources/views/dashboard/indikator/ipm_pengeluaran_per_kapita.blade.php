@@ -73,12 +73,15 @@
           <h5 class="mb-0">Perbandingan Pengeluaran per Kapita: Surabaya vs Jawa Timur</h5>
           <div class="chart-header-actions">
             <x-chart-share-button chartId="comparisonChart" title="Perbandingan Pengeluaran per Kapita Surabaya vs Jawa Timur" />
-            <button id="downloadChartPengeluaran" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
-            </button>
-            <button id="downloadImagePengeluaran" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadPengeluaranDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadPengeluaranDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadChartPengeluaran" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadImagePengeluaran" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="comparisonChart" style="width: 100%; height: 450px;"></div>
@@ -127,27 +130,27 @@
     }
     
     /* Download button responsive */
-    #downloadChartPengeluaran, #downloadImagePengeluaran {
+    #downloadPengeluaranDropdown {
       padding: 3px 8px !important;
       font-size: 11px !important;
     }
     
-    #downloadChartPengeluaran i, #downloadImagePengeluaran i {
+    #downloadPengeluaranDropdown i {
       font-size: 10px !important;
     }
     
-    #downloadChartPengeluaran span, #downloadImagePengeluaran span {
+    #downloadPengeluaranDropdown span {
       display: none;
     }
   }
   
   @media (max-width: 576px) {
-    #downloadChartPengeluaran, #downloadImagePengeluaran {
+    #downloadPengeluaranDropdown {
       padding: 4px 6px !important;
       font-size: 10px !important;
     }
     
-    #downloadChartPengeluaran i, #downloadImagePengeluaran i {
+    #downloadPengeluaranDropdown i {
       font-size: 12px !important;
       margin: 0 !important;
     }
@@ -429,7 +432,8 @@
       @endauth
     }
 
-    document.getElementById('downloadChartPengeluaran').addEventListener('click', function() {
+    document.getElementById('downloadChartPengeluaran').addEventListener('click', function(e) {
+      e.preventDefault();
       checkAuthBeforeDownload(exportToExcelPengeluaran, 'data pengeluaran per kapita');
     });
     
@@ -450,7 +454,8 @@
       link.click();
     }
     
-    document.getElementById('downloadImagePengeluaran').addEventListener('click', function() {
+    document.getElementById('downloadImagePengeluaran').addEventListener('click', function(e) {
+      e.preventDefault();
       checkAuthBeforeDownload(exportToPNGPengeluaran, 'grafik pengeluaran per kapita');
     });
 

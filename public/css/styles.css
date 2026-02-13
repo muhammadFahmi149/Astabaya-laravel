@@ -53,16 +53,18 @@ footer p {
 /* Person Graphic Image Styling */
 .left-image {
   display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
   height: 100% !important;
   min-height: 400px !important;
+  padding: 0 !important;
+  margin-top: 30px !important;
 }
 
 img.person-graphic {
   width: 100% !important;
   height: auto !important;
-  max-width: 600px !important;
+  max-width: none !important;
   object-fit: contain !important;
 }
 
@@ -101,12 +103,15 @@ img.person-graphic {
   line-height: 1.5 !important;
 }
 
-/* Person Graphic Image Styling */
-img.person-graphic {
-  width: 100%;
-  height: auto;
-  max-width: none;
-  object-fit: contain;
+/* Person Graphic Image Styling - Additional */
+#about .container-fluid {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+#about .row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 .main-banner .start-btn {
@@ -282,5 +287,86 @@ img.person-graphic {
 
   .services .row .col-lg-6 .item {
     width: 100%;
+  }
+  
+  /* Publikasi - Teks abstrak di card mobile */
+  .publication-item .card-text {
+    font-size: 1.1rem !important;
+    line-height: 1.7 !important;
+  }
+  
+  /* Publikasi - Teks abstrak di modal mobile */
+  #publicationModal #modalAbstract {
+    font-size: 1.05rem !important;
+    line-height: 1.8 !important;
+  }
+  
+  /* Berita - Teks konten di card mobile */
+  .news-item .card-text {
+    font-size: 1.1rem !important;
+    line-height: 1.7 !important;
+  }
+  
+  /* Berita - Teks konten di modal mobile */
+  #newsCardModal #newsModalContent {
+    font-size: 1.05rem !important;
+    line-height: 1.9 !important;
+  }
+}
+
+/* ===========================
+  RESPONSIVE FONT SIZE UNTUK PUBLIKASI & BERITA
+=========================== */
+@media (max-width: 992px) {
+  /* Publikasi - Teks abstrak di card */
+  .publication-item .card-text {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
+  
+  /* Publikasi - Teks abstrak di modal */
+  #publicationModal #modalAbstract {
+    font-size: 1rem !important;
+    line-height: 1.7 !important;
+  }
+  
+  /* Berita - Teks konten di card */
+  .news-item .card-text {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
+  
+  /* Berita - Teks konten di modal */
+  #newsCardModal #newsModalContent {
+    font-size: 1rem !important;
+    line-height: 1.8 !important;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Publikasi - Teks abstrak di card mobile kecil (override inline style) */
+  .publication-item .card-text[style*="font-size"],
+  .publication-item .card-text {
+    font-size: 1.15rem !important;
+    line-height: 1.8 !important;
+  }
+  
+  /* Publikasi - Teks abstrak di modal mobile kecil */
+  #publicationModal #modalAbstract {
+    font-size: 1.1rem !important;
+    line-height: 1.9 !important;
+  }
+  
+  /* Berita - Teks konten di card mobile kecil (override inline style) */
+  .news-item .card-text[style*="font-size"],
+  .news-item .card-text {
+    font-size: 1.15rem !important;
+    line-height: 1.8 !important;
+  }
+  
+  /* Berita - Teks konten di modal mobile kecil */
+  #newsCardModal #newsModalContent {
+    font-size: 1.1rem !important;
+    line-height: 2 !important;
   }
 }

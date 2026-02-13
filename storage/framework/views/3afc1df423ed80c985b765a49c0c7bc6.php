@@ -84,20 +84,20 @@
     </div>
 
     <div id="about" class="about-us section">
-        <div class="container pt-4 pb-5">
+        <div class="container-fluid pt-4 pb-5 px-2">
             <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-5 px-3">
                     <div class="left-image wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s">
                         <img class="person-graphic" src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/tab_kemiskinan.png')); ?>" alt="person graphic">
                     </div>
                 </div>
-                <div class="col-lg-8 align-self-center">
+                <div class="col-lg-7 align-self-center">
                     <div class="services pb-5">
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="item wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s">
                                     <div class="icon">
-                                        <img src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/inflasi-astabaya.png')); ?>" alt="reporting">
+                                        <i class="bi bi-graph-up-arrow" style="font-size: 60px; color: #234C6A;"></i>
                                     </div>
                                     <div class="right-text">
                                         <h4>Inflasi</h4>
@@ -108,7 +108,7 @@
                             <div class="col-lg-6">
                                 <div class="item wow fadeIn" data-wow-duration="1s" data-wow-delay="0.7s">
                                     <div class="icon">
-                                        <img src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/IPM-astabaya.png')); ?>" alt="">
+                                        <i class="bi bi-buildings" style="font-size: 60px; color: #234C6A;"></i>
                                     </div>
                                     <div class="right-text">
                                         <h4>IPM</h4>
@@ -119,7 +119,7 @@
                             <div class="col-lg-6">
                                 <div class="item wow fadeIn" data-wow-duration="1s" data-wow-delay="0.9s">
                                     <div class="icon">
-                                        <img src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/kemiskinan-astabaya.png')); ?>" alt="">
+                                        <i class="bi bi-heart-pulse" style="font-size: 60px; color: #234C6A;"></i>
                                     </div>
                                     <div class="right-text">
                                         <h4>Kemiskinan</h4>
@@ -130,7 +130,7 @@
                             <div class="col-lg-6">
                                 <div class="item wow fadeIn" data-wow-duration="1s" data-wow-delay="1.1s">
                                     <div class="icon">
-                                        <img src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/gini-ratio-astabaya.png')); ?>" alt="">
+                                        <i class="bi bi-percent" style="font-size: 60px; color: #234C6A;"></i>
                                     </div>
                                     <div class="right-text">
                                         <h4>Gini Ratio</h4>
@@ -141,7 +141,7 @@
                             <div class="col-lg-6">
                                 <div class="item wow fadeIn" data-wow-duration="1s" data-wow-delay="1.1s">
                                     <div class="icon">
-                                        <img src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/Ketenagakerjaan-astabaya.png')); ?>" alt="">
+                                        <i class="bi bi-briefcase" style="font-size: 60px; color: #234C6A;"></i>
                                     </div>
                                     <div class="right-text">
                                         <h4>Ketenagakerjaan</h4>
@@ -152,7 +152,7 @@
                             <div class="col-lg-6">
                                 <div class="item wow fadeIn" data-wow-duration="1s" data-wow-delay="1.1s">
                                     <div class="icon">
-                                        <img src="<?php echo e(asset('templatemo_562_space_dynamic/assets/images/PDRB-astabaya.png')); ?>" alt="">
+                                        <i class="bi bi-cash-stack" style="font-size: 60px; color: #234C6A;"></i>
                                     </div>
                                     <div class="right-text">
                                         <h4>PDRB</h4>
@@ -204,27 +204,52 @@
                     </div>
                 </div>
                 <div class="col-lg-6 wow fadeInRight" data-wow-duration="0.5s" data-wow-delay="0.25s">
+                    <?php if(session('success')): ?>
+                        <div class="alert alert-success" role="alert" style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                            <i class="fa fa-check-circle"></i> <?php echo e(session('success')); ?>
+
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if(session('error')): ?>
+                        <div class="alert alert-danger" role="alert" style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                            <i class="fa fa-exclamation-circle"></i> <?php echo e(session('error')); ?>
+
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if($errors->any()): ?>
+                        <div class="alert alert-danger" role="alert" style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                            <strong><i class="fa fa-exclamation-circle"></i> Terjadi kesalahan:</strong>
+                            <ul style="margin: 10px 0 0 20px; padding: 0;">
+                                <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li><?php echo e($error); ?></li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+                    
                     <form id="contact" action="<?php echo e(route('contact_us')); ?>" method="post">
                         <?php echo csrf_field(); ?>
                         <div class="row">
                             <div class="col-lg-6">
                                 <fieldset>
-                                    <input type="text" name="name" id="name" placeholder="Nama" autocomplete="on" required>
+                                    <input type="text" name="name" id="name" placeholder="Nama" autocomplete="on" value="<?php echo e(old('name')); ?>" required>
                                 </fieldset>
                             </div>
                             <div class="col-lg-6">
                                 <fieldset>
-                                    <input type="text" name="surname" id="surname" placeholder="Nama Belakang" autocomplete="on" required>
+                                    <input type="text" name="surname" id="surname" placeholder="Nama Belakang" autocomplete="on" value="<?php echo e(old('surname')); ?>">
                                 </fieldset>
                             </div>
                             <div class="col-lg-12">
                                 <fieldset>
-                                    <input type="email" name="email" id="email" placeholder="Email Kamu" required>
+                                    <input type="email" name="email" id="email" placeholder="Email Kamu" value="<?php echo e(old('email')); ?>" required>
                                 </fieldset>
                             </div>
                             <div class="col-lg-12">
                                 <fieldset>
-                                    <textarea name="message" class="form-control" id="message" placeholder="Pesan Kamu" required></textarea>
+                                    <textarea name="message" class="form-control" id="message" placeholder="Pesan Kamu" required><?php echo e(old('message')); ?></textarea>
                                 </fieldset>
                             </div>
                             <div class="col-lg-12">

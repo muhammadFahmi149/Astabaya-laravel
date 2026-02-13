@@ -254,6 +254,17 @@
     let paginationLinks = null;
     let totalAllInfographics = 0; // Total all infographics without filter
 
+    // Generate slug from title
+    function generateSlug(title) {
+        if (!title) return '';
+        return title
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') // Remove special characters
+            .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    }
+
     // Get page from URL
     function getPageFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -390,6 +401,7 @@
                         <div class="card-img-wrapper" style="background: #ffffff; height: 280px; min-height: 280px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                             <img src="${item.image || ''}" alt="${item.title}" 
                                  class="card-img-top" 
+                                 loading="lazy"
                                  style="width: 100%; max-height: 100%; object-fit: contain; cursor: pointer;">
                         </div>
                         <div class="card-body d-flex flex-column">
@@ -400,7 +412,7 @@
                                 <button class="btn btn-sm btn-outline-primary flex-fill" onclick="event.stopPropagation(); showInfographicDetail(${item.id})">
                                     <i class="bi bi-eye"></i> Lihat
                                 </button>
-                                <button class="btn btn-sm btn-outline-secondary share-infographic-btn" data-infographic-title="${item.title || 'Infografis'}" data-infographic-url="${window.location.origin}/infographics?infographic=${item.id}" onclick="event.stopPropagation();">
+                                <button class="btn btn-sm btn-outline-secondary share-infographic-btn" data-infographic-title="${item.title || 'Infografis'}" data-infographic-url="${window.location.origin}/infographics?infographic=${item.id}&slug=${generateSlug(item.title)}" onclick="event.stopPropagation();">
                                     <i class="bi bi-share"></i>
                                 </button>
                                 <div onclick="event.stopPropagation();">${bookmarkBtn}</div>
@@ -436,14 +448,14 @@
                                     `;
                                     return `
                                     <tr>
-                                        <td><img src="${item.image}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"></td>
+                                        <td><img src="${item.image}" loading="lazy" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"></td>
                                         <td><strong style="font-size: 0.85rem;">${item.title}</strong></td>
                                         <td>
                                             <div class="d-flex gap-2">
                                                 <button class="btn btn-sm btn-info" onclick="showInfographicDetail(${item.id})">
                                                     <i class="bi bi-eye"></i> View
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-secondary share-infographic-btn" data-infographic-title="${item.title || 'Infografis'}" data-infographic-url="${window.location.origin}/infographics?infographic=${item.id}" onclick="event.stopPropagation();">
+                                                <button class="btn btn-sm btn-outline-secondary share-infographic-btn" data-infographic-title="${item.title || 'Infografis'}" data-infographic-url="${window.location.origin}/infographics?infographic=${item.id}&slug=${generateSlug(item.title)}" onclick="event.stopPropagation();">
                                                     <i class="bi bi-share"></i> Bagikan
                                                 </button>
                                                 ${bookmarkBtn}
@@ -507,6 +519,17 @@
             return;
         }
 
+        // Generate slug from title
+        const slug = generateSlug(item.title);
+        
+        // Update URL with infographic ID and slug
+        const url = new URL(window.location.href);
+        url.searchParams.set('infographic', id);
+        if (slug) {
+            url.searchParams.set('slug', slug);
+        }
+        window.history.pushState({}, '', url);
+
         // Set modal title
         document.getElementById('infographicModalTitle').textContent = item.title || 'Infografis';
         
@@ -547,14 +570,15 @@
         // Set download button data
         const downloadBtn = document.getElementById('infographicModalDownload');
         if (downloadBtn) {
-            const downloadUrl = `{{ url('/infographics/download') }}/${item.id}`;
+            // Gunakan dl (download link) jika ada, jika tidak gunakan route download
+            const downloadUrl = item.dl || `{{ url('/infographics/download') }}/${item.id}`;
             downloadBtn.setAttribute('data-infographic-id', item.id || '');
             downloadBtn.setAttribute('data-infographic-title', item.title || '');
             downloadBtn.setAttribute('data-infographic-url', downloadUrl);
         }
         
-        // Set share button data
-        const shareUrl = window.location.origin + '/infographics?infographic=' + item.id;
+        // Set share button data with slug
+        const shareUrl = window.location.origin + '/infographics?infographic=' + item.id + (slug ? '&slug=' + slug : '');
         const shareButtons = document.querySelectorAll('.share-infographic-modal-btn, .share-infographic-btn');
         shareButtons.forEach(btn => {
             if (btn) {
@@ -634,7 +658,7 @@
                     
                     const relatedThumbnail = relatedItem.image || placeholderImg;
                     relatedElement.innerHTML = `
-                        <img src="${relatedThumbnail}" alt="${relatedItem.title}" onerror="this.src='${placeholderImg}'" />
+                        <img src="${relatedThumbnail}" alt="${relatedItem.title}" loading="lazy" onerror="this.src='${placeholderImg}'" />
                         <div class="content">
                             <div class="title">${relatedItem.title}</div>
                         </div>
@@ -1030,8 +1054,10 @@
         }
         
         // User is authenticated, proceed with download
+        // Langsung arahkan ke link dl jika ada
         const downloadUrl = button.dataset.infographicUrl || button.getAttribute('data-infographic-url');
         if (downloadUrl) {
+            // Langsung redirect ke link download agar file langsung terunduh
             window.location.href = downloadUrl;
         } else {
             console.error('Download URL not found');
@@ -1154,6 +1180,12 @@
                 console.log('[DEBUG] Body overflow sebelum cleanup:', document.body.style.overflow);
                 console.log('[DEBUG] Body paddingRight sebelum cleanup:', document.body.style.paddingRight);
                 
+                // Remove infographic and slug from URL when modal is closed
+                const url = new URL(window.location.href);
+                url.searchParams.delete('infographic');
+                url.searchParams.delete('slug');
+                window.history.pushState({}, '', url);
+                
                 // Clean up backdrop
                 setTimeout(() => {
                     const backdrops = document.querySelectorAll('.modal-backdrop');
@@ -1206,7 +1238,16 @@
         await getTotalAllInfographics();
         
         // Then load infographics
-        loadInfographics();
+        await loadInfographics();
+        
+        // Check if there's an infographic parameter in URL, open modal automatically
+        const infographicId = urlParams.get('infographic');
+        if (infographicId) {
+            // Wait a bit for infographics to be loaded
+            setTimeout(() => {
+                showInfographicDetail(parseInt(infographicId));
+            }, 500);
+        }
     });
 </script>
 @endpush

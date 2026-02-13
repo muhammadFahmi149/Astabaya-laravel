@@ -328,9 +328,27 @@ class DashboardController extends Controller
      */
     public function downloadInfographic($id)
     {
-        // Implementation will fetch from API
-        // For now, just redirect to download URL
-        return redirect()->back();
+        try {
+            $infographic = Infographic::find($id);
+            
+            if (!$infographic) {
+                return redirect()->back()->with('error', 'Infografis tidak ditemukan');
+            }
+            
+            // Jika ada link download (dl), redirect langsung ke sana
+            if ($infographic->dl) {
+                return redirect($infographic->dl);
+            }
+            
+            // Jika tidak ada dl, fallback ke image
+            if ($infographic->image) {
+                return redirect($infographic->image);
+            }
+            
+            return redirect()->back()->with('error', 'Link download tidak tersedia');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh infografis');
+        }
     }
 
     /**

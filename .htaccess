@@ -6,7 +6,7 @@
     RewriteEngine On
 
     # Set DirectoryIndex to index.php only (prevent index.html from being served)
-    DirectoryIndex index.blade.php
+    DirectoryIndex index.php
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
@@ -16,6 +16,12 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
+    # Redirect asset requests (CSS, JS, images, etc.) to Laravel public folder
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^/(css|js|images|templatemo_562_space_dynamic|assets|vendor|favicon\.ico|robots\.txt)(.*)$
+    RewriteRule ^(.*)$ ../astabaya/public/$1 [L]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
@@ -24,5 +30,6 @@
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.blade.php [L]
+    RewriteRule ^ index.php [L]
 </IfModule>
+

@@ -73,12 +73,15 @@
           <h5 class="mb-0">Perbandingan Indeks Hidup Layak: Surabaya vs Jawa Timur</h5>
           <div class="chart-header-actions">
             <x-chart-share-button chartId="comparisonChart" title="Perbandingan Indeks Hidup Layak Surabaya vs Jawa Timur" />
-            <button id="downloadChartIHL" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
-            </button>
-            <button id="downloadImageIHL" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadIHLDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadIHLDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadChartIHL" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadImageIHL" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="comparisonChart" style="width: 100%; height: 450px;"></div>
@@ -127,27 +130,27 @@
     }
     
     /* Download button responsive */
-    #downloadChartIHL, #downloadImageIHL {
+    #downloadIHLDropdown {
       padding: 3px 8px !important;
       font-size: 11px !important;
     }
     
-    #downloadChartIHL i, #downloadImageIHL i {
+    #downloadIHLDropdown i {
       font-size: 10px !important;
     }
     
-    #downloadChartIHL span, #downloadImageIHL span {
+    #downloadIHLDropdown span {
       display: none;
     }
   }
   
   @media (max-width: 576px) {
-    #downloadChartIHL, #downloadImageIHL {
+    #downloadIHLDropdown {
       padding: 4px 6px !important;
       font-size: 10px !important;
     }
     
-    #downloadChartIHL i, #downloadImageIHL i {
+    #downloadIHLDropdown i {
       font-size: 12px !important;
       margin: 0 !important;
     }
@@ -399,7 +402,8 @@
       @endauth
     }
 
-    document.getElementById('downloadChartIHL').addEventListener('click', function() {
+    document.getElementById('downloadChartIHL').addEventListener('click', function(e) {
+      e.preventDefault();
       checkAuthBeforeDownload(exportToExcelIHL, 'data indeks hidup layak');
     });
     
@@ -420,7 +424,8 @@
       link.click();
     }
     
-    document.getElementById('downloadImageIHL').addEventListener('click', function() {
+    document.getElementById('downloadImageIHL').addEventListener('click', function(e) {
+      e.preventDefault();
       checkAuthBeforeDownload(exportToPNGIHL, 'grafik indeks hidup layak');
     });
 

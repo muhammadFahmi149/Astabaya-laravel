@@ -34,7 +34,7 @@ return [
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID', '477948872524-8h48o7jmg3seadns5ddmb7hpi336e5a5.apps.googleusercontent.com'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_REDIRECT_URI', 'http://127.0.0.1:8000/accounts/google/login/callback'),
+        'redirect' => env('GOOGLE_REDIRECT_URI', 'https://astabaya.bpskotasurabaya.com/accounts/google/login/callback'),
         'sheet_id' => env('GOOGLE_SHEET_ID', '1keS9YFYO1qzAawWgLh2U2pY6xX5ppKUnhbdHQYfU5HM'),
     ],
 

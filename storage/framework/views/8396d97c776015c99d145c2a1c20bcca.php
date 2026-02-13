@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Berita'); ?>
 
 <?php $__env->startPush('styles'); ?>
@@ -253,7 +251,7 @@
                                     <button class="btn btn-sm btn-primary" onclick="showNewsModal(<?php echo e($index); ?>)">
                                         <i class="bi bi-book"></i> Baca Selengkapnya
                                     </button>
-                                    <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="<?php echo e($item->id); ?>" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)">
+                                    <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="<?php echo e($item->news_id); ?>" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)">
                                         <i class="bi bi-bookmark"></i> Bookmark
                                     </button>
                                 </div>
@@ -296,7 +294,7 @@
                                             <button class="btn btn-sm btn-primary" onclick="showNewsModal(<?php echo e($index); ?>)" style="font-size: 0.8rem;">
                                                 <i class="bi bi-book"></i> Baca
                                             </button>
-                                            <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="<?php echo e($item->id); ?>" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)" style="font-size: 0.8rem;">
+                                            <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="<?php echo e($item->news_id); ?>" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)" style="font-size: 0.8rem;">
                                                 <i class="bi bi-bookmark"></i> Bookmark
                                             </button>
                                         </div>
@@ -369,7 +367,7 @@
     <?php if(isset($dataNews) && $dataNews->count() > 0): ?>
         <?php $__currentLoopData = $dataNews; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <div class="news-data"
-             data-id="<?php echo e($item->id); ?>"
+             data-id="<?php echo e($item->news_id); ?>"
              data-title="<?php echo e(e($item->title ?? '')); ?>"
              data-content="<?php echo e(e($item->content ?? '')); ?>"
              data-category="<?php echo e(e($item->category_name ?? '')); ?>"
@@ -410,15 +408,20 @@
             </div>
             <div class="modal-footer">
                 <div class="d-flex gap-2 w-100 flex-wrap">
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-primary btn-sm share-news-modal-btn" id="modalNewsShareBtn" data-news-title="" data-news-url="" onclick="handleNewsShareClick(this); return false;">
-                            <i class="bi bi-share"></i> <span class="d-none d-md-inline share-btn-text">Bagikan</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm bookmark-btn" id="modalNewsBookmarkBtn" data-content-type="news" data-object-id="" data-bookmark-id="" onclick="handleNewsBookmark(this)">
-                            <i class="bi bi-bookmark"></i> <span class="d-none d-md-inline">Bookmark</span>
-                        </button>
-                    </div>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm bookmark-btn" id="modalNewsBookmarkBtn" data-content-type="news" data-object-id="" data-bookmark-id="" onclick="handleNewsBookmark(this)">
+                        <i class="bi bi-bookmark"></i> <span>Bookmark</span>
+                    </button>
+                    <?php echo $__env->make('components.share-button', [
+                        'title' => '',
+                        'url' => '',
+                        'contentType' => 'news',
+                        'size' => 'sm',
+                        'variant' => 'outline-secondary',
+                        'showText' => true,
+                        'class' => 'share-news-modal-btn',
+                        'id' => 'modalNewsShareBtn'
+                    ], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
@@ -486,6 +489,17 @@
     // Authentication status - global scope
     const isAuthenticated = <?php if(auth()->guard()->check()): ?> true <?php else: ?> false <?php endif; ?>;
     
+    // Generate slug from title
+    function generateSlug(title) {
+        if (!title) return '';
+        return title
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') // Remove special characters
+            .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    }
+    
     // Store news data for modal
     const newsData = [];
     const dataElements = document.querySelectorAll('.news-data');
@@ -506,6 +520,17 @@
             console.error('News not found at index:', index);
             return;
         }
+
+        // Generate slug from title
+        const slug = generateSlug(item.title);
+        
+        // Update URL with news ID and slug
+        const url = new URL(window.location.href);
+        url.searchParams.set('news', item.id || index);
+        if (slug) {
+            url.searchParams.set('slug', slug);
+        }
+        window.history.pushState({}, '', url);
 
         const modalTitle = document.getElementById('newsModalTitle');
         const modalCategory = document.getElementById('newsModalCategory');
@@ -604,11 +629,11 @@
             }
         }
 
-        // Update share button in modal
+        // Update share button in modal with slug
         const modalShareBtn = document.getElementById('modalNewsShareBtn');
         if (modalShareBtn) {
             const newsTitle = item.title || 'Berita';
-            const newsUrl = window.location.href;
+            const newsUrl = window.location.origin + '/news?news=' + (item.id || index) + (slug ? '&slug=' + slug : '');
             
             modalShareBtn.dataset.newsTitle = newsTitle;
             modalShareBtn.dataset.newsUrl = newsUrl;
@@ -628,13 +653,15 @@
         <?php if(auth()->guard()->check()): ?>
         const modalBookmarkBtn = document.getElementById('modalNewsBookmarkBtn');
         if (modalBookmarkBtn) {
+            // Use news_id for News model (custom primary key)
+            const newsId = item.news_id || item.id;
             // Find the news in the list to get bookmark_id
-            const newsElement = document.querySelector(`.bookmark-btn[data-content-type="news"][data-object-id="${item.id}"]`);
+            const newsElement = document.querySelector(`.bookmark-btn[data-content-type="news"][data-object-id="${newsId}"]`);
             if (newsElement) {
                 const bookmarkId = newsElement.dataset.bookmarkId || '';
                 const isBookmarked = newsElement.classList.contains('bookmarked');
                 
-                modalBookmarkBtn.dataset.objectId = String(item.id);
+                modalBookmarkBtn.dataset.objectId = String(newsId);
                 modalBookmarkBtn.dataset.bookmarkId = bookmarkId;
                 
                 const icon = modalBookmarkBtn.querySelector('i');
@@ -653,7 +680,8 @@
                 }
             } else {
                 // Set default values
-                modalBookmarkBtn.dataset.objectId = String(item.id);
+                const newsId = item.news_id || item.id;
+                modalBookmarkBtn.dataset.objectId = String(newsId);
                 modalBookmarkBtn.dataset.bookmarkId = '';
                 modalBookmarkBtn.classList.remove('bookmarked');
                 const icon = modalBookmarkBtn.querySelector('i');
@@ -668,63 +696,15 @@
         // Show modal
         const modal = new bootstrap.Modal(document.getElementById('newsCardModal'));
         modal.show();
+        
+        // Update font size after modal is shown
+        setTimeout(() => {
+            updateResponsiveFontSizes();
+        }, 100);
     }
     
     // Make showNewsModal globally available
     window.showNewsModal = showNewsModal;
-
-    // Handle share button click
-    function handleNewsShareClick(button) {
-        console.log('handleNewsShareClick called:', button);
-        console.log('Button dataset:', {
-            newsTitle: button.dataset.newsTitle,
-            newsUrl: button.dataset.newsUrl
-        });
-        
-        const title = button.dataset.newsTitle || 'Berita';
-        const url = button.dataset.newsUrl || window.location.href;
-        
-        console.log('Calling showShareModal with:', { title, url });
-        console.log('window.showShareModal available?', typeof window.showShareModal === 'function');
-        
-        // Always use window.showShareModal for consistency
-        if (typeof window.showShareModal === 'function') {
-            window.showShareModal(title, url);
-        } else {
-            // Wait a bit and try again (in case script is still loading)
-            console.log('showShareModal not found, waiting...');
-            setTimeout(() => {
-                if (typeof window.showShareModal === 'function') {
-                    console.log('showShareModal found on retry, calling...');
-                    window.showShareModal(title, url);
-                } else {
-                    console.error('showShareModal function not found after retry!');
-                    // Fallback: try to show modal manually
-                    const shareModal = document.getElementById('shareModal');
-                    if (shareModal) {
-                        const modalTitle = document.getElementById('shareModalTitle');
-                        const modalInput = document.getElementById('shareModalInput');
-                        if (modalTitle) modalTitle.textContent = 'Bagikan: ' + title;
-                        if (modalInput) modalInput.value = url;
-                        const modal = new bootstrap.Modal(shareModal);
-                        modal.show();
-                        // Select text when shown
-                        shareModal.addEventListener('shown.bs.modal', function() {
-                            if (modalInput) {
-                                modalInput.select();
-                                modalInput.focus();
-                            }
-                        }, { once: true });
-                    } else {
-                        alert('Modal share tidak ditemukan. Silakan refresh halaman.');
-                    }
-                }
-            }, 200);
-        }
-    }
-    
-    // Make handleNewsShareClick globally available
-    window.handleNewsShareClick = handleNewsShareClick;
 
     // Share news functionality - menggunakan fungsi global dari main.blade.php
     // Fungsi shareNews, copyNewsToClipboard, fallbackCopyNewsToClipboard, dan showNewsToast
@@ -769,19 +749,70 @@
     // Event handler untuk share button sudah ditangani oleh fungsi global di main.blade.php
     // Tidak perlu event handler tambahan di sini karena sudah menggunakan event delegation global
 
+    // Function to update font sizes for responsive
+    function updateResponsiveFontSizes() {
+        const isMobile = window.innerWidth <= 768;
+        const isSmallMobile = window.innerWidth <= 576;
+        const isTablet = window.innerWidth <= 992;
+        
+        // Update news card text
+        const newsCardTexts = document.querySelectorAll('.news-item .card-text');
+        newsCardTexts.forEach(el => {
+            if (isSmallMobile) {
+                el.style.fontSize = '1.15rem';
+                el.style.lineHeight = '1.8';
+            } else if (isMobile) {
+                el.style.fontSize = '1.1rem';
+                el.style.lineHeight = '1.7';
+            } else if (isTablet) {
+                el.style.fontSize = '1rem';
+                el.style.lineHeight = '1.6';
+            }
+        });
+        
+        // Update news modal content
+        const modalContent = document.getElementById('newsModalContent');
+        if (modalContent) {
+            if (isSmallMobile) {
+                modalContent.style.fontSize = '1.1rem';
+                modalContent.style.lineHeight = '2';
+            } else if (isMobile) {
+                modalContent.style.fontSize = '1.05rem';
+                modalContent.style.lineHeight = '1.9';
+            } else if (isTablet) {
+                modalContent.style.fontSize = '1rem';
+                modalContent.style.lineHeight = '1.8';
+            }
+        }
+    }
+
     // Load bookmarks for authenticated users
     document.addEventListener('DOMContentLoaded', function() {
+        // Update font sizes on load
+        updateResponsiveFontSizes();
+        
+        // Update font sizes on resize
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(updateResponsiveFontSizes, 100);
+        });
+        
+        <?php if(auth()->guard()->check()): ?>
         if (isAuthenticated) {
             // Check if toggleBookmark function exists, if not, load it
             if (typeof toggleBookmark === 'undefined') {
                 // Load bookmarks and sync bookmark buttons
-                fetch('/api/bookmarks/')
+                fetch('/bookmarks')
                     .then(response => response.json())
                     .then(data => {
-                        const bookmarks = data.bookmarks || data || [];
+                        const bookmarks = data || [];
+                        console.log('[News] Loaded bookmarks:', bookmarks.length);
                         bookmarks.forEach(bookmark => {
-                            if (bookmark.content_type === 'news') {
+                            // Use content_type_model (new field name from backend)
+                            if (bookmark.content_type_model === 'news') {
                                 const buttons = document.querySelectorAll(`.bookmark-btn[data-content-type="news"][data-object-id="${bookmark.object_id}"]`);
+                                console.log('[News] Found', buttons.length, 'buttons for bookmark', bookmark.id);
                                 buttons.forEach(btn => {
                                     btn.classList.add('bookmarked');
                                     const icon = btn.querySelector('i');
@@ -797,6 +828,53 @@
                     .catch(err => {
                         console.error('Error loading bookmarks:', err);
                     });
+            }
+        }
+        <?php endif; ?>
+        
+        // Clean up URL when modal is closed
+        const newsModal = document.getElementById('newsCardModal');
+        if (newsModal) {
+            newsModal.addEventListener('hidden.bs.modal', function() {
+                // Remove news and slug from URL when modal is closed
+                const url = new URL(window.location.href);
+                url.searchParams.delete('news');
+                url.searchParams.delete('slug');
+                window.history.pushState({}, '', url);
+            });
+        }
+        
+        // Check if there's a news parameter in URL, open modal automatically
+        const urlParams = new URLSearchParams(window.location.search);
+        const newsId = urlParams.get('news');
+        if (newsId) {
+            // Find news by id or index
+            let newsIndex = -1;
+            if (!isNaN(newsId)) {
+                // If newsId is a number, try to find by index first
+                newsIndex = parseInt(newsId);
+                if (newsIndex >= 0 && newsIndex < newsData.length) {
+                    // Wait a bit for page to be fully loaded
+                    setTimeout(() => {
+                        showNewsModal(newsIndex);
+                    }, 500);
+                } else {
+                    // Try to find by id
+                    newsIndex = newsData.findIndex(n => n.id === newsId || n.id === String(newsId));
+                    if (newsIndex !== -1) {
+                        setTimeout(() => {
+                            showNewsModal(newsIndex);
+                        }, 500);
+                    }
+                }
+            } else {
+                // Try to find by id
+                newsIndex = newsData.findIndex(n => n.id === newsId);
+                if (newsIndex !== -1) {
+                    setTimeout(() => {
+                        showNewsModal(newsIndex);
+                    }, 500);
+                }
             }
         }
     });

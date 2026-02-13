@@ -78,12 +78,15 @@
           <h5 class="mb-0">Perbandingan HLS: Surabaya vs Jawa Timur</h5>
           <div class="chart-header-actions">
             <x-chart-share-button chartId="comparisonChart" title="Perbandingan HLS Surabaya vs Jawa Timur" />
-            <button id="downloadChartHLS" class="btn btn-sm btn-outline-primary" style="padding: 5px 10px; border-radius: 5px;" title="Download Data Excel">
-              <i class="fas fa-file-excel"></i> <span>Excel</span>
-            </button>
-            <button id="downloadImageHLS" class="btn btn-sm btn-outline-success" style="padding: 5px 10px; border-radius: 5px;" title="Download Grafik PNG">
-              <i class="fas fa-image"></i> <span>PNG</span>
-            </button>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadHLSDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+                <i class="fas fa-download"></i> <span>Unduh</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="downloadHLSDropdown" style="border-radius: 8px; min-width: 100%;">
+                <li><a class="dropdown-item" href="#" id="downloadChartHLS" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadImageHLS" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         <div id="comparisonChart" style="width: 100%; height: 450px;"></div>
@@ -145,27 +148,27 @@
     }
     
     /* Download button responsive */
-    #downloadChartHLS, #downloadImageHLS {
+    #downloadHLSDropdown {
       padding: 3px 8px !important;
       font-size: 11px !important;
     }
     
-    #downloadChartHLS i, #downloadImageHLS i {
+    #downloadHLSDropdown i {
       font-size: 10px !important;
     }
     
-    #downloadChartHLS span, #downloadImageHLS span {
+    #downloadHLSDropdown span {
       display: none;
     }
   }
   
   @media (max-width: 576px) {
-    #downloadChartHLS, #downloadImageHLS {
+    #downloadHLSDropdown {
       padding: 4px 6px !important;
       font-size: 10px !important;
     }
     
-    #downloadChartHLS i, #downloadImageHLS i {
+    #downloadHLSDropdown i {
       font-size: 12px !important;
       margin: 0 !important;
     }
@@ -439,7 +442,8 @@
     }
 
     // Add click event to download button
-    document.getElementById('downloadChartHLS').addEventListener('click', function() {
+    document.getElementById('downloadChartHLS').addEventListener('click', function(e) {
+      e.preventDefault();
       checkAuthBeforeDownload(exportToExcel, 'data HLS');
     });
     
@@ -461,7 +465,8 @@
       link.click();
     }
     
-    document.getElementById('downloadImageHLS').addEventListener('click', function() {
+    document.getElementById('downloadImageHLS').addEventListener('click', function(e) {
+      e.preventDefault();
       checkAuthBeforeDownload(exportToPNGHLS, 'grafik HLS');
     });
 

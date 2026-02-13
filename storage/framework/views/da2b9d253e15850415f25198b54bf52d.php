@@ -124,7 +124,7 @@
                 <div class="col-3">
                   <a href="<?php echo e(route('download-publication', $publication->pub_id ?? $publication->id)); ?>" target="_blank" class="btn btn-light w-100 publication-action-btn download-publication-btn d-flex flex-column align-items-center justify-content-center" style="text-decoration: none" data-pub-id="<?php echo e($publication->pub_id ?? $publication->id); ?>" data-pub-title="<?php echo e(e($publication->title ?? '')); ?>">
                     <i class="bi bi-download publication-action-icon"></i>
-                    <span class="publication-action-text">Unduhan</span>
+                    <span class="publication-action-text">Unduh PDF</span>
                   </a>
                 </div>
                 <div class="col-3">
@@ -522,38 +522,95 @@
     margin-left: 0.5rem;
   }
 
-  /* Mobile: Stack buttons vertically, Unduh at bottom */
+  /* Mobile: Display buttons in a single row like publication items */
   @media (max-width: 767.98px) {
     #publicationModal .modal-footer {
       padding: 1rem;
-      flex-direction: column;
     }
 
     #publicationModal .modal-footer-buttons {
-      flex-direction: column !important;
+      display: flex !important;
+      flex-direction: row !important;
       width: 100%;
-      gap: 0.75rem !important;
+      gap: 0.5rem !important;
+      margin: 0;
     }
 
-    #publicationModal .modal-footer-btn-left {
-      width: 100% !important;
-      margin-right: 0;
-      margin-left: 0;
+    #publicationModal .modal-footer-btn-left,
+    #publicationModal .modal-footer-btn-right,
+    #publicationModal .modal-footer .share-btn {
+      flex: 1;
+      margin: 0 !important;
+      width: auto !important;
+      min-width: 0;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
+      padding: 0.5rem !important;
+      min-height: 60px !important;
+      height: 60px !important;
     }
 
-    #publicationModal .modal-footer-btn-right {
-      width: 100% !important;
-      margin-left: 0;
-      margin-top: 0.5rem;
-      order: 999;
+    #publicationModal .modal-footer-btn-left i,
+    #publicationModal .modal-footer-btn-right i,
+    #publicationModal .modal-footer .share-btn i {
+      font-size: 1.2rem !important;
+      margin-bottom: 0.25rem !important;
+      line-height: 1 !important;
+      color: #0d6efd !important;
     }
 
-    #publicationModal .modal-btn-text {
-      display: inline !important;
-      margin-left: 0.5rem;
+    #publicationModal .modal-btn-text,
+    #publicationModal .modal-footer .share-btn-text {
+      display: block !important;
+      margin-left: 0 !important;
+      font-size: 0.75rem !important;
+      line-height: 1 !important;
+      font-weight: 500 !important;
+      color: #0d6efd !important;
+    }
+
+    #publicationModal .modal-footer .btn {
+      font-size: 0.8rem;
+      border-radius: 0.5rem !important;
+      background-color: #f8f9fa !important;
+      border: 1px solid #e9ecef !important;
+      color: #0d6efd !important;
+      transition: all 0.2s ease !important;
+    }
+
+    #publicationModal .modal-footer .btn-primary {
+      background-color: #0d6efd !important;
+      border-color: #0d6efd !important;
+      color: white !important;
+    }
+
+    #publicationModal .modal-footer .btn-primary i {
+      color: white !important;
+    }
+
+    #publicationModal .modal-footer .btn-primary .modal-btn-text {
+      color: white !important;
+    }
+
+    #publicationModal .modal-footer .btn:hover,
+    #publicationModal .modal-footer .btn:active,
+    #publicationModal .modal-footer .btn:focus {
+      background-color: #e9ecef !important;
+      transform: scale(0.98);
+      border-color: #dee2e6 !important;
+    }
+
+    #publicationModal .modal-footer .btn-primary:hover,
+    #publicationModal .modal-footer .btn-primary:active,
+    #publicationModal .modal-footer .btn-primary:focus {
+      background-color: #0b5ed7 !important;
+      border-color: #0b5ed7 !important;
+    }
+
+    #publicationModal .modal-footer .btn:active {
+      transform: scale(0.96);
     }
   }
 
@@ -1126,10 +1183,68 @@
 </div>
 
 <script>
+  // Generate slug from title
+  function generateSlug(title) {
+    if (!title) return '';
+    return title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '') // Remove special characters
+      .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+      .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+  }
+
+  // Function to update font sizes for responsive
+  function updateResponsiveFontSizes() {
+    const isMobile = window.innerWidth <= 768;
+    const isSmallMobile = window.innerWidth <= 576;
+    const isTablet = window.innerWidth <= 992;
+    
+    // Update publication card text
+    const publicationCardTexts = document.querySelectorAll('.publication-item .card-text');
+    publicationCardTexts.forEach(el => {
+      if (isSmallMobile) {
+        el.style.fontSize = '1.15rem';
+        el.style.lineHeight = '1.8';
+      } else if (isMobile) {
+        el.style.fontSize = '1.1rem';
+        el.style.lineHeight = '1.7';
+      } else if (isTablet) {
+        el.style.fontSize = '1rem';
+        el.style.lineHeight = '1.6';
+      }
+    });
+    
+    // Update publication modal abstract
+    const modalAbstract = document.getElementById('modalAbstract');
+    if (modalAbstract) {
+      if (isSmallMobile) {
+        modalAbstract.style.fontSize = '1.1rem';
+        modalAbstract.style.lineHeight = '1.9';
+      } else if (isMobile) {
+        modalAbstract.style.fontSize = '1.05rem';
+        modalAbstract.style.lineHeight = '1.8';
+      } else if (isTablet) {
+        modalAbstract.style.fontSize = '1rem';
+        modalAbstract.style.lineHeight = '1.7';
+      }
+    }
+  }
+
   // Lazy loading for images
   document.addEventListener("DOMContentLoaded", function () {
     // Initialize year filter dropdown
     initYearFilter();
+    
+    // Update font sizes on load
+    updateResponsiveFontSizes();
+    
+    // Update font sizes on resize
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateResponsiveFontSizes, 100);
+    });
     
     // Initialize bookmark states
     <?php if(auth()->guard()->check()): ?>
@@ -1358,6 +1473,17 @@
 
     document.getElementById("modalTitle").textContent = pub.title;
     
+    // Generate slug from title
+    const slug = generateSlug(pub.title);
+    
+    // Update URL with publication ID and slug
+    const url = new URL(window.location.href);
+    url.searchParams.set('publication', pub.pubId || pub.id || '');
+    if (slug) {
+      url.searchParams.set('slug', slug);
+    }
+    window.history.pushState({}, '', url);
+    
     // Set image with error handling
     const modalImage = document.getElementById("modalImage");
     const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 200"%3E%3Crect fill="%23f0f0f0" width="150" height="200"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-size="14" font-family="Arial"%3ENo Image%3C/text%3E%3C/svg%3E';
@@ -1517,14 +1643,19 @@
 
     const modal = new bootstrap.Modal(document.getElementById("publicationModal"));
     modal.show();
+    
+    // Update font size after modal is shown
+    setTimeout(() => {
+      updateResponsiveFontSizes();
+    }, 100);
 
-    // Update share button data
+    // Update share button data with slug
     const shareBtn = document.querySelector('.share-publication-modal-btn');
     if (shareBtn) {
       shareBtn.dataset.pubTitle = pub.title || 'Publikasi';
       // Use the publication ID (primary key) for the share URL
       const publicationId = pub.id || pub.pubId || '';
-      const shareUrl = window.location.origin + '/publications?publication=' + publicationId;
+      const shareUrl = window.location.origin + '/publications?publication=' + publicationId + (slug ? '&slug=' + slug : '');
       shareBtn.dataset.pubUrl = shareUrl;
       console.log('Share button updated:', { title: shareBtn.dataset.pubTitle, url: shareBtn.dataset.pubUrl }); // Debug log
     }
@@ -1572,6 +1703,43 @@
         }
       });
     });
+    
+    // Clean up URL when modal is closed
+    const publicationModal = document.getElementById('publicationModal');
+    if (publicationModal) {
+      publicationModal.addEventListener('hidden.bs.modal', function() {
+        // Remove publication and slug from URL when modal is closed
+        const url = new URL(window.location.href);
+        url.searchParams.delete('publication');
+        url.searchParams.delete('slug');
+        window.history.pushState({}, '', url);
+      });
+    }
+    
+    // Check if there's a publication parameter in URL, open modal automatically
+    const urlParams = new URLSearchParams(window.location.search);
+    const publicationId = urlParams.get('publication');
+    if (publicationId) {
+      // Find publication by pubId or id
+      let pub = null;
+      if (window.publicationsMap && window.publicationsMap[publicationId]) {
+        pub = window.publicationsMap[publicationId];
+      } else {
+        // Try to find by id in publications array
+        pub = publications.find(p => (p.pubId === publicationId || p.id === publicationId));
+      }
+      
+      if (pub) {
+        // Find the index of the publication
+        const index = publications.findIndex(p => (p.pubId === pub.pubId && p.id === pub.id));
+        if (index !== -1) {
+          // Wait a bit for page to be fully loaded
+          setTimeout(() => {
+            showModal(pub.pubId || pub.id, index);
+          }, 500);
+        }
+      }
+    }
   });
 
   // Handle download clicks with login check
@@ -1677,18 +1845,15 @@
       return;
     }
 
-    // Try to get CSRF token from cookie first, then from meta tag
-    let csrftoken = getCookie("XSRF-TOKEN");
-    if (!csrftoken) {
-      const metaTag = document.querySelector('meta[name="csrf-token"]');
-      if (metaTag) {
-        csrftoken = metaTag.getAttribute("content");
-      }
-    }
+    // Get CSRF token from meta tag (Laravel standard)
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    const csrftoken = metaTag ? metaTag.getAttribute('content') : null;
+    
+    console.log("[Publications Bookmark] CSRF Token:", csrftoken ? "Found" : "NOT FOUND");
 
     if (!csrftoken) {
-      console.error("CSRF token not found");
-      alert("Sesi Anda telah berakhir. Silakan refresh halaman dan login kembali.");
+      console.error("CSRF token not found! Silakan refresh halaman (Ctrl+F5).");
+      alert("Token CSRF tidak ditemukan. Silakan refresh halaman (Ctrl+F5).");
       button.disabled = false;
       return;
     }
@@ -1703,7 +1868,7 @@
         }
 
         console.log("Deleting bookmark:", { bookmarkId, contentType, objectId });
-        const response = await fetch(`/api/bookmarks/delete/${bookmarkId}/`, {
+        const response = await fetch(`/bookmarks/${bookmarkId}`, {
           method: "DELETE",
           headers: { 
             "X-CSRF-TOKEN": csrftoken,
@@ -1747,7 +1912,7 @@
         
         console.log("Adding bookmark:", requestBody);
         
-        const response = await fetch(`/api/bookmarks/add/`, {
+        const response = await fetch(`/bookmarks/add`, {
           method: "POST",
           headers: { 
             "Content-Type": "application/json", 
@@ -1785,7 +1950,7 @@
           if (response.status === 409) {
             // Bookmark already exists, fetch and update UI
             try {
-              const existingBookmarks = await fetch(`/api/bookmarks/`, {
+              const existingBookmarks = await fetch(`/bookmarks`, {
                 headers: { 
                   "X-CSRF-TOKEN": csrftoken,
                   "X-Requested-With": "XMLHttpRequest"
@@ -1957,7 +2122,7 @@
       }
       
       // Fetch user's bookmarks
-      const response = await fetch('/api/bookmarks/', {
+      const response = await fetch('/bookmarks', {
         headers: { 
           "X-CSRF-TOKEN": csrftoken,
           "X-Requested-With": "XMLHttpRequest"
@@ -2018,12 +2183,12 @@
     console.log('Initializing share buttons for publications'); // Debug
     // Use event delegation to handle all share buttons (including dynamically added ones)
     document.addEventListener('click', async function(e) {
-      const shareBtn = e.target.closest('.share-publication-modal-btn') || e.target.closest('.share-publication-btn');
+      const shareBtn = e.target.closest('.share-publication-modal-btn') || e.target.closest('.share-publication-btn') || e.target.closest('.share-btn');
       if (shareBtn) {
         e.preventDefault();
         e.stopPropagation();
-        const title = shareBtn.dataset.pubTitle || 'Publikasi';
-        let url = shareBtn.dataset.pubUrl || window.location.href;
+        const title = shareBtn.dataset.pubTitle || shareBtn.dataset.shareTitle || 'Publikasi';
+        let url = shareBtn.dataset.pubUrl || shareBtn.dataset.shareUrl || window.location.href;
         
         // Ensure URL is complete (add origin if relative)
         if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
@@ -2032,33 +2197,14 @@
         
         console.log('Share button clicked:', { title, url, button: shareBtn, dataset: shareBtn.dataset }); // Debug log
         
-        // Try Web Share API first
-        if (navigator.share) {
-          try {
-            await navigator.share({
-              title: title,
-              text: 'Lihat publikasi ini: ' + title,
-              url: url
-            });
-            console.log('Share successful');
-            return;
-          } catch (err) {
-            if (err.name !== 'AbortError') {
-              console.log('Error sharing or user cancelled:', err);
-              // Fallback to copy to clipboard
-              await copyToClipboardDirect(url, title, e);
-            }
-          }
-        } else {
-          // Fallback: copy to clipboard directly from event handler
-          await copyToClipboardDirect(url, title, e);
-        }
+        // Directly copy to clipboard (no Web Share API)
+        await copyToClipboardDirect(url, title, e, shareBtn);
       }
     });
   });
   
   // Copy to clipboard directly from event handler (maintains user interaction context)
-  async function copyToClipboardDirect(text, title, event) {
+  async function copyToClipboardDirect(text, title, event, button) {
     text = String(text || '');
     
     if (!text) {
@@ -2074,6 +2220,20 @@
         await navigator.clipboard.writeText(text);
         console.log('Successfully copied to clipboard using Clipboard API'); // Debug log
         showToast('Link publikasi "' + title + '" telah disalin ke clipboard');
+        
+        // Visual feedback on button
+        if (button) {
+          const originalHTML = button.innerHTML;
+          const originalClasses = button.className;
+          button.innerHTML = '<i class="bi bi-check"></i> <span>Tersalin!</span>';
+          button.classList.add('btn-success');
+          button.classList.remove('btn-light', 'btn-outline-secondary');
+          
+          setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.className = originalClasses;
+          }, 2000);
+        }
       } catch (err) {
         console.error('Clipboard API failed:', err);
         // Fallback for older browsers or when API fails

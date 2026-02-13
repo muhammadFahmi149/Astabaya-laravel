@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Infografis'); ?>
 
 <?php $__env->startPush('styles'); ?>
@@ -254,6 +252,17 @@
     let paginationLinks = null;
     let totalAllInfographics = 0; // Total all infographics without filter
 
+    // Generate slug from title
+    function generateSlug(title) {
+        if (!title) return '';
+        return title
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') // Remove special characters
+            .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    }
+
     // Get page from URL
     function getPageFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -390,6 +399,7 @@
                         <div class="card-img-wrapper" style="background: #ffffff; height: 280px; min-height: 280px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                             <img src="${item.image || ''}" alt="${item.title}" 
                                  class="card-img-top" 
+                                 loading="lazy"
                                  style="width: 100%; max-height: 100%; object-fit: contain; cursor: pointer;">
                         </div>
                         <div class="card-body d-flex flex-column">
@@ -400,7 +410,7 @@
                                 <button class="btn btn-sm btn-outline-primary flex-fill" onclick="event.stopPropagation(); showInfographicDetail(${item.id})">
                                     <i class="bi bi-eye"></i> Lihat
                                 </button>
-                                <button class="btn btn-sm btn-outline-secondary share-infographic-btn" data-infographic-title="${item.title || 'Infografis'}" data-infographic-url="${window.location.origin}/infographics?infographic=${item.id}" onclick="event.stopPropagation();">
+                                <button class="btn btn-sm btn-outline-secondary share-infographic-btn" data-infographic-title="${item.title || 'Infografis'}" data-infographic-url="${window.location.origin}/infographics?infographic=${item.id}&slug=${generateSlug(item.title)}" onclick="event.stopPropagation();">
                                     <i class="bi bi-share"></i>
                                 </button>
                                 <div onclick="event.stopPropagation();">${bookmarkBtn}</div>
@@ -436,14 +446,14 @@
                                     `;
                                     return `
                                     <tr>
-                                        <td><img src="${item.image}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"></td>
+                                        <td><img src="${item.image}" loading="lazy" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"></td>
                                         <td><strong style="font-size: 0.85rem;">${item.title}</strong></td>
                                         <td>
                                             <div class="d-flex gap-2">
                                                 <button class="btn btn-sm btn-info" onclick="showInfographicDetail(${item.id})">
                                                     <i class="bi bi-eye"></i> View
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-secondary share-infographic-btn" data-infographic-title="${item.title || 'Infografis'}" data-infographic-url="${window.location.origin}/infographics?infographic=${item.id}" onclick="event.stopPropagation();">
+                                                <button class="btn btn-sm btn-outline-secondary share-infographic-btn" data-infographic-title="${item.title || 'Infografis'}" data-infographic-url="${window.location.origin}/infographics?infographic=${item.id}&slug=${generateSlug(item.title)}" onclick="event.stopPropagation();">
                                                     <i class="bi bi-share"></i> Bagikan
                                                 </button>
                                                 ${bookmarkBtn}
@@ -507,6 +517,17 @@
             return;
         }
 
+        // Generate slug from title
+        const slug = generateSlug(item.title);
+        
+        // Update URL with infographic ID and slug
+        const url = new URL(window.location.href);
+        url.searchParams.set('infographic', id);
+        if (slug) {
+            url.searchParams.set('slug', slug);
+        }
+        window.history.pushState({}, '', url);
+
         // Set modal title
         document.getElementById('infographicModalTitle').textContent = item.title || 'Infografis';
         
@@ -547,14 +568,15 @@
         // Set download button data
         const downloadBtn = document.getElementById('infographicModalDownload');
         if (downloadBtn) {
-            const downloadUrl = `<?php echo e(url('/infographics/download')); ?>/${item.id}`;
+            // Gunakan dl (download link) jika ada, jika tidak gunakan route download
+            const downloadUrl = item.dl || `<?php echo e(url('/infographics/download')); ?>/${item.id}`;
             downloadBtn.setAttribute('data-infographic-id', item.id || '');
             downloadBtn.setAttribute('data-infographic-title', item.title || '');
             downloadBtn.setAttribute('data-infographic-url', downloadUrl);
         }
         
-        // Set share button data
-        const shareUrl = window.location.origin + '/infographics?infographic=' + item.id;
+        // Set share button data with slug
+        const shareUrl = window.location.origin + '/infographics?infographic=' + item.id + (slug ? '&slug=' + slug : '');
         const shareButtons = document.querySelectorAll('.share-infographic-modal-btn, .share-infographic-btn');
         shareButtons.forEach(btn => {
             if (btn) {
@@ -634,7 +656,7 @@
                     
                     const relatedThumbnail = relatedItem.image || placeholderImg;
                     relatedElement.innerHTML = `
-                        <img src="${relatedThumbnail}" alt="${relatedItem.title}" onerror="this.src='${placeholderImg}'" />
+                        <img src="${relatedThumbnail}" alt="${relatedItem.title}" loading="lazy" onerror="this.src='${placeholderImg}'" />
                         <div class="content">
                             <div class="title">${relatedItem.title}</div>
                         </div>
@@ -835,7 +857,7 @@
     }
 
     // Copy to clipboard directly from event handler (maintains user interaction context)
-    async function copyInfographicToClipboardDirect(text, title, event) {
+    async function copyInfographicToClipboardDirect(text, title, event, button) {
         text = String(text || '');
         
         if (!text) {
@@ -851,6 +873,20 @@
                 await navigator.clipboard.writeText(text);
                 console.log('Successfully copied to clipboard using Clipboard API'); // Debug log
                 showInfographicToast('Link infografis "' + title + '" telah disalin ke clipboard');
+                
+                // Visual feedback on button
+                if (button) {
+                    const originalHTML = button.innerHTML;
+                    const originalClasses = button.className;
+                    button.innerHTML = '<i class="bi bi-check"></i> <span>Tersalin!</span>';
+                    button.classList.add('btn-success');
+                    button.classList.remove('btn-outline-secondary', 'btn-light');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalHTML;
+                        button.className = originalClasses;
+                    }, 2000);
+                }
             } catch (err) {
                 console.error('Clipboard API failed:', err);
                 // Fallback for older browsers or when API fails
@@ -955,7 +991,24 @@
     }
 
     // Handle bookmark click - check login first
-    function handleInfographicBookmark(button) {
+    async function handleInfographicBookmark(button) {
+        // Prevent multiple clicks
+        if (button.disabled) {
+            console.log('[Infographic Bookmark] Button already disabled, ignoring');
+            return;
+        }
+        
+        // Prevent refresh during user interaction
+        if (window.refreshingBookmarks) {
+            console.log('[Infographic Bookmark] Bookmark refresh in progress, waiting...');
+            // Wait for refresh to complete
+            let waitCount = 0;
+            while (window.refreshingBookmarks && waitCount < 50) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                waitCount++;
+            }
+        }
+        
         if (!isAuthenticated) {
             // User not logged in, show login required modal
             const infographicTitle = button.closest('.card')?.querySelector('.card-title')?.textContent || 
@@ -983,9 +1036,107 @@
         
         // User is authenticated, proceed with bookmark
         if (typeof toggleBookmark === 'function') {
-            toggleBookmark(button);
+            // Disable button immediately to prevent double clicks
+            button.disabled = true;
+            
+            // Store original state BEFORE any operations
+            const icon = button.querySelector('i');
+            const text = button.querySelector('span');
+            const originalState = {
+                hasBookmarkedClass: button.classList.contains('bookmarked'),
+                bookmarkId: button.dataset.bookmarkId || '',
+                iconClasses: icon ? icon.className : '',
+                textContent: text ? text.textContent : '',
+                buttonClasses: button.className
+            };
+            
+            console.log('[Infographic Bookmark] ===== HANDLE BOOKMARK START =====');
+            console.log('[Infographic Bookmark] Original button state:', originalState);
+            
+            // Determine actual bookmark state - check multiple indicators
+            const isCurrentlyBookmarked = originalState.hasBookmarkedClass || 
+                                         (icon && icon.classList.contains('bi-bookmark-fill')) ||
+                                         (originalState.bookmarkId && originalState.bookmarkId.trim() !== '');
+            
+            console.log('[Infographic Bookmark] Determined state - isCurrentlyBookmarked:', isCurrentlyBookmarked);
+            
+            // Show loading state
+            if (icon) {
+                icon.className = 'bi bi-hourglass-split';
+            }
+            
+            try {
+                // Call toggleBookmark and wait for it to complete
+                console.log('[Infographic Bookmark] Calling toggleBookmark...');
+                const result = await toggleBookmark(button);
+                
+                // Log final state after toggle
+                const finalState = {
+                    hasBookmarkedClass: button.classList.contains('bookmarked'),
+                    bookmarkId: button.dataset.bookmarkId || '',
+                    iconClasses: icon ? icon.className : '',
+                    textContent: text ? text.textContent : '',
+                    buttonClasses: button.className
+                };
+                console.log('[Infographic Bookmark] Final button state after toggle:', finalState);
+                console.log('[Infographic Bookmark] Toggle result:', result);
+                
+                // Verify the action matches the result
+                if (result && result.success) {
+                    const expectedBookmarked = result.action === 'added';
+                    const actualBookmarked = finalState.hasBookmarkedClass;
+                    
+                    console.log('[Infographic Bookmark] State verification:', {
+                        expectedBookmarked,
+                        actualBookmarked,
+                        matches: expectedBookmarked === actualBookmarked
+                    });
+                    
+                    if (expectedBookmarked !== actualBookmarked) {
+                        console.warn('[Infographic Bookmark] WARNING: State mismatch! Expected:', expectedBookmarked, 'Actual:', actualBookmarked);
+                    }
+                    
+                    // Show success notification
+                    if (result.action === 'added') {
+                        showInfographicToast('Infografis berhasil disimpan ke bookmark');
+                    } else if (result.action === 'deleted') {
+                        showInfographicToast('Infografis berhasil dihapus dari bookmark');
+                    }
+                } else {
+                    // Fallback: check button state after toggle
+                    const isBookmarked = button.classList.contains('bookmarked');
+                    console.log('[Infographic Bookmark] Fallback check - isBookmarked:', isBookmarked);
+                    if (isBookmarked) {
+                        showInfographicToast('Infografis berhasil disimpan ke bookmark');
+                    } else {
+                        showInfographicToast('Infografis berhasil dihapus dari bookmark');
+                    }
+                }
+            } catch (error) {
+                console.error('[Infographic Bookmark] ===== ERROR CAUGHT =====');
+                console.error('[Infographic Bookmark] Error:', error);
+                console.error('[Infographic Bookmark] Error details:', {
+                    message: error.message,
+                    stack: error.stack,
+                    originalState: originalState,
+                    currentButtonState: {
+                        hasBookmarkedClass: button.classList.contains('bookmarked'),
+                        bookmarkId: button.dataset.bookmarkId,
+                        iconClasses: icon ? icon.className : ''
+                    }
+                });
+                showInfographicToast('Gagal memproses bookmark: ' + error.message);
+                // Don't restore original state - let toggleBookmark handle it
+            } finally {
+                console.log('[Infographic Bookmark] ===== HANDLE BOOKMARK END =====');
+                // Re-enable button after a short delay
+                setTimeout(() => {
+                    button.disabled = false;
+                }, 300);
+            }
         } else {
             console.error('toggleBookmark function not found');
+            button.disabled = false;
         }
     }
 
@@ -1016,8 +1167,10 @@
         }
         
         // User is authenticated, proceed with download
+        // Langsung arahkan ke link dl jika ada
         const downloadUrl = button.dataset.infographicUrl || button.getAttribute('data-infographic-url');
         if (downloadUrl) {
+            // Langsung redirect ke link download agar file langsung terunduh
             window.location.href = downloadUrl;
         } else {
             console.error('Download URL not found');
@@ -1029,12 +1182,12 @@
         console.log('Initializing share buttons for infographics'); // Debug
         // Share buttons in modal and actions - using event delegation
         document.addEventListener('click', async function(e) {
-            const shareBtn = e.target.closest('.share-infographic-modal-btn') || e.target.closest('.share-infographic-btn');
+            const shareBtn = e.target.closest('.share-infographic-modal-btn') || e.target.closest('.share-infographic-btn') || e.target.closest('.share-btn');
             if (shareBtn) {
                 e.preventDefault();
                 e.stopPropagation();
-                const title = shareBtn.dataset.infographicTitle || 'Infografis';
-                let url = shareBtn.dataset.infographicUrl || window.location.href;
+                const title = shareBtn.dataset.infographicTitle || shareBtn.dataset.shareTitle || 'Infografis';
+                let url = shareBtn.dataset.infographicUrl || shareBtn.dataset.shareUrl || window.location.href;
                 
                 // Ensure URL is complete (add origin if relative)
                 if (url && !url.startsWith('http://') && !url.startsWith('https://')) {
@@ -1043,57 +1196,74 @@
                 
                 console.log('Share button clicked:', { title, url, button: shareBtn, dataset: shareBtn.dataset }); // Debug log
                 
-                // Try Web Share API first
-                if (navigator.share) {
-                    try {
-                        await navigator.share({
-                            title: title,
-                            text: 'Lihat infografis ini: ' + title,
-                            url: url
-                        });
-                        console.log('Share successful');
-                        return;
-                    } catch (err) {
-                        if (err.name !== 'AbortError') {
-                            console.log('Error sharing or user cancelled:', err);
-                            // Fallback to copy to clipboard
-                            await copyInfographicToClipboardDirect(url, title, e);
-                        }
-                    }
-                } else {
-                    // Fallback: copy to clipboard directly from event handler
-                    await copyInfographicToClipboardDirect(url, title, e);
-                }
+                // Directly copy to clipboard (no Web Share API)
+                await copyInfographicToClipboardDirect(url, title, e, shareBtn);
             }
         });
 
-        // Load bookmarks for authenticated users
+        // Load bookmarks for authenticated users - Optimized
         if (isAuthenticated) {
-            // Check if toggleBookmark function exists, if not, load it
-            if (typeof toggleBookmark === 'undefined') {
-                // Load bookmarks and sync bookmark buttons
-                fetch('/api/bookmarks/')
-                    .then(response => response.json())
-                    .then(data => {
-                        const bookmarks = data.bookmarks || data || [];
-                        bookmarks.forEach(bookmark => {
-                            if (bookmark.content_type === 'infographic') {
-                                const buttons = document.querySelectorAll(`.bookmark-btn[data-content-type="infographic"][data-object-id="${bookmark.object_id}"]`);
-                                buttons.forEach(btn => {
-                                    btn.classList.add('bookmarked');
-                                    const icon = btn.querySelector('i');
-                                    if (icon) {
-                                        icon.classList.remove('bi-bookmark');
-                                        icon.classList.add('bi-bookmark-fill');
+            // Use refreshBookmarkStatus if available (from main.blade.php) for better performance
+            if (typeof refreshBookmarkStatus === 'function') {
+                // Use the optimized function from main layout
+                setTimeout(() => {
+                    refreshBookmarkStatus();
+                }, 300);
+            } else if (typeof toggleBookmark !== 'undefined') {
+                // Fallback: Load bookmarks only once and cache
+                if (!window.infographicBookmarksLoaded) {
+                    window.infographicBookmarksLoaded = true;
+                    
+                    // Get CSRF token
+                    const metaTag = document.querySelector('meta[name="csrf-token"]');
+                    const csrftoken = metaTag ? metaTag.getAttribute('content') : null;
+                    
+                    if (csrftoken) {
+                        fetch('/bookmarks', {
+                            headers: { 
+                                'X-CSRF-TOKEN': csrftoken,
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            credentials: 'include',
+                            cache: 'no-cache'
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            const bookmarks = data.bookmarks || data || [];
+                            // Create a map for faster lookup
+                            const bookmarkMap = new Map();
+                            bookmarks.forEach(bookmark => {
+                                if (bookmark.content_type_model === 'infographic' || bookmark.content_type === 'infographic') {
+                                    const key = `infographic_${bookmark.object_id}`;
+                                    bookmarkMap.set(key, bookmark);
+                                }
+                            });
+                            
+                            // Update all bookmark buttons at once (optimized)
+                            const allBookmarkButtons = document.querySelectorAll('.bookmark-btn[data-content-type="infographic"]');
+                            allBookmarkButtons.forEach(btn => {
+                                const objectId = btn.dataset.objectId;
+                                if (objectId) {
+                                    const key = `infographic_${objectId}`;
+                                    const bookmark = bookmarkMap.get(key);
+                                    
+                                    if (bookmark) {
+                                        btn.classList.add('bookmarked');
+                                        const icon = btn.querySelector('i');
+                                        if (icon) {
+                                            icon.classList.remove('bi-bookmark');
+                                            icon.classList.add('bi-bookmark-fill');
+                                        }
+                                        btn.dataset.bookmarkId = String(bookmark.id);
                                     }
-                                    btn.dataset.bookmarkId = String(bookmark.id);
-                                });
-                            }
+                                }
+                            });
+                        })
+                        .catch(err => {
+                            console.error('Error loading bookmarks:', err);
                         });
-                    })
-                    .catch(err => {
-                        console.error('Error loading bookmarks:', err);
-                    });
+                    }
+                }
             }
         }
     });
@@ -1159,6 +1329,12 @@
                 console.log('[DEBUG] Body overflow sebelum cleanup:', document.body.style.overflow);
                 console.log('[DEBUG] Body paddingRight sebelum cleanup:', document.body.style.paddingRight);
                 
+                // Remove infographic and slug from URL when modal is closed
+                const url = new URL(window.location.href);
+                url.searchParams.delete('infographic');
+                url.searchParams.delete('slug');
+                window.history.pushState({}, '', url);
+                
                 // Clean up backdrop
                 setTimeout(() => {
                     const backdrops = document.querySelectorAll('.modal-backdrop');
@@ -1211,7 +1387,16 @@
         await getTotalAllInfographics();
         
         // Then load infographics
-        loadInfographics();
+        await loadInfographics();
+        
+        // Check if there's an infographic parameter in URL, open modal automatically
+        const infographicId = urlParams.get('infographic');
+        if (infographicId) {
+            // Wait a bit for infographics to be loaded
+            setTimeout(() => {
+                showInfographicDetail(parseInt(infographicId));
+            }, 500);
+        }
     });
 </script>
 <?php $__env->stopPush(); ?>

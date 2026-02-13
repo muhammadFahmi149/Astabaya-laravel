@@ -243,8 +243,24 @@ class AuthController extends Controller
      */
     public function redirectToGoogle()
     {
-        // Get redirect URI from config (handles .test domain conversion)
+        // Get redirect URI from config
         $redirectUrl = config('services.google.redirect');
+        
+        // If redirect URL is not set in config, build it from current request
+        if (!$redirectUrl || $redirectUrl === 'http://127.0.0.1:8000/accounts/google/login/callback') {
+            $scheme = request()->getScheme(); // http or https
+            $host = request()->getHost(); // astabaya.bpskotasurabaya.com or localhost
+            $port = request()->getPort();
+            
+            // Build base URL
+            if ($port && $port != 80 && $port != 443) {
+                $baseUrl = "{$scheme}://{$host}:{$port}";
+            } else {
+                $baseUrl = "{$scheme}://{$host}";
+            }
+            
+            $redirectUrl = $baseUrl . '/accounts/google/login/callback';
+        }
         
         // If using .test domain, convert to 127.0.0.1 for Google OAuth
         if (str_contains($redirectUrl, '.test')) {
@@ -266,8 +282,24 @@ class AuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
         try {
-            // Get redirect URI from config (handles .test domain conversion)
+            // Get redirect URI from config
             $redirectUrl = config('services.google.redirect');
+            
+            // If redirect URL is not set in config, build it from current request
+            if (!$redirectUrl || $redirectUrl === 'http://127.0.0.1:8000/accounts/google/login/callback') {
+                $scheme = request()->getScheme(); // http or https
+                $host = request()->getHost(); // astabaya.bpskotasurabaya.com or localhost
+                $port = request()->getPort();
+                
+                // Build base URL
+                if ($port && $port != 80 && $port != 443) {
+                    $baseUrl = "{$scheme}://{$host}:{$port}";
+                } else {
+                    $baseUrl = "{$scheme}://{$host}";
+                }
+                
+                $redirectUrl = $baseUrl . '/accounts/google/login/callback';
+            }
             
             // If using .test domain, convert to 127.0.0.1 for Google OAuth
             if (str_contains($redirectUrl, '.test')) {

@@ -90,8 +90,8 @@
       <div class="summary-card" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
         <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
           <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Garis Kemiskinan</h6>
-          <h3 style="font-size: 24px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
-            <span class="garis-kemiskinan-value" id="garis-kemiskinan-value">-</span>
+          <h3 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
+            <span class="garis-kemiskinan-value" id="garis-kemiskinan-value" style="font-size: 28px; font-weight: 700;">-</span>
           </h3>
           <div style="display: flex; align-items: center; gap: 5px; margin-top: 8px;" id="garis-kemiskinan-change">
           </div>
@@ -457,7 +457,7 @@
     }
     
     .summary-card-mobile h3 {
-      font-size: 26px !important;
+      font-size: 28px !important;
       font-weight: 700 !important;
       line-height: 1.2 !important;
       margin: 0 0 10px 0 !important;
@@ -465,9 +465,22 @@
       overflow-wrap: break-word;
     }
     
-    .summary-card-mobile h3 span {
+    /* Hanya mempengaruhi span dengan inline style font-size kecil (seperti "ribu", "%") */
+    .summary-card-mobile h3 span[style*="font-size: 16px"],
+    .summary-card-mobile h3 span[style*="font-size: 14px"],
+    .summary-card-mobile h3 span[style*="font-size: 12px"],
+    .summary-card-mobile h3 span[style*="font-size: 10px"] {
       font-size: 14px !important;
       font-weight: 400 !important;
+    }
+    
+    /* Pastikan nilai utama di h3 tetap besar - override rule di atas */
+    .summary-card-mobile h3 > span:first-child:not([style*="font-size: 16"]):not([style*="font-size: 14"]):not([style*="font-size: 12"]):not([style*="font-size: 10"]),
+    .summary-card-mobile h3 > span[id*="-value"],
+    .summary-card-mobile h3 .garis-kemiskinan-value,
+    .summary-card-mobile h3 span[id="garis-kemiskinan-value"] {
+      font-size: 28px !important;
+      font-weight: 700 !important;
     }
     
     .summary-card-mobile > div[style*="display: flex"][style*="align-items: center"],

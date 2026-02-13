@@ -486,6 +486,17 @@
     // Authentication status - global scope
     const isAuthenticated = @auth true @else false @endauth;
     
+    // Generate slug from title
+    function generateSlug(title) {
+        if (!title) return '';
+        return title
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '') // Remove special characters
+            .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+            .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+    }
+    
     // Store news data for modal
     const newsData = [];
     const dataElements = document.querySelectorAll('.news-data');
@@ -506,6 +517,17 @@
             console.error('News not found at index:', index);
             return;
         }
+
+        // Generate slug from title
+        const slug = generateSlug(item.title);
+        
+        // Update URL with news ID and slug
+        const url = new URL(window.location.href);
+        url.searchParams.set('news', item.id || index);
+        if (slug) {
+            url.searchParams.set('slug', slug);
+        }
+        window.history.pushState({}, '', url);
 
         const modalTitle = document.getElementById('newsModalTitle');
         const modalCategory = document.getElementById('newsModalCategory');
@@ -604,11 +626,11 @@
             }
         }
 
-        // Update share button in modal
+        // Update share button in modal with slug
         const modalShareBtn = document.getElementById('modalNewsShareBtn');
         if (modalShareBtn) {
             const newsTitle = item.title || 'Berita';
-            const newsUrl = window.location.href;
+            const newsUrl = window.location.origin + '/news?news=' + (item.id || index) + (slug ? '&slug=' + slug : '');
             
             modalShareBtn.dataset.newsTitle = newsTitle;
             modalShareBtn.dataset.newsUrl = newsUrl;
@@ -671,6 +693,11 @@
         // Show modal
         const modal = new bootstrap.Modal(document.getElementById('newsCardModal'));
         modal.show();
+        
+        // Update font size after modal is shown
+        setTimeout(() => {
+            updateResponsiveFontSizes();
+        }, 100);
     }
     
     // Make showNewsModal globally available
@@ -719,8 +746,55 @@
     // Event handler untuk share button sudah ditangani oleh fungsi global di main.blade.php
     // Tidak perlu event handler tambahan di sini karena sudah menggunakan event delegation global
 
+    // Function to update font sizes for responsive
+    function updateResponsiveFontSizes() {
+        const isMobile = window.innerWidth <= 768;
+        const isSmallMobile = window.innerWidth <= 576;
+        const isTablet = window.innerWidth <= 992;
+        
+        // Update news card text
+        const newsCardTexts = document.querySelectorAll('.news-item .card-text');
+        newsCardTexts.forEach(el => {
+            if (isSmallMobile) {
+                el.style.fontSize = '1.15rem';
+                el.style.lineHeight = '1.8';
+            } else if (isMobile) {
+                el.style.fontSize = '1.1rem';
+                el.style.lineHeight = '1.7';
+            } else if (isTablet) {
+                el.style.fontSize = '1rem';
+                el.style.lineHeight = '1.6';
+            }
+        });
+        
+        // Update news modal content
+        const modalContent = document.getElementById('newsModalContent');
+        if (modalContent) {
+            if (isSmallMobile) {
+                modalContent.style.fontSize = '1.1rem';
+                modalContent.style.lineHeight = '2';
+            } else if (isMobile) {
+                modalContent.style.fontSize = '1.05rem';
+                modalContent.style.lineHeight = '1.9';
+            } else if (isTablet) {
+                modalContent.style.fontSize = '1rem';
+                modalContent.style.lineHeight = '1.8';
+            }
+        }
+    }
+
     // Load bookmarks for authenticated users
     document.addEventListener('DOMContentLoaded', function() {
+        // Update font sizes on load
+        updateResponsiveFontSizes();
+        
+        // Update font sizes on resize
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(updateResponsiveFontSizes, 100);
+        });
+        
         @auth
         if (isAuthenticated) {
             // Check if toggleBookmark function exists, if not, load it
@@ -754,6 +828,52 @@
             }
         }
         @endauth
+        
+        // Clean up URL when modal is closed
+        const newsModal = document.getElementById('newsCardModal');
+        if (newsModal) {
+            newsModal.addEventListener('hidden.bs.modal', function() {
+                // Remove news and slug from URL when modal is closed
+                const url = new URL(window.location.href);
+                url.searchParams.delete('news');
+                url.searchParams.delete('slug');
+                window.history.pushState({}, '', url);
+            });
+        }
+        
+        // Check if there's a news parameter in URL, open modal automatically
+        const urlParams = new URLSearchParams(window.location.search);
+        const newsId = urlParams.get('news');
+        if (newsId) {
+            // Find news by id or index
+            let newsIndex = -1;
+            if (!isNaN(newsId)) {
+                // If newsId is a number, try to find by index first
+                newsIndex = parseInt(newsId);
+                if (newsIndex >= 0 && newsIndex < newsData.length) {
+                    // Wait a bit for page to be fully loaded
+                    setTimeout(() => {
+                        showNewsModal(newsIndex);
+                    }, 500);
+                } else {
+                    // Try to find by id
+                    newsIndex = newsData.findIndex(n => n.id === newsId || n.id === String(newsId));
+                    if (newsIndex !== -1) {
+                        setTimeout(() => {
+                            showNewsModal(newsIndex);
+                        }, 500);
+                    }
+                }
+            } else {
+                // Try to find by id
+                newsIndex = newsData.findIndex(n => n.id === newsId);
+                if (newsIndex !== -1) {
+                    setTimeout(() => {
+                        showNewsModal(newsIndex);
+                    }, 500);
+                }
+            }
+        }
     });
 
     // Toast notification animations

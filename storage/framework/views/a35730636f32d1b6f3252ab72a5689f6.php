@@ -23,6 +23,7 @@
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/style.css')); ?>" />
+    <link rel="stylesheet" href="<?php echo e(asset('css/share-styles.css')); ?>" />
     <!-- endinject -->
     <link rel="shortcut icon" href="<?php echo e(asset('images/Aastabaya-favicon(2).png')); ?>" />
     <?php echo $__env->yieldPushContent('styles'); ?>
@@ -538,102 +539,100 @@
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
             <li class="nav-item">
-              <a class="nav-link <?php echo e(request()->routeIs('dashboard') ? 'active' : ''); ?>" href="<?php echo e(route('dashboard')); ?>">
+              <a class="nav-link" href="<?php echo e(route('dashboard')); ?>">
                 <i class="icon-grid menu-icon"></i>
                 <span class="menu-title">Dashboard</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link <?php echo e(request()->routeIs('inflasi') ? 'active' : ''); ?>" href="<?php echo e(route('inflasi')); ?>">
+              <a class="nav-link" href="<?php echo e(route('inflasi')); ?>">
                 <i class="bi bi-graph-up-arrow menu-icon"></i>
                 <span class="menu-title">Inflasi</span>
               </a>
             </li>
-            <li class="nav-item <?php echo e(request()->routeIs(['pdrb-pengeluaran', 'pdrb-lapangan-usaha']) ? 'active' : ''); ?>">
-              <a class="nav-link <?php echo e(request()->routeIs(['pdrb-pengeluaran', 'pdrb-lapangan-usaha']) ? 'active' : ''); ?>" data-bs-toggle="collapse" href="#PDRB" aria-expanded="<?php echo e(request()->routeIs(['pdrb-pengeluaran', 'pdrb-lapangan-usaha']) ? 'true' : 'false'); ?>" aria-controls="PDRB">
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#PDRB" aria-expanded="false" aria-controls="PDRB">
                 <i class="bi bi-cash-stack menu-icon"></i>
                 <span class="menu-title">PDRB</span>
                 <i class="menu-arrow"></i>
               </a>
-              <div class="collapse <?php echo e(request()->routeIs(['pdrb-pengeluaran', 'pdrb-lapangan-usaha']) ? 'show' : ''); ?>" id="PDRB">
+              <div class="collapse" id="PDRB">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('pdrb-pengeluaran') ? 'active' : ''); ?>" href="<?php echo e(route('pdrb-pengeluaran')); ?>">PDRB Pengeluaran</a></li>
-                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('pdrb-lapangan-usaha') ? 'active' : ''); ?>" href="<?php echo e(route('pdrb-lapangan-usaha')); ?>">PDRB Lapangan Usaha</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('pdrb-pengeluaran')); ?>">PDRB Pengeluaran</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('pdrb-lapangan-usaha')); ?>">PDRB Lapangan Usaha</a></li>
                 </ul>
               </div>
 
             </li>
             <li class="nav-item">
-              <a class="nav-link <?php echo e(request()->routeIs('kemiskinan') ? 'active' : ''); ?>" href="<?php echo e(route('kemiskinan')); ?>">
+              <a class="nav-link" href="<?php echo e(route('kemiskinan')); ?>">
                 <i class="bi bi-heart-pulse menu-icon"></i>
                 <span class="menu-title">Kemiskinan</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link <?php echo e(request()->routeIs('kependudukan') ? 'active' : ''); ?>" href="<?php echo e(route('kependudukan')); ?>">
+              <a class="nav-link" href="<?php echo e(route('kependudukan')); ?>">
                 <i class="bi bi-people menu-icon"></i>
                 <span class="menu-title">Kependudukan</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link <?php echo e(request()->routeIs('ketenagakerjaan') ? 'active' : ''); ?>" href="<?php echo e(route('ketenagakerjaan')); ?>">
+              <a class="nav-link" href="<?php echo e(route('ketenagakerjaan')); ?>">
                 <i class="bi bi-briefcase menu-icon"></i>
                 <span class="menu-title">Ketenagakerjaan</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link <?php echo e(request()->routeIs('hotel-occupancy') ? 'active' : ''); ?>" href="<?php echo e(route('hotel-occupancy')); ?>" >
+              <a class="nav-link" href="<?php echo e(route('hotel-occupancy')); ?>" >
                 <i class="bi bi-luggage menu-icon"></i>
                 <span class="menu-title">Tingkat Hunian Hotel</span>
               </a>
             </li>
-            <li class="nav-item <?php echo e(request()->routeIs(['indeks-pembangunan-manusia', 'ipm-uhh-sp', 'ipm-hls', 'ipm-rls', 'ipm-pengeluaran-per-kapita', 'ipm-indeks-kesehatan', 'ipm-indeks-hidup-layak', 'ipm-indeks-pendidikan']) ? 'active' : ''); ?>">
-              <a class="nav-link <?php echo e(request()->routeIs(['indeks-pembangunan-manusia', 'ipm-uhh-sp', 'ipm-hls', 'ipm-rls', 'ipm-pengeluaran-per-kapita', 'ipm-indeks-kesehatan', 'ipm-indeks-hidup-layak', 'ipm-indeks-pendidikan']) ? 'active' : ''); ?>" data-bs-toggle="collapse" href="#pembangunan-manusia" aria-expanded="<?php echo e(request()->routeIs(['indeks-pembangunan-manusia', 'ipm-uhh-sp', 'ipm-hls', 'ipm-rls', 'ipm-pengeluaran-per-kapita', 'ipm-indeks-kesehatan', 'ipm-indeks-hidup-layak', 'ipm-indeks-pendidikan']) ? 'true' : 'false'); ?>" aria-controls="pembangunan-manusia">
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#pembangunan-manusia" aria-expanded="false" aria-controls="pembangunan-manusia">
                 <i class="bi bi-buildings menu-icon"></i>
                 <span class="menu-title">Pembangunan Manusia</span>
                 <i class="menu-arrow"></i>
               </a>
-              <div class="collapse <?php echo e(request()->routeIs(['indeks-pembangunan-manusia', 'ipm-uhh-sp', 'ipm-hls', 'ipm-rls', 'ipm-pengeluaran-per-kapita', 'ipm-indeks-kesehatan', 'ipm-indeks-hidup-layak', 'ipm-indeks-pendidikan']) ? 'show' : ''); ?>" id="pembangunan-manusia">
+              <div class="collapse" id="pembangunan-manusia">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('indeks-pembangunan-manusia') ? 'active' : ''); ?>" href="<?php echo e(route('indeks-pembangunan-manusia')); ?>">IPM</a></li>
-                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-uhh-sp') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-uhh-sp')); ?>">UHH SP</a></li>
-                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-hls') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-hls')); ?>">HLS</a></li>
-                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-rls') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-rls')); ?>">RLS</a></li>
-                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-pengeluaran-per-kapita') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-pengeluaran-per-kapita')); ?>">Pengeluaran per Kapita</a></li>
-                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-indeks-kesehatan') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-indeks-kesehatan')); ?>">Indeks Kesehatan</a></li>
-                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-indeks-hidup-layak') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-indeks-hidup-layak')); ?>">Indeks Hidup Layak</a></li>
-                  <li class="nav-item"><a class="nav-link <?php echo e(request()->routeIs('ipm-indeks-pendidikan') ? 'active' : ''); ?>" href="<?php echo e(route('ipm-indeks-pendidikan')); ?>">Indeks Pendidikan</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('indeks-pembangunan-manusia')); ?>">IPM</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-uhh-sp')); ?>">UHH SP</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-hls')); ?>">HLS</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-rls')); ?>">RLS</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-pengeluaran-per-kapita')); ?>">Pengeluaran per Kapita</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-indeks-kesehatan')); ?>">Indeks Kesehatan</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-indeks-hidup-layak')); ?>">Indeks Hidup Layak</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-indeks-pendidikan')); ?>">Indeks Pendidikan</a></li>
                 </ul>
               </div>
             </li>
               <li class="nav-item">
-                <a class="nav-link <?php echo e(request()->routeIs('gini-ratio') ? 'active' : ''); ?>" href="<?php echo e(route('gini-ratio')); ?>">
+                <a class="nav-link" href="<?php echo e(route('gini-ratio')); ?>">
                   <i class="bi bi-percent menu-icon"></i>
                   <span class="menu-title">Gini ratio</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link <?php echo e(request()->routeIs('publications') ? 'active' : ''); ?>" href="<?php echo e(route('publications')); ?>">
+                <a class="nav-link" href="<?php echo e(route('publications')); ?>">
                   <i class="icon-book menu-icon"></i>
                   <span class="menu-title">Publikasi</span>
                 </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link <?php echo e(request()->routeIs('infographics') ? 'active' : ''); ?>" href="<?php echo e(route('infographics')); ?>">
+              <a class="nav-link" href="<?php echo e(route('infographics')); ?>">
                 <i class="bi bi-bar-chart-line menu-icon"></i>
                 <span class="menu-title">Infografis</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link <?php echo e(request()->routeIs('news') ? 'active' : ''); ?>" href="<?php echo e(route('news')); ?>">
+              <a class="nav-link" href="<?php echo e(route('news')); ?>">
                 <i class="bi bi-file-earmark-text menu-icon"></i>
                 <span class="menu-title">Berita</span>
               </a>
             </li>
           </ul>
         </nav>
-        <!-- Sidebar backdrop for mobile -->
-        <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
         <div class="main-panel">
           <div class="content-wrapper">
             <?php echo $__env->yieldContent('content'); ?>
@@ -1426,9 +1425,6 @@
               }
               // Remove active class on mobile resize if sidebar should be hidden
               sidebar.classList.remove('active');
-              if (sidebarBackdrop) {
-                sidebarBackdrop.classList.remove('show');
-              }
             } else {
               // When switching to desktop view, maintain collapsed state
               // Don't automatically expand, keep current state
@@ -1454,8 +1450,6 @@
         const brandLogoMiniMoved = navbarMenuWrapper?.querySelector('.brand-logo-mini-moved');
         const navbarBrandMoved = navbarMenuWrapper?.querySelector('.navbar-brand-moved');
 
-        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
-        
         if (sidebarToggle && sidebar) {
           sidebarToggle.addEventListener('click', function() {
             const isCollapsed = sidebar.classList.contains('collapsed');
@@ -1465,10 +1459,6 @@
               // On mobile, toggle active class (show/hide sidebar overlay)
               // Sidebar always shows full width with text on mobile
               sidebar.classList.toggle('active');
-              // Toggle backdrop
-              if (sidebarBackdrop) {
-                sidebarBackdrop.classList.toggle('show');
-              }
               // Remove collapsed state on mobile - always show full sidebar
               sidebar.classList.remove('collapsed');
               body.classList.remove('sidebar-icon-only');
@@ -1478,10 +1468,6 @@
               body.classList.toggle('sidebar-icon-only');
               // Remove active class on desktop
               sidebar.classList.remove('active');
-              // Hide backdrop on desktop
-              if (sidebarBackdrop) {
-                sidebarBackdrop.classList.remove('show');
-              }
             }
 
             // Handle logo visibility based on collapsed state (only for desktop)
@@ -1557,15 +1543,9 @@
               
               // Remove active class on mobile resize to hide sidebar overlay initially
               sidebar.classList.remove('active');
-              if (sidebarBackdrop) {
-                sidebarBackdrop.classList.remove('show');
-              }
             } else if (!isMobile && wasMobile) {
               // Switching from mobile to desktop - restore previous state
               sidebar.classList.remove('active');
-              if (sidebarBackdrop) {
-                sidebarBackdrop.classList.remove('show');
-              }
               
               // Restore collapsed state if it was collapsed before
               if (sidebarStateBeforeMobile === true) {
@@ -1609,9 +1589,6 @@
           sidebar.classList.remove('collapsed');
           body.classList.remove('sidebar-icon-only');
           sidebar.classList.remove('active');
-          if (sidebarBackdrop) {
-            sidebarBackdrop.classList.remove('show');
-          }
         } else {
           // On desktop, save initial state
           sidebarStateBeforeMobile = sidebar.classList.contains('collapsed');
@@ -1619,16 +1596,6 @@
         
         // Initialize previousWidth
         previousWidth = window.innerWidth;
-
-        // Handle backdrop click to close sidebar on mobile
-        if (sidebarBackdrop) {
-          sidebarBackdrop.addEventListener('click', function() {
-            if (window.innerWidth <= 991) {
-              sidebar.classList.remove('active');
-              sidebarBackdrop.classList.remove('show');
-            }
-          });
-        }
 
         // Handle sidebar menu item clicks when sidebar is collapsed
         const sidebarNavLinks = sidebar.querySelectorAll('.nav-link');
@@ -2851,7 +2818,7 @@
       }
 
       /* Sidebar animation from left to right for mobile */
-      @media screen and (max-width: 991px) {
+      @media screen && (max-width: 991px) {
         .sidebar-offcanvas {
           position: fixed;
           height: calc(100vh - 60px);
@@ -2868,8 +2835,6 @@
           transition: left 0.25s ease-out;
           z-index: 1045;
           width: 235px !important;
-          background-color: #fff;
-          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .sidebar-offcanvas.active {
@@ -2883,25 +2848,6 @@
         /* On mobile, collapsed state still shows full sidebar when active */
         .sidebar-offcanvas.collapsed.active {
           width: 235px !important;
-        }
-
-        /* Sidebar backdrop overlay for mobile */
-        .sidebar-backdrop {
-          display: none;
-          position: fixed;
-          top: 60px;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(0, 0, 0, 0.5);
-          z-index: 1040;
-          opacity: 0;
-          transition: opacity 0.25s ease-out;
-        }
-
-        .sidebar-backdrop.show {
-          display: block;
-          opacity: 1;
         }
       }
 
@@ -3022,42 +2968,6 @@
 
       .sidebar .nav.sub-menu .nav-item .nav-link {
         font-size: 0.8125rem !important;
-      }
-
-      /* Active state styling for sidebar menu items */
-      .sidebar .nav .nav-item .nav-link.active,
-      .sidebar .nav.sub-menu .nav-item .nav-link.active {
-        background-color: rgba(35, 76, 106, 0.15) !important;
-        color: #234C6A !important;
-        font-weight: 600;
-        border-left: 3px solid #234C6A;
-        padding-left: calc(1.5rem - 3px);
-      }
-
-      .sidebar .nav .nav-item.active > .nav-link {
-        background-color: rgba(35, 76, 106, 0.15) !important;
-        color: #234C6A !important;
-        font-weight: 600;
-        border-left: 3px solid #234C6A;
-        padding-left: calc(1.5rem - 3px);
-      }
-
-      .sidebar .nav .nav-item .nav-link.active .menu-icon,
-      .sidebar .nav.sub-menu .nav-item .nav-link.active .menu-icon {
-        color: #234C6A !important;
-      }
-
-      /* Hover state for sidebar menu items */
-      .sidebar .nav .nav-item .nav-link:hover:not(.active),
-      .sidebar .nav.sub-menu .nav-item .nav-link:hover:not(.active) {
-        background-color: rgba(35, 76, 106, 0.08) !important;
-        color: #234C6A !important;
-      }
-
-      /* Ensure active state is visible even on hover */
-      .sidebar .nav .nav-item .nav-link.active:hover,
-      .sidebar .nav.sub-menu .nav-item .nav-link.active:hover {
-        background-color: rgba(35, 76, 106, 0.2) !important;
       }
     </style>
     <!-- Login Modal -->
@@ -3206,7 +3116,7 @@
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'X-CSRFToken': csrfToken,
+              'X-CSRF-TOKEN': csrfToken,
             },
             body: JSON.stringify(data),
           });
@@ -3239,7 +3149,7 @@
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'X-CSRFToken': csrfToken,
+              'X-CSRF-TOKEN': csrfToken,
             },
             body: JSON.stringify(data),
           });
@@ -3359,33 +3269,16 @@
         const icon = button.querySelector("i");
         const text = button.querySelector("span");
 
-        function getCookie(name) {
-          let cookieValue = null;
-          if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              if (cookie.substring(0, name.length + 1) === name + "=") {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-              }
-            }
-          }
-          return cookieValue;
-        }
+        // Get CSRF token (Laravel way - from meta tag)
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        const csrftoken = metaTag ? metaTag.getAttribute('content') : null;
         
-        // Try to get CSRF token from cookie first, then from meta tag
-        let csrftoken = getCookie("csrftoken");
-        if (!csrftoken) {
-          const metaTag = document.querySelector('meta[name="csrf-token"]');
-          if (metaTag) {
-            csrftoken = metaTag.getAttribute("content");
-          }
-        }
+        console.log("[Bookmark v3] CSRF Token:", csrftoken ? `Found (${csrftoken.substring(0, 10)}...)` : "NOT FOUND");
+        console.log("[Bookmark v3] Meta tag exists:", !!metaTag);
 
         if (!csrftoken) {
-          console.error("CSRF token not found");
-          alert("Sesi Anda telah berakhir. Silakan refresh halaman dan login kembali.");
+          console.error("CSRF token not found! Meta tag:", metaTag);
+          alert("Token CSRF tidak ditemukan. Silakan refresh halaman (Ctrl+F5).");
           button.disabled = false;
           return;
         }
@@ -3400,10 +3293,10 @@
             }
 
             console.log("Deleting bookmark:", { bookmarkId, contentType, objectId });
-          const response = await fetch(`/api/bookmarks/delete/${bookmarkId}/`, {
+          const response = await fetch(`/bookmarks/${bookmarkId}`, {
             method: "DELETE",
               headers: { 
-                "X-CSRFToken": csrftoken,
+                "X-CSRF-TOKEN": csrftoken,
                 "X-Requested-With": "XMLHttpRequest"
               },
               credentials: "include",
@@ -3444,11 +3337,11 @@
             
             console.log("Adding bookmark:", requestBody);
             
-          const response = await fetch(`/api/bookmarks/add/`, {
+          const response = await fetch(`/bookmarks/add`, {
             method: "POST",
               headers: { 
                 "Content-Type": "application/json", 
-                "X-CSRFToken": csrftoken,
+                "X-CSRF-TOKEN": csrftoken,
                 "X-Requested-With": "XMLHttpRequest"
               },
               credentials: "include",
@@ -3456,8 +3349,17 @@
             });
 
             console.log("Add response status:", response.status);
-            const responseData = await response.json().catch(() => ({}));
-            console.log("Add response data:", responseData);
+            console.log("Add response headers:", Object.fromEntries(response.headers.entries()));
+            const responseText = await response.text();
+            console.log("Add response text:", responseText);
+            let responseData = {};
+            try {
+              responseData = JSON.parse(responseText);
+              console.log("Add response data (parsed):", responseData);
+            } catch (e) {
+              console.error("Failed to parse response as JSON:", e);
+              console.log("Response was:", responseText);
+            }
 
           if (response.ok) {
             button.classList.add("bookmarked");
@@ -3482,9 +3384,9 @@
               if (response.status === 409) {
                 // Bookmark already exists, fetch && update UI
                 try {
-                  const existingBookmarks = await fetch(`/api/bookmarks/`, {
+                  const existingBookmarks = await fetch(`/bookmarks`, {
                     headers: { 
-                      "X-CSRFToken": csrftoken,
+                      "X-CSRF-TOKEN": csrftoken,
                       "X-Requested-With": "XMLHttpRequest"
                     },
                     credentials: "include",
@@ -3520,14 +3422,20 @@
                   alert("Bookmark sudah ada di daftar Anda.");
                 }
               } else {
-                const errorMsg = responseData.error || responseData.detail || responseData.non_field_errors || "Terjadi kesalahan";
-                console.error("Add bookmark error:", responseData);
+                const errorMsg = responseData.error || responseData.detail || responseData.non_field_errors || responseData.message || "Terjadi kesalahan";
+                console.error("Add bookmark error:", {
+                  status: response.status,
+                  statusText: response.statusText,
+                  responseData: responseData,
+                  errorMsg: errorMsg
+                });
                 alert("Gagal menambahkan bookmark: " + (Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg));
               }
             }
           }
         } catch (error) {
           console.error("Error toggling bookmark:", error);
+          console.error("Error stack:", error.stack);
           alert("Terjadi kesalahan: " + error.message);
         } finally {
           button.disabled = false;
@@ -3541,28 +3449,11 @@
         return;
         <?php endif; ?>
         
-        function getCookie(name) {
-          let cookieValue = null;
-          if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-              const cookie = cookies[i].trim();
-              if (cookie.substring(0, name.length + 1) === name + "=") {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-              }
-            }
-          }
-          return cookieValue;
-        }
+        // Get CSRF token from meta tag (Laravel standard)
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        const csrftoken = metaTag ? metaTag.getAttribute('content') : null;
         
-        let csrftoken = getCookie("csrftoken");
-        if (!csrftoken) {
-          const metaTag = document.querySelector('meta[name="csrf-token"]');
-          if (metaTag) {
-            csrftoken = metaTag.getAttribute("content");
-          }
-        }
+        console.log('[updateBookmarkList] CSRF Token:', csrftoken ? 'Found' : 'NOT FOUND');
 
         if (!csrftoken) {
           console.error("CSRF token not found for updating bookmark list");
@@ -3570,21 +3461,28 @@
         }
 
         try {
-          const response = await fetch(`/api/bookmarks/`, {
+          const response = await fetch(`/bookmarks`, {
             headers: { 
-              "X-CSRFToken": csrftoken,
+              "X-CSRF-TOKEN": csrftoken,
               "X-Requested-With": "XMLHttpRequest"
             },
             credentials: "include",
           });
 
+          console.log('[updateBookmarkList] Response status:', response.status);
+
           if (response.ok) {
             const bookmarks = await response.json();
+            console.log('[updateBookmarkList] Bookmarks loaded:', bookmarks.length, bookmarks);
+            
             const bookmarkList = document.getElementById("bookmarkList");
             const countIndicator = document.getElementById("bookmarkCount") || document.querySelector("#notificationDropdown .count");
             const emptyMessage = document.getElementById("emptyBookmarkMessage");
 
-            if (!bookmarkList) return;
+            if (!bookmarkList) {
+              console.error('[updateBookmarkList] bookmarkList element not found!');
+              return;
+            }
 
             // Clear existing items
             bookmarkList.innerHTML = "";
@@ -3615,27 +3513,38 @@
               // Add bookmark items
               bookmarks.forEach(bookmark => {
                 const item = bookmark.content_object;
-                if (!item || !item.title) return;
+                console.log('[updateBookmarkList] Processing bookmark:', {
+                  id: bookmark.id,
+                  type: bookmark.content_type_model,
+                  has_object: !!item,
+                  has_title: item?.title
+                });
+                
+                if (!item || !item.title) {
+                  console.warn('[updateBookmarkList] Skipping bookmark - no content_object or title:', bookmark);
+                  return;
+                }
 
                 let itemUrl = "#";
-                let iconClass = "bi bi-bookmark-fill"; // Default icon
+                let iconClass = "bi bi-bookmark-fill"; // Default icon (fallback jika tidak ada gambar)
                 let contentTypeLabel = ""; // Label untuk menampilkan asal bookmark
+                let imageUrl = bookmark.image_url; // Ambil image URL dari API
                 
                 // Determine URL, icon, && label based on content type
                 if (bookmark.content_type_model === "news") {
                   const newsId = item.news_id || bookmark.object_id;
                   itemUrl = `/news/#news-${newsId}`;
-                  iconClass = "bi bi-file-earmark-text"; // Icon berita dari sidebar
+                  iconClass = "bi bi-file-earmark-text"; // Icon berita dari sidebar (fallback)
                   contentTypeLabel = "Berita";
                 } else if (bookmark.content_type_model === "infographic") {
                   const infographicId = item.id || bookmark.object_id;
                   itemUrl = `/infographics/#infographic-${infographicId}`;
-                  iconClass = "bi bi-bar-chart-line"; // Icon infografis dari sidebar
+                  iconClass = "bi bi-bar-chart-line"; // Icon infografis dari sidebar (fallback)
                   contentTypeLabel = "Infografis";
                 } else if (bookmark.content_type_model === "publication") {
                   const pubId = item.pub_id || bookmark.object_id;
                   itemUrl = `/publications/#publication-${pubId}`;
-                  iconClass = "icon-book"; // Icon publikasi dari sidebar
+                  iconClass = "icon-book"; // Icon publikasi dari sidebar (fallback)
                   contentTypeLabel = "Publikasi";
                 }
 
@@ -3648,12 +3557,29 @@
                 // Format: "Judul (Asal)"
                 const formattedTitle = `${title} (${contentTypeLabel})`;
 
-                bookmarkItem.innerHTML = `
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-primary">
-                      <i class="${iconClass} mx-0"></i>
+                // Gunakan gambar thumbnail jika tersedia, jika tidak gunakan icon
+                let thumbnailHtml = '';
+                if (imageUrl) {
+                  thumbnailHtml = `
+                    <div class="preview-thumbnail">
+                      <img src="${imageUrl}" 
+                           alt="${title}" 
+                           style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px;"
+                           onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;preview-icon bg-primary&quot;><i class=&quot;${iconClass} mx-0&quot;></i></div>';">
                     </div>
-                  </div>
+                  `;
+                } else {
+                  thumbnailHtml = `
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-primary">
+                        <i class="${iconClass} mx-0"></i>
+                      </div>
+                    </div>
+                  `;
+                }
+
+                bookmarkItem.innerHTML = `
+                  ${thumbnailHtml}
                   <div class="preview-item-content">
                     <h6 class="preview-subject font-weight-normal" style="word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">${formattedTitle}</h6>
                   </div>
@@ -3835,9 +3761,9 @@
         }
 
         try {
-          const response = await fetch(`/api/bookmarks/`, {
+          const response = await fetch(`/bookmarks`, {
             headers: { 
-              "X-CSRFToken": csrftoken,
+              "X-CSRF-TOKEN": csrftoken,
               "X-Requested-With": "XMLHttpRequest"
             },
             credentials: "include",
@@ -3937,8 +3863,9 @@
 
         // Initial refresh after a short delay to ensure DOM is ready
         setTimeout(function() {
-          console.log('Initial bookmark status refresh...');
+          console.log('Initial bookmark status refresh and list update...');
           refreshBookmarkStatus();
+          updateBookmarkList(); // Also update bookmark dropdown on page load
         }, 500);
         <?php endif; ?>
         
@@ -4084,6 +4011,12 @@
             const targetBtn = shareBtn || (isShareButton ? e.target.closest('button') : null) || (parentIsShareBtn ? e.target.closest('button') : null);
             
             if (targetBtn) {
+              // Skip if this button has an onclick handler (to avoid conflicts with page-specific handlers)
+              if (targetBtn.hasAttribute('onclick')) {
+                console.log('Skipping button with onclick handler:', targetBtn);
+                return;
+              }
+              
               console.log('Share button detected:', targetBtn, 'Classes:', targetBtn.className); // Debug
               e.preventDefault();
               e.stopPropagation();
@@ -4122,35 +4055,14 @@
               
               console.log('Share button clicked:', { title, url, button: targetBtn }); // Debug log
               
-              // Try Web Share API first (for mobile devices)
-              if (navigator.share) {
-                try {
-                  await navigator.share({
-                    title: title,
-                    text: 'Lihat konten ini: ' + title,
-                    url: url
-                  });
-                  console.log('Share successful');
-                  return;
-                } catch (err) {
-                  if (err.name !== 'AbortError') {
-                    console.log('Error sharing or user cancelled:', err);
-                    // Fallback: show share modal
-                    console.log('Calling showShareModal:', { title, url });
-                    showShareModal(title, url);
-                  }
-                }
-              } else {
-                // Show share modal with textarea for manual copy
-                    console.log('Web Share API not available, calling showShareModal:', { title, url });
-                showShareModal(title, url);
-              }
+              // Directly copy to clipboard (no Web Share API or modal)
+              await copyToClipboardGlobal(url, title, targetBtn);
             }
           });
         });
         
         // Global copy to clipboard function (maintains user interaction context)
-        async function copyToClipboardGlobal(text, title) {
+        async function copyToClipboardGlobal(text, title, button) {
           text = String(text || '');
           
           if (!text) {
@@ -4168,6 +4080,21 @@
               await navigator.clipboard.writeText(text);
               console.log('Successfully copied to clipboard using Clipboard API'); // Debug log
               showShareToast('Link "' + title + '" telah disalin ke clipboard');
+              
+              // Visual feedback on button
+              if (button) {
+                const originalHTML = button.innerHTML;
+                const originalClasses = button.className;
+                button.innerHTML = '<i class="bi bi-check"></i> <span class="share-btn-text">Tersalin!</span>';
+                button.classList.add('btn-success');
+                button.classList.remove('btn-light', 'btn-outline-secondary', 'btn-outline-primary');
+                
+                setTimeout(() => {
+                  button.innerHTML = originalHTML;
+                  button.className = originalClasses;
+                }, 2000);
+              }
+              
               return; // Success, exit early
             } catch (err) {
               console.error('Clipboard API failed:', err);
@@ -4179,11 +4106,11 @@
           // Clipboard API not available or failed, use fallback immediately (synchronously)
           // Important: Must call synchronously to maintain user interaction context
           console.log('Using fallback copy method (Clipboard API not available or failed)'); // Debug log
-          fallbackCopyToClipboardGlobal(text, title);
+          fallbackCopyToClipboardGlobal(text, title, button);
         }
         
         // Global fallback copy function
-        function fallbackCopyToClipboardGlobal(text, title) {
+        function fallbackCopyToClipboardGlobal(text, title, button) {
           console.log('Using fallback copy method');
           
           text = String(text || '');
@@ -4259,6 +4186,20 @@
             if (copySuccess) {
               console.log('Fallback copy successful via execCommand');
               showShareToast('Link "' + title + '" telah disalin ke clipboard');
+              
+              // Visual feedback on button
+              if (button) {
+                const originalHTML = button.innerHTML;
+                const originalClasses = button.className;
+                button.innerHTML = '<i class="bi bi-check"></i> <span class="share-btn-text">Tersalin!</span>';
+                button.classList.add('btn-success');
+                button.classList.remove('btn-light', 'btn-outline-secondary', 'btn-outline-primary');
+                
+                setTimeout(() => {
+                  button.innerHTML = originalHTML;
+                  button.className = originalClasses;
+                }, 2000);
+              }
               
               // Clean up
               setTimeout(() => {
@@ -4507,6 +4448,7 @@
       </div>
     </div>
     
+    <script src="<?php echo e(asset('js/share-utils.js')); ?>"></script>
     <?php echo $__env->yieldPushContent('scripts'); ?>
   </body>
 </html>
