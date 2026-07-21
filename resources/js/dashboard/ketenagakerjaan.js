@@ -1,780 +1,13 @@
-<?php $__env->startSection('title', 'Ketenagakerjaan'); ?>
-
-<?php $__env->startPush('styles'); ?>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-<?php $__env->stopPush(); ?>
-
-<?php $__env->startPush('scripts'); ?>
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<?php $__env->stopPush(); ?>
-
-<?php $__env->startSection('content'); ?>
-<div class="container py-4">
-  <h3 class="font-weight-bold mb-4">Ketenagakerjaan</h3>
-  
-  <!-- Rangkuman Data Ketenagakerjaan -->
-  <div class="row mb-4">
-    <!-- TPT Summary Card -->
-    <div class="col-md-6 mb-3">
-      <div class="summary-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);; color: white; border-radius: 12px; padding: 25px; min-height: 200px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-        <div style="position: relative; z-index: 2;">
-          <h5 style="color: rgba(255, 255, 255, 0.95); font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">
-            <i class="fas fa-chart-line me-2"></i>Tingkat Pengangguran Terbuka (TPT)
-          </h5>
-          <div class="row">
-            <div class="col-4">
-              <h6 style="color: rgba(255, 255, 255, 0.8); font-size: 11px; font-weight: 500; margin: 0 0 5px 0;">Total</h6>
-              <h3 id="tpt-total-value" style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0;">-</h3>
-            </div>
-            <div class="col-4">
-              <h6 style="color: rgba(255, 255, 255, 0.8); font-size: 11px; font-weight: 500; margin: 0 0 5px 0;">Laki-Laki</h6>
-              <h3 id="tpt-laki-value" style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0;">-</h3>
-            </div>
-            <div class="col-4">
-              <h6 style="color: rgba(255, 255, 255, 0.8); font-size: 11px; font-weight: 500; margin: 0 0 5px 0;">Perempuan</h6>
-              <h3 id="tpt-perempuan-value" style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0;">-</h3>
-            </div>
-          </div>
-          <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <small id="tpt-year-value" style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">Data tidak tersedia</small>
-              <div id="tpt-change-value" style="display: flex; align-items: center; gap: 5px;"></div>
-            </div>
-          </div>
-        </div>
-        <div style="position: absolute; top: 10px; right: 10px; opacity: 0.1; z-index: 1;">
-          <i class="fas fa-chart-line" style="font-size: 80px;"></i>
-        </div>
-      </div>
-    </div>
-
-    <!-- TPAK Summary Card -->
-    <div class="col-md-6 mb-3">
-      <div class="summary-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);; color: white; border-radius: 12px; padding: 25px; min-height: 200px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-        <div style="position: relative; z-index: 2;">
-          <h5 style="color: rgba(255, 255, 255, 0.95); font-size: 16px; font-weight: 600; margin: 0 0 15px 0;">
-            <i class="fas fa-users me-2"></i>Tingkat Partisipasi Angkatan Kerja (TPAK)
-          </h5>
-          <div class="row">
-            <div class="col-4">
-              <h6 style="color: rgba(255, 255, 255, 0.8); font-size: 11px; font-weight: 500; margin: 0 0 5px 0;">Total</h6>
-              <h3 id="tpak-total-value" style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0;">-</h3>
-            </div>
-            <div class="col-4">
-              <h6 style="color: rgba(255, 255, 255, 0.8); font-size: 11px; font-weight: 500; margin: 0 0 5px 0;">Laki-Laki</h6>
-              <h3 id="tpak-laki-value" style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0;">-</h3>
-            </div>
-            <div class="col-4">
-              <h6 style="color: rgba(255, 255, 255, 0.8); font-size: 11px; font-weight: 500; margin: 0 0 5px 0;">Perempuan</h6>
-              <h3 id="tpak-perempuan-value" style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0;">-</h3>
-            </div>
-          </div>
-          <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <small id="tpak-year-value" style="color: rgba(255, 255, 255, 0.8); font-size: 11px;">Data tidak tersedia</small>
-              <div id="tpak-change-value" style="display: flex; align-items: center; gap: 5px;"></div>
-            </div>
-          </div>
-        </div>
-        <div style="position: absolute; top: 10px; right: 10px; opacity: 0.1; z-index: 1;">
-          <i class="fas fa-users" style="font-size: 80px;"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Comparison Chart -->
-  <div class="row mb-4 comparison-chart-row">
-    <div class="col-md-12">
-      <div class="dashboard-card comparison-chart-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;" class="chart-header">
-          <h5 class="mb-0">Perbandingan TPT dan TPAK dari Tahun ke Tahun</h5>
-          <div class="chart-header-actions">
-            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'comparisonChart','title' => 'Perbandingan TPT dan TPAK']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('chart-share-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'comparisonChart','title' => 'Perbandingan TPT dan TPAK']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-            <div class="dropdown">
-              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                <i class="fas fa-download"></i> <span>Unduh</span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="downloadComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
-                <li><a class="dropdown-item" href="#" id="downloadComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                <li><a class="dropdown-item" href="#" id="downloadComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="chart-container-mobile">
-          <div id="comparisonChart" style="width: 100%; height: 400px;"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Tab Navigation -->
-  <ul class="nav nav-tabs mb-4" id="ketenagakerjaanTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="tpt-tab" data-bs-toggle="tab" data-bs-target="#tpt" type="button" role="tab" aria-controls="tpt" aria-selected="true">
-        <i class="fas fa-chart-line me-2"></i>TPT
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tpak-tab" data-bs-toggle="tab" data-bs-target="#tpak" type="button" role="tab" aria-controls="tpak" aria-selected="false">
-        <i class="fas fa-users me-2"></i>TPAK
-      </button>
-    </li>
-  </ul>
-
-  <!-- Tab Content -->
-  <div class="tab-content" id="ketenagakerjaanTabsContent">
-    <!-- Tab 1: TPT -->
-    <div class="tab-pane fade show active" id="tpt" role="tabpanel" aria-labelledby="tpt-tab">
-      <!-- Summary Cards -->
-      <div class="row mb-4">
-        <!-- Total TPT -->
-        <div class="col-6 col-md-4 mb-2 mb-md-3">
-          <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-            <div style="position: relative; z-index: 2;">
-              <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Total TPT</h6>
-              <h3 id="tpt-tab-total-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
-              <div id="tpt-tab-total-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
-              <small id="tpt-tab-total-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
-            </div>
-            <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
-              <i class="fas fa-chart-line" style="font-size: 60px;"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Laki-Laki TPT -->
-        <div class="col-6 col-md-4 mb-2 mb-md-3">
-          <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-            <div style="position: relative; z-index: 2;">
-              <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Laki-Laki</h6>
-              <h3 id="tpt-tab-laki-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
-              <div id="tpt-tab-laki-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
-              <small id="tpt-tab-laki-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
-            </div>
-            <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
-              <i class="fas fa-male" style="font-size: 60px;"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Perempuan TPT -->
-        <div class="col-6 col-md-4 mb-2 mb-md-3">
-          <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-            <div style="position: relative; z-index: 2;">
-              <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Perempuan</h6>
-              <h3 id="tpt-tab-perempuan-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
-              <div id="tpt-tab-perempuan-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
-              <small id="tpt-tab-perempuan-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
-            </div>
-            <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
-              <i class="fas fa-female" style="font-size: 60px;"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Charts Row TPT -->
-      <div class="row mb-4">
-        <!-- Pie Chart for Demographics TPT -->
-        <div class="col-md-6 mb-3">
-          <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-              <h5 class="mb-0">Distribusi TPT Berdasarkan Gender (<?php if(isset($tpt_latest_data) && $tpt_latest_data): ?><?php echo e($tpt_latest_data->year ?? '-'); ?><?php else: ?>-<?php endif; ?>)</h5>
-              <div class="chart-header-actions">
-                <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'tptPieChart','title' => 'Distribusi TPT Berdasarkan Gender']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('chart-share-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'tptPieChart','title' => 'Distribusi TPT Berdasarkan Gender']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-                <div class="dropdown">
-                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                    <i class="fas fa-download"></i> <span>Unduh</span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="downloadTptPieDropdown" style="border-radius: 8px; min-width: 100%;">
-                    <li><a class="dropdown-item" href="#" id="downloadTptPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                    <li><a class="dropdown-item" href="#" id="downloadTptPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="chart-container-mobile">
-              <div id="tptPieChart" style="width: 100%; height: 400px;"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Line Chart TPT -->
-        <div class="col-md-6 mb-3">
-          <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-              <h5 class="mb-0">Tren TPT dari Tahun ke Tahun</h5>
-              <div class="chart-header-actions">
-                <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'tptLineChart','title' => 'Tren TPT dari Tahun ke Tahun']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('chart-share-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'tptLineChart','title' => 'Tren TPT dari Tahun ke Tahun']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-                <div class="dropdown">
-                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTptLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                    <i class="fas fa-download"></i> <span>Unduh</span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="downloadTptLineDropdown" style="border-radius: 8px; min-width: 100%;">
-                    <li><a class="dropdown-item" href="#" id="downloadTptLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                    <li><a class="dropdown-item" href="#" id="downloadTptLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="chart-container-mobile">
-              <div id="tptLineChart" style="width: 100%; height: 400px;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tab 2: TPAK -->
-    <div class="tab-pane fade" id="tpak" role="tabpanel" aria-labelledby="tpak-tab">
-      <!-- Summary Cards -->
-      <div class="row mb-4">
-        <!-- Total TPAK -->
-        <div class="col-6 col-md-4 mb-2 mb-md-3">
-          <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-            <div style="position: relative; z-index: 2;">
-              <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Total TPAK</h6>
-              <h3 id="tpak-tab-total-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
-              <div id="tpak-tab-total-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
-              <small id="tpak-tab-total-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
-            </div>
-            <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
-              <i class="fas fa-users" style="font-size: 60px;"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Laki-Laki TPAK -->
-        <div class="col-6 col-md-4 mb-2 mb-md-3">
-          <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-            <div style="position: relative; z-index: 2;">
-              <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Laki-Laki</h6>
-              <h3 id="tpak-tab-laki-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
-              <div id="tpak-tab-laki-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
-              <small id="tpak-tab-laki-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
-            </div>
-            <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
-              <i class="fas fa-male" style="font-size: 60px;"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Perempuan TPAK -->
-        <div class="col-6 col-md-4 mb-2 mb-md-3">
-          <div class="summary-card summary-card-mobile" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);; color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
-            <div style="position: relative; z-index: 2;">
-              <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">Perempuan</h6>
-              <h3 id="tpak-tab-perempuan-value" style="font-size: 32px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">-</h3>
-              <div id="tpak-tab-perempuan-change" style="display: flex; align-items: center; gap: 5px; margin-top: 8px;"></div>
-              <small id="tpak-tab-perempuan-year" style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: 8px; display: block;">Data tidak tersedia</small>
-            </div>
-            <div style="position: absolute; top: 10px; right: 10px; opacity: 0.15; z-index: 1;">
-              <i class="fas fa-female" style="font-size: 60px;"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Charts Row TPAK -->
-      <div class="row mb-4">
-        <!-- Pie Chart for Demographics TPAK -->
-        <div class="col-md-6 mb-3">
-          <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-              <h5 class="mb-0">Distribusi TPAK Berdasarkan Gender (<span id="tpak-pie-year">-</span>)</h5>
-              <div class="chart-header-actions">
-                <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'tpakPieChart','title' => 'Distribusi TPAK Berdasarkan Gender']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('chart-share-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'tpakPieChart','title' => 'Distribusi TPAK Berdasarkan Gender']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-                <div class="dropdown">
-                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakPieDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                    <i class="fas fa-download"></i> <span>Unduh</span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="downloadTpakPieDropdown" style="border-radius: 8px; min-width: 100%;">
-                    <li><a class="dropdown-item" href="#" id="downloadTpakPieExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                    <li><a class="dropdown-item" href="#" id="downloadTpakPiePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="chart-container-mobile">
-              <div id="tpakPieChart" style="width: 100%; height: 400px;"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Line Chart TPAK -->
-        <div class="col-md-6 mb-3">
-          <div class="dashboard-card" style="position: relative;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-              <h5 class="mb-0">Tren TPAK dari Tahun ke Tahun</h5>
-              <div class="chart-header-actions">
-                <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'tpakLineChart','title' => 'Tren TPAK dari Tahun ke Tahun']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('chart-share-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'tpakLineChart','title' => 'Tren TPAK dari Tahun ke Tahun']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-                <div class="dropdown">
-                  <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpakLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                    <i class="fas fa-download"></i> <span>Unduh</span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="downloadTpakLineDropdown" style="border-radius: 8px; min-width: 100%;">
-                    <li><a class="dropdown-item" href="#" id="downloadTpakLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                    <li><a class="dropdown-item" href="#" id="downloadTpakLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="chart-container-mobile">
-              <div id="tpakLineChart" style="width: 100%; height: 400px;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Additional Info Card -->
-  <div class="row">
-    <div class="col-md-12">
-      <div class="dashboard-card" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang Ketenagakerjaan</h5>
-        <p style="margin-bottom: 0; line-height: 1.8;">
-          <strong>Ketenagakerjaan</strong> mencakup berbagai indikator yang mengukur kondisi pasar tenaga kerja dan partisipasi penduduk dalam kegiatan ekonomi. 
-          Dua indikator utama yang digunakan adalah:
-        </p>
-        <ul style="margin-top: 12px; margin-bottom: 0; line-height: 1.8;">
-          <li><strong>Tingkat Pengangguran Terbuka (TPT)</strong>: Persentase angkatan kerja yang tidak bekerja dan sedang mencari pekerjaan terhadap total angkatan kerja. 
-            TPT yang rendah menunjukkan kondisi pasar tenaga kerja yang baik.</li>
-          <li><strong>Tingkat Partisipasi Angkatan Kerja (TPAK)</strong>: Persentase angkatan kerja (bekerja dan menganggur) terhadap penduduk usia kerja (15 tahun ke atas). 
-            TPAK yang tinggi menunjukkan tingkat partisipasi ekonomi yang tinggi.</li>
-        </ul>
-        <p style="margin-top: 12px; margin-bottom: 16px; line-height: 1.8;">
-          Angkatan kerja terdiri dari penduduk yang bekerja dan yang menganggur. 
-          Penduduk yang bekerja adalah mereka yang melakukan pekerjaan dengan maksud memperoleh atau membantu memperoleh pendapatan atau keuntungan. 
-          Data ketenagakerjaan penting untuk memahami kondisi ekonomi dan merancang kebijakan penciptaan lapangan kerja.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<style>
-  .dashboard-card {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .summary-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .summary-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  }
-
-  /* Mobile responsive styles for summary cards */
-  @media (max-width: 767.98px) {
-    .summary-card-mobile {
-      padding: 10px 10px 0px 10px !important;
-      min-height: auto !important;
-      height: fit-content !important;
-      border-radius: 8px !important;
-    }
-    
-    .summary-card-mobile h6 {
-      font-size: 11px !important;
-      margin-bottom: 4px !important;
-    }
-    
-    .summary-card-mobile h3 {
-      font-size: 24px !important;
-      margin-bottom: 2px !important;
-      line-height: 1.1 !important;
-    }
-    
-    .summary-card-mobile > div[style*="position: absolute"] {
-      top: 10px !important;
-      right: 10px !important;
-    }
-    
-    .summary-card-mobile > div[style*="position: absolute"] .fas {
-      font-size: 25px !important;
-    }
-    
-    .summary-card-mobile small {
-      font-size: 10px !important;
-      margin-top: 2px !important;
-      margin-bottom: 0 !important;
-      line-height: 1 !important;
-      padding-bottom: 0 !important;
-      padding-top: 0 !important;
-      display: block !important;
-    }
-    
-    .summary-card-mobile span[style*="font-size: 12px"] {
-      font-size: 10px !important;
-    }
-    
-    .summary-card-mobile span[style*="font-size: 11px"] {
-      font-size: 9px !important;
-    }
-    
-    .summary-card-mobile > div[style*="position: relative"][style*="z-index: 2"] {
-      margin: 0 !important;
-      padding-bottom: 0 !important;
-      flex: 0 0 auto !important;
-    }
-    
-    .summary-card-mobile > div[style*="position: relative"][style*="z-index: 2"] > div[style*="display: flex"][style*="align-items: center"] {
-      margin-top: 2px !important;
-      margin-bottom: 0 !important;
-    }
-    
-    .summary-card-mobile > div[style*="position: relative"][style*="z-index: 2"] > div[style*="display: flex"][style*="align-items: center"] span[style*="gap: 5px"] {
-      gap: 3px !important;
-    }
-    
-    /* Hilangkan semua space kosong di bawah */
-    .summary-card-mobile > div[style*="position: relative"][style*="z-index: 2"] > *:last-child {
-      margin-bottom: 0 !important;
-      padding-bottom: 0 !important;
-    }
-    
-    /* Override inline style padding dan margin-top auto */
-    .summary-card-mobile[style*="padding: 20px"] {
-      padding: 10px 10px 0px 10px !important;
-    }
-    
-    /* Pastikan card tidak punya space kosong di bawah */
-    .summary-card-mobile {
-      padding-bottom: 0 !important;
-    }
-    
-    .summary-card-mobile small[style*="margin-top: 8px"] {
-      margin-top: 2px !important;
-    }
-    
-    /* Pastikan tidak ada space dari flex */
-    .summary-card-mobile[style*="display: flex"] {
-      align-items: flex-start !important;
-    }
-    
-    /* Hilangkan semua space kosong di bawah card */
-    .summary-card-mobile > div[style*="position: relative"][style*="z-index: 2"] {
-      margin-bottom: 0 !important;
-      padding-bottom: 0 !important;
-    }
-    
-    .summary-card-mobile > div[style*="position: relative"][style*="z-index: 2"] > small:last-child {
-      margin-bottom: 0 !important;
-      padding-bottom: 0 !important;
-    }
-
-    /* Override margin-top pada div yang berisi change indicator */
-    .summary-card-mobile > div[style*="position: relative"][style*="z-index: 2"] > div[style*="margin-top: 8px"] {
-      margin-top: 2px !important;
-    }
-  }
-
-  /* Chart container for mobile horizontal scroll */
-  .chart-container-mobile {
-    overflow-x: auto;
-    overflow-y: visible;
-    -webkit-overflow-scrolling: touch;
-    width: 100%;
-    position: relative;
-    margin: 0;
-    padding: 0;
-  }
-
-  @media (max-width: 767.98px) {
-    .chart-container-mobile {
-      width: 100%;
-      overflow-x: auto;
-      overflow-y: visible;
-      margin: 0;
-      padding: 0;
-      -webkit-overflow-scrolling: touch;
-    }
-    
-    .chart-container-mobile > div {
-      min-width: 400px;
-      width: 100%;
-      margin: 0;
-      padding: 0;
-    }
-    
-    .dashboard-card {
-      overflow: hidden;
-      padding: 12px 10px;
-      margin-bottom: 15px;
-    }
-    
-    .dashboard-card h5 {
-      white-space: normal;
-      word-wrap: break-word;
-      overflow: visible;
-      margin-bottom: 10px !important;
-      font-size: 14px;
-    }
-    
-    /* Reduce spacing in header with download button */
-    .dashboard-card > div[style*="display: flex"][style*="justify-content: space-between"] {
-      margin-bottom: 10px !important;
-    }
-    
-    /* Download button responsive */
-    .dashboard-card button[id*="download"] {
-      padding: 3px 8px !important;
-      font-size: 11px !important;
-    }
-    
-    .dashboard-card button[id*="download"] i {
-      font-size: 10px !important;
-    }
-    
-    .dashboard-card button[id*="download"] span {
-      display: none;
-    }
-    
-    /* Reduce chart height on mobile to prevent excessive scrolling */
-    .chart-container-mobile > div[id*="Chart"] {
-      height: 350px !important;
-    }
-    
-    /* Specific styling for comparison chart */
-    .comparison-chart-row {
-      margin-bottom: 15px !important;
-    }
-    
-    .comparison-chart-card {
-      margin-bottom: 15px !important;
-    }
-    
-    .comparison-chart-card .chart-header {
-      margin-bottom: 10px !important;
-    }
-    
-    /* Remove extra margins from container */
-    .container {
-      padding-left: 10px;
-      padding-right: 10px;
-    }
-    
-    /* Reduce row margins */
-    .row {
-      margin-left: -5px;
-      margin-right: -5px;
-    }
-    
-    .row > [class*="col-"] {
-      padding-left: 5px;
-      padding-right: 5px;
-    }
-    
-    /* Remove extra padding from mb-4 class on mobile */
-    .mb-4 {
-      margin-bottom: 1rem !important;
-    }
-    
-    /* Ensure no extra space after charts */
-    .chart-container-mobile:after {
-      content: '';
-      display: none;
-    }
-    
-    /* Fix column spacing on mobile */
-    .row > [class*="col-"] {
-      padding-left: 5px !important;
-      padding-right: 5px !important;
-    }
-    
-    /* Ensure cards don't overflow */
-    .summary-card-mobile {
-      overflow: hidden !important;
-    }
-    
-    /* Better spacing for tab summary cards */
-    #tpt .row.mb-4,
-    #tpak .row.mb-4 {
-      margin-bottom: 1rem !important;
-    }
-    
-    /* Adjust tab content padding */
-    .tab-content {
-      padding-top: 10px;
-    }
-    
-    /* Fix nav tabs on mobile */
-    .nav-tabs {
-      flex-wrap: nowrap !important;
-      overflow-x: auto !important;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE and Edge */
-    }
-    
-    .nav-tabs::-webkit-scrollbar {
-      display: none; /* Chrome, Safari, Opera */
-    }
-    
-    .nav-tabs .nav-item {
-      flex-shrink: 0;
-    }
-    
-    .nav-tabs .nav-link {
-      white-space: nowrap;
-      padding: 8px 15px;
-      font-size: 14px;
-    }
-    
-    /* Fix summary card text overflow */
-    .summary-card-mobile h3 {
-      word-break: break-word;
-      overflow-wrap: break-word;
-    }
-    
-    /* Better spacing for change indicators */
-    .summary-card-mobile > div[style*="position: relative"][style*="z-index: 2"] > div[style*="display: flex"] {
-      flex-wrap: wrap;
-      align-items: center;
-    }
-  }
-  
-  /* Download button styles */
-  .dashboard-card button[id*="download"] {
-    white-space: nowrap;
-  }
-  
-  @media (max-width: 576px) {
-    .dashboard-card button[id*="download"] {
-      padding: 4px 6px !important;
-      font-size: 10px !important;
-    }
-    
-    .dashboard-card button[id*="download"] i {
-      font-size: 12px !important;
-      margin: 0 !important;
-    }
-  }
-
-  @media (min-width: 768px) {
-    .chart-container-mobile {
-      overflow: visible;
-    }
-    
-    .chart-container-mobile > div {
-      min-width: auto !important;
-      width: 100% !important;
-    }
-  }
-</style>
-
-<script>
-  document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const mainPanel = document.querySelector('.main-panel');
     // API Base URL
-    const API_BASE = '<?php echo e(url("/api")); ?>';
+    const API_BASE = window.APP_CONFIG.apiUrl;
     
     // Initialize data variables
     let tptData = [];
+    let originalTptData = [];
     let tpakData = [];
+    let originalTpakData = [];
     let tptLatestData = null;
     let tpakLatestData = null;
     let tptPreviousData = null;
@@ -785,6 +18,12 @@
     let tpakLakiLakiChange = null;
     let tptPerempuanChange = null;
     let tpakPerempuanChange = null;
+    tptPieChart = null;
+    tptLineChart = null;
+    tpakPieChart = null;
+    tpakLineChart = null;
+    comparisonChart = null;
+
 
     // Load summary data from API
     try {
@@ -901,6 +140,60 @@
     }
 
     // Sort data by year
+    originalTptData = [...tptData];
+    originalTpakData = [...tpakData];
+    
+    // Populate year filter
+    const allYears = [...new Set([...originalTptData.map(d => d.year), ...originalTpakData.map(d => d.year)])].sort((a, b) => b - a);
+    const yearFilter = document.getElementById('yearFilter');
+    if (yearFilter) {
+      allYears.forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearFilter.appendChild(option);
+      });
+      yearFilter.addEventListener('change', function() {
+        applyYearFilter(this.value);
+      });
+    }
+    
+    function applyYearFilter(selectedYear) {
+      if (selectedYear === 'all') {
+        tptData = [...originalTptData];
+        tpakData = [...originalTpakData];
+      } else {
+        const year = parseInt(selectedYear);
+        tptData = originalTptData.filter(d => d.year <= year);
+        tpakData = originalTpakData.filter(d => d.year <= year);
+      }
+      
+      tptLatestData = tptData.length > 0 ? tptData[tptData.length - 1] : null;
+      tpakLatestData = tpakData.length > 0 ? tpakData[tpakData.length - 1] : null;
+      
+      tptPreviousData = tptData.length > 1 ? tptData[tptData.length - 2] : null;
+      tpakPreviousData = tpakData.length > 1 ? tpakData[tpakData.length - 2] : null;
+      
+      if (tptLatestData && tptPreviousData) {
+        tptTotalChange = tptLatestData.total - tptPreviousData.total;
+        tptLakiLakiChange = tptLatestData.laki_laki - tptPreviousData.laki_laki;
+        tptPerempuanChange = tptLatestData.perempuan - tptPreviousData.perempuan;
+      } else {
+        tptTotalChange = tptLakiLakiChange = tptPerempuanChange = null;
+      }
+      
+      if (tpakLatestData && tpakPreviousData) {
+        tpakTotalChange = tpakLatestData.total - tpakPreviousData.total;
+        tpakLakiLakiChange = tpakLatestData.laki_laki - tpakPreviousData.laki_laki;
+        tpakPerempuanChange = tpakLatestData.perempuan - tpakPreviousData.perempuan;
+      } else {
+        tpakTotalChange = tpakLakiLakiChange = tpakPerempuanChange = null;
+      }
+      
+      updateUI();
+      initCharts();
+    }
+    
     tptData.sort((a, b) => a.year - b.year);
     tpakData.sort((a, b) => a.year - b.year);
 
@@ -1180,20 +473,46 @@
     // Update UI after data is loaded
     updateUI();
 
+        // Resize all charts function
+    function resizeAllCharts() {
+      setTimeout(() => {
+        try {
+          if (typeof comparisonChart !== 'undefined' && comparisonChart) {
+            comparisonChart.resize();
+          }
+          if (typeof tptPieChart !== 'undefined' && tptPieChart) {
+            tptPieChart.resize();
+          }
+          if (typeof tptLineChart !== 'undefined' && tptLineChart) {
+            tptLineChart.resize();
+          }
+          if (typeof tpakPieChart !== 'undefined' && tpakPieChart) {
+            tpakPieChart.resize();
+          }
+          if (typeof tpakLineChart !== 'undefined' && tpakLineChart) {
+            tpakLineChart.resize();
+          }
+        } catch (e) {
+          console.log('Chart resize error:', e);
+        }
+      }, 150);
+    }
+
+    function initCharts() {
     // Check if mobile
     const isMobile = window.innerWidth <= 767.98;
     
     // Adjust chart height for mobile
-    let comparisonChartDom = document.getElementById('comparisonChart');
+    const comparisonChartDom = document.getElementById('comparisonChart');
     if (isMobile && comparisonChartDom) {
       comparisonChartDom.style.height = '350px';
     }
 
     // TPT Pie Chart
     const tptPieChartDom = document.getElementById('tptPieChart');
-    let tptPieChart = null;
+    tptPieChart = null;
     if (tptPieChartDom) {
-      tptPieChart = echarts.init(tptPieChartDom);
+      tptPieChart = echarts.getInstanceByDom(tptPieChartDom) || echarts.init(tptPieChartDom);
     }
     
     // Use tptLatestData from API, fallback to last item in array if not available
@@ -1281,9 +600,9 @@
 
     // TPT Line Chart
     const tptLineChartDom = document.getElementById('tptLineChart');
-    let tptLineChart = null;
+    tptLineChart = null;
     if (tptLineChartDom) {
-      tptLineChart = echarts.init(tptLineChartDom);
+      tptLineChart = echarts.getInstanceByDom(tptLineChartDom) || echarts.init(tptLineChartDom);
     }
     
     // Filter TPT data starting from 2017
@@ -1410,9 +729,9 @@
 
     // TPAK Pie Chart
     const tpakPieChartDom = document.getElementById('tpakPieChart');
-    let tpakPieChart = null;
+    tpakPieChart = null;
     if (tpakPieChartDom) {
-      tpakPieChart = echarts.init(tpakPieChartDom);
+      tpakPieChart = echarts.getInstanceByDom(tpakPieChartDom) || echarts.init(tpakPieChartDom);
     }
     
     // Use tpakLatestData from API, fallback to last item in array if not available
@@ -1510,9 +829,9 @@
 
     // TPAK Line Chart
     const tpakLineChartDom = document.getElementById('tpakLineChart');
-    let tpakLineChart = null;
+    tpakLineChart = null;
     if (tpakLineChartDom) {
-      tpakLineChart = echarts.init(tpakLineChartDom);
+      tpakLineChart = echarts.getInstanceByDom(tpakLineChartDom) || echarts.init(tpakLineChartDom);
     }
     
     // Filter TPAK data starting from 2017
@@ -1639,10 +958,10 @@
 
     // Comparison Chart - TPT vs TPAK
     // comparisonChartDom already declared above, just initialize chart
-    let comparisonChart = null;
+    comparisonChart = null;
     if (comparisonChartDom) {
       try {
-        comparisonChart = echarts.init(comparisonChartDom);
+        comparisonChart = echarts.getInstanceByDom(comparisonChartDom) || echarts.init(comparisonChartDom);
         console.log('Comparison chart initialized');
       } catch (e) {
         console.error('Error initializing comparison chart:', e);
@@ -1922,30 +1241,7 @@
       });
     }
 
-    // Resize all charts function
-    function resizeAllCharts() {
-      setTimeout(() => {
-        try {
-          if (typeof comparisonChart !== 'undefined' && comparisonChart && comparisonChartDom) {
-            comparisonChart.resize();
-          }
-          if (typeof tptPieChart !== 'undefined' && tptPieChart && tptPieChartDom) {
-            tptPieChart.resize();
-          }
-          if (typeof tptLineChart !== 'undefined' && tptLineChart && tptLineChartDom) {
-            tptLineChart.resize();
-          }
-          if (typeof tpakPieChart !== 'undefined' && tpakPieChart && tpakPieChartDom) {
-            tpakPieChart.resize();
-          }
-          if (typeof tpakLineChart !== 'undefined' && tpakLineChart && tpakLineChartDom) {
-            tpakLineChart.resize();
-          }
-        } catch (e) {
-          console.log('Chart resize error:', e);
-        }
-      }, 150);
-    }
+
 
     // Handle window resize
     window.addEventListener('resize', function() {
@@ -1956,7 +1252,7 @@
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebarCheck = document.getElementById('check');
     const sidebar = document.querySelector('.sidebar');
-    const mainPanel = document.querySelector('.main-panel');
+
 
     if (sidebarToggle) {
       sidebarToggle.addEventListener('click', function() {
@@ -1990,27 +1286,31 @@
 
     // Helper function to check authentication before download
     function checkAuthBeforeDownload(callback, itemName = 'data') {
-      <?php if(auth()->guard()->guest()): ?>
-      // User not authenticated, show login modal
-      if (typeof showLoginRequiredModal === 'function') {
-        showLoginRequiredModal(itemName);
-      } else {
-        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
-        const loginModal = document.getElementById('loginModal');
-        if (loginModal) {
-          const modal = new bootstrap.Modal(loginModal);
-          modal.show();
+      if (!window.APP_CONFIG.isAuthenticated) {
+        // User not authenticated, show login modal
+        if (typeof showLoginRequiredModal === 'function') {
+          showLoginRequiredModal(itemName);
         } else {
-          window.location.href = '<?php echo e(route('login')); ?>';
+          alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
+          const loginModal = document.getElementById('loginModal');
+          if (loginModal) {
+            const modal = new bootstrap.Modal(loginModal);
+            modal.show();
+          } else {
+            window.location.href = window.APP_CONFIG.loginUrl;
+          }
         }
+        return false;
+      } else {
+        // User authenticated, proceed with download
+        callback();
+        return true;
       }
-      return false;
-      <?php else: ?>
-      // User authenticated, proceed with download
-      callback();
-      return true;
-      <?php endif; ?>
     }
+
+    }
+
+    initCharts();
 
     // Export functions for Comparison Chart
     function exportComparisonToExcel() {
@@ -2209,9 +1509,3 @@
       });
     });
   });
-</script>
-
-<?php $__env->stopSection(); ?>
-
-
-<?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\astabaya\resources\views/dashboard/indikator/ketenagakerjaan.blade.php ENDPATH**/ ?>

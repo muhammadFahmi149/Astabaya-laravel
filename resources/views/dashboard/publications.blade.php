@@ -1717,29 +1717,115 @@
       });
     }
     
+    // Function to fetch publication by ID from API
+    async function fetchPublicationById(pubId) {
+      try {
+        const response = await fetch(`/api/publications/${encodeURIComponent(pubId)}`, {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+          },
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          // Handle both direct data and wrapped data format
+          const pub = data.data || data;
+          if (pub && (pub.title || pub.pub_id)) {
+            // Format date properly
+            let formattedDate = 'N/A';
+            if (pub.date) {
+              try {
+                const dateObj = new Date(pub.date);
+                formattedDate = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+              } catch (e) {
+                formattedDate = pub.date;
+              }
+            }
+            
+            return {
+              title: pub.title || '',
+              image: pub.image || '',
+              date: formattedDate,
+              size: pub.size || 'N/A',
+              pubId: pub.pub_id || pubId,
+              id: pub.id || pubId,
+              abstract: pub.abstract || '',
+              download: pub.download_url || pub.dl || ''
+            };
+          }
+        } else {
+          console.warn('Publication API returned error:', response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching publication from API:', error);
+      }
+      return null;
+    }
+
+    // Function to show modal by publication ID (with fallback to fetch from API)
+    async function showModalByPubId(pubId) {
+      // First try to find in loaded data - try both pubId and id
+      let pub = null;
+      let index = -1;
+      
+      // Try to find by pubId in map
+      if (window.publicationsMap && window.publicationsMap[pubId]) {
+        pub = window.publicationsMap[pubId];
+        index = publications.findIndex(p => (p.pubId === pub.pubId && p.id === pub.id));
+      }
+      
+      // If not found, try to find in publications array by pubId or id
+      if (!pub) {
+        pub = publications.find(p => {
+          return String(p.pubId) === String(pubId) || 
+                 String(p.id) === String(pubId) ||
+                 (p.pubId && String(p.pubId) === String(pubId)) ||
+                 (p.id && String(p.id) === String(pubId));
+        });
+        if (pub) {
+          index = publications.findIndex(p => (p.pubId === pub.pubId && p.id === pub.id));
+        }
+      }
+      
+      // If still not found, try to fetch from API
+      if (!pub) {
+        console.log('Publication not found in loaded data, fetching from API...', pubId);
+        pub = await fetchPublicationById(pubId);
+        if (pub) {
+          // Add to publications array and map for future use
+          publications.push(pub);
+          if (pub.pubId && !window.publicationsMap) {
+            window.publicationsMap = {};
+          }
+          if (pub.pubId && window.publicationsMap) {
+            window.publicationsMap[pub.pubId] = pub;
+          }
+          if (pub.id && window.publicationsMap) {
+            window.publicationsMap[pub.id] = pub;
+          }
+          index = publications.length - 1;
+        }
+      }
+      
+      if (pub) {
+        // Use showModal with the found publication
+        showModal(pub.pubId || pub.id, index >= 0 ? index : publications.length - 1);
+      } else {
+        console.error('Publication not found:', pubId);
+        alert('Publikasi tidak ditemukan. Mungkin publikasi sudah dihapus atau tidak tersedia.');
+      }
+    }
+
     // Check if there's a publication parameter in URL, open modal automatically
     const urlParams = new URLSearchParams(window.location.search);
     const publicationId = urlParams.get('publication');
     if (publicationId) {
-      // Find publication by pubId or id
-      let pub = null;
-      if (window.publicationsMap && window.publicationsMap[publicationId]) {
-        pub = window.publicationsMap[publicationId];
-      } else {
-        // Try to find by id in publications array
-        pub = publications.find(p => (p.pubId === publicationId || p.id === publicationId));
-      }
-      
-      if (pub) {
-        // Find the index of the publication
-        const index = publications.findIndex(p => (p.pubId === pub.pubId && p.id === pub.id));
-        if (index !== -1) {
-          // Wait a bit for page to be fully loaded
-          setTimeout(() => {
-            showModal(pub.pubId || pub.id, index);
-          }, 500);
-        }
-      }
+      // Wait a bit for page to be fully loaded, then try to open modal
+      setTimeout(() => {
+        showModalByPubId(publicationId);
+      }, 500);
     }
   });
 

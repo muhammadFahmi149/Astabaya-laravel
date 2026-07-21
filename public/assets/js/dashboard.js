@@ -287,7 +287,9 @@
       document.querySelector('.navbar').classList.add('mt-3');
       
     }
-    document.querySelector('#bannerClose').addEventListener('click',function() {
+    const bannerClose = document.querySelector('#bannerClose');
+    if (bannerClose) {
+      bannerClose.addEventListener('click',function() {
       document.querySelector('#proBanner').classList.add('d-none');
       document.querySelector('#proBanner').classList.remove('d-flex');
       document.querySelector('.navbar').classList.remove('pt-5');
@@ -298,6 +300,7 @@
       date.setTime(date.getTime() + 24 * 60 * 60 * 1000); 
       $.cookie('skydash-pro-banner', "true", { expires: date });
     });
+    }
 
     function format ( d ) {
       // `d` is the original data object for the row
@@ -307,6 +310,7 @@
           '</tr>'+
       '</table>';
   }
+  if ($.fn.DataTable) {
     var table = $('#example').DataTable( {
       "ajax": "../assets/js/data.txt",
       "columns": [
@@ -353,5 +357,6 @@
           tr.addClass('shown');
       }
     });
+  }
   });
 })(jQuery);

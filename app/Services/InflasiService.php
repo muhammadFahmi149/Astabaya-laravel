@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Inflasi;
 use App\Models\InflasiPerKomoditas;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -138,6 +139,7 @@ class InflasiService
     public function sync(string $sheetName = 'Inflasi'): array
     {
         try {
+            $startTime = microtime(true);
             echo "📊 Syncing Inflasi data from sheet: {$sheetName}\n";
             $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
             
@@ -154,37 +156,59 @@ class InflasiService
                 return ['created' => 0, 'updated' => 0];
             }
 
-            $createdCount = 0;
-            $updatedCount = 0;
+            // Prepare records for bulk upsert
+            $now = now();
+            $records = [];
 
             foreach ($processedData as $row) {
                 if (empty($row['year']) || empty($row['month'])) {
                     continue;
                 }
 
-                $data = [
+                $records[] = [
                     'year' => (int) $row['year'],
                     'month' => $row['month'], // Keep as string (JANUARI, FEBRUARI, etc.)
                     'bulanan' => $this->parseDecimal($row['bulanan'] ?? null),
                     'kumulatif' => $this->parseDecimal($row['kumulatif'] ?? null),
                     'yoy' => $this->parseDecimal($row['yoy'] ?? null),
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
-
-                $existing = Inflasi::where('year', $data['year'])
-                    ->where('month', $data['month'])
-                    ->first();
-
-                if ($existing) {
-                    $existing->update($data);
-                    $updatedCount++;
-                } else {
-                    Inflasi::create($data);
-                    $createdCount++;
-                }
             }
 
-            echo "✅ Inflasi sync completed. Created: {$createdCount}, Updated: {$updatedCount}\n";
-            Log::info("Inflasi sync completed. Created: {$createdCount}, Updated: {$updatedCount}");
+            $totalProcessed = count($records);
+            $chunkSize = 500;
+            $chunks = array_chunk($records, $chunkSize);
+            $totalChunks = count($chunks);
+
+            // Count before upsert to calculate inserted vs updated
+            $countBefore = Inflasi::count();
+
+            DB::transaction(function () use ($chunks) {
+                foreach ($chunks as $chunk) {
+                    Inflasi::upsert(
+                        $chunk,
+                        ['year', 'month'],
+                        ['bulanan', 'kumulatif', 'yoy', 'updated_at']
+                    );
+                }
+            });
+
+            $countAfter = Inflasi::count();
+            $createdCount = $countAfter - $countBefore;
+            $updatedCount = $totalProcessed - $createdCount;
+            $duration = round(microtime(true) - $startTime, 2);
+
+            $logMessage = "Sync Inflasi\n"
+                . "  Processed : {$totalProcessed}\n"
+                . "  Inserted  : {$createdCount}\n"
+                . "  Updated   : {$updatedCount}\n"
+                . "  Chunks    : {$totalChunks}\n"
+                . "  Duration  : {$duration} sec";
+
+            echo "✅ {$logMessage}\n";
+            Log::info($logMessage);
+
             return ['created' => $createdCount, 'updated' => $updatedCount];
         } catch (\Exception $e) {
             Log::error('Error syncing Inflasi: ' . $e->getMessage());
@@ -355,6 +379,7 @@ class InflasiService
     public function syncPerKomoditasFromSheet(string $sheetName): array
     {
         try {
+            $startTime = microtime(true);
             echo "📊 Syncing Inflasi Per Komoditas data from sheet: {$sheetName}\n";
             
             // Extract year from sheet name
@@ -380,29 +405,51 @@ class InflasiService
                 return ['created' => 0, 'updated' => 0];
             }
 
-            $createdCount = 0;
-            $updatedCount = 0;
+            // Prepare records for bulk upsert with timestamps
+            $now = now();
+            $records = [];
 
             foreach ($processedRecords as $record) {
-                // IMPORTANT: Include 'flag' in the query because same commodity_code 
-                // can exist with different flags (e.g., code "11" can be Flag 1 or Flag 2)
-                $existing = InflasiPerKomoditas::where('commodity_code', $record['commodity_code'])
-                    ->where('flag', $record['flag'])
-                    ->where('year', $record['year'])
-                    ->where('month', $record['month'])
-                    ->first();
-
-                if ($existing) {
-                    $existing->update($record);
-                    $updatedCount++;
-                } else {
-                    InflasiPerKomoditas::create($record);
-                    $createdCount++;
-                }
+                $records[] = $record + [
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
             }
 
-            echo "✅ Sheet '{$sheetName}' sync completed. Created: {$createdCount}, Updated: {$updatedCount}\n";
-            Log::info("Sheet '{$sheetName}' sync completed. Created: {$createdCount}, Updated: {$updatedCount}");
+            $totalProcessed = count($records);
+            $chunkSize = 500;
+            $chunks = array_chunk($records, $chunkSize);
+            $totalChunks = count($chunks);
+
+            // Count before upsert to calculate inserted vs updated
+            $countBefore = InflasiPerKomoditas::count();
+
+            DB::transaction(function () use ($chunks) {
+                foreach ($chunks as $chunk) {
+                    // IMPORTANT: Include 'flag' in unique key because same commodity_code
+                    // can exist with different flags (e.g., code "11" can be Flag 1 or Flag 2)
+                    InflasiPerKomoditas::upsert(
+                        $chunk,
+                        ['commodity_code', 'flag', 'year', 'month'],
+                        ['commodity_name', 'value', 'updated_at']
+                    );
+                }
+            });
+
+            $countAfter = InflasiPerKomoditas::count();
+            $createdCount = $countAfter - $countBefore;
+            $updatedCount = $totalProcessed - $createdCount;
+            $duration = round(microtime(true) - $startTime, 2);
+
+            $logMessage = "Sync Inflasi Per Komoditas [{$sheetName}]\n"
+                . "  Processed : {$totalProcessed}\n"
+                . "  Inserted  : {$createdCount}\n"
+                . "  Updated   : {$updatedCount}\n"
+                . "  Chunks    : {$totalChunks}\n"
+                . "  Duration  : {$duration} sec";
+
+            echo "✅ {$logMessage}\n";
+            Log::info($logMessage);
             
             return ['created' => $createdCount, 'updated' => $updatedCount];
         } catch (\Exception $e) {

@@ -19,8 +19,8 @@
     # Redirect asset requests (CSS, JS, images, etc.) to Laravel public folder
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} ^/(css|js|images|templatemo_562_space_dynamic|assets|vendor|favicon\.ico|robots\.txt)(.*)$
-    RewriteRule ^(.*)$ ../astabaya/public/$1 [L]
+    RewriteCond %{REQUEST_URI} ^/(build|css|js|images|templatemo_562_space_dynamic|assets|vendor|favicon\.ico|robots\.txt|storage)(.*)$
+    RewriteRule ^(.*)$ public/$1 [L]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d

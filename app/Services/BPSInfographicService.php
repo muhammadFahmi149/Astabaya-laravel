@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Infographic;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -59,15 +60,10 @@ class BPSInfographicService
         }
     }
 
-    /**
-     * Save infographic data to database
-     */
     public function saveInfographicToDb(array $infographicList): array
     {
-        $createdCount = 0;
-        $updatedCount = 0;
+        $startTime = microtime(true);
         $skippedCount = 0;
-        $errorCount = 0;
 
         echo "📝 Processing " . count($infographicList) . " infographics...\n";
         Log::info("Processing " . count($infographicList) . " infographics for database save");
@@ -80,6 +76,8 @@ class BPSInfographicService
             Log::info("Sample item data: " . json_encode($firstItem));
         }
 
+        $records = [];
+        $now = now();
         foreach ($infographicList as $index => $item) {
             // API menggunakan 'inf_id' bukan 'id'
             $bpsId = $item['inf_id'] ?? null;
@@ -96,43 +94,50 @@ class BPSInfographicService
             // Convert bpsId to string if it's not already
             $bpsId = (string) $bpsId;
 
-            $data = [
+            $records[] = [
                 'bps_id' => $bpsId,
                 'title' => $item['title'] ?? '',
                 'image' => $item['img'] ?? '',
                 'dl' => $item['dl'] ?? '', // API menggunakan 'dl' bukan 'pdf'
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
-
-            try {
-                $infographic = Infographic::where('bps_id', $bpsId)->first();
-                
-                if ($infographic) {
-                    $infographic->update($data);
-                    $updatedCount++;
-                } else {
-                    Infographic::create($data);
-                    $createdCount++;
-                }
-            } catch (\Exception $e) {
-                $errorCount++;
-                echo "❌ Error saving infographic {$bpsId}: " . $e->getMessage() . "\n";
-                Log::error("Error saving infographic {$bpsId}: " . $e->getMessage());
-                Log::error("Stack trace: " . $e->getTraceAsString());
-            }
-
-            // Progress indicator every 100 items
-            if (($index + 1) % 100 == 0) {
-                echo "📊 Progress: " . ($index + 1) . "/" . count($infographicList) . " (Created: {$createdCount}, Updated: {$updatedCount}, Errors: {$errorCount})\n";
-            }
         }
 
-        echo "✅ Processing completed!\n";
-        echo "   Created: {$createdCount} records\n";
-        echo "   Updated: {$updatedCount} records\n";
-        echo "   Skipped: {$skippedCount} records (no ID)\n";
-        echo "   Errors: {$errorCount} records\n";
-        
-        Log::info("Infographic sync completed. Created: {$createdCount}, Updated: {$updatedCount}, Skipped: {$skippedCount}, Errors: {$errorCount}");
+        $totalProcessed = count($records);
+        $chunkSize = 500;
+        $chunks = array_chunk($records, $chunkSize);
+        $totalChunks = count($chunks);
+
+        // Count before upsert to calculate inserted vs updated
+        $countBefore = Infographic::count();
+
+        DB::transaction(function () use ($chunks) {
+            foreach ($chunks as $chunk) {
+                Infographic::upsert(
+                    $chunk,
+                    ['bps_id'],
+                    ['title', 'image', 'dl', 'updated_at']
+                );
+            }
+        });
+
+        $countAfter = Infographic::count();
+        $createdCount = max(0, $countAfter - $countBefore);
+        $updatedCount = $totalProcessed - $createdCount;
+        $duration = round(microtime(true) - $startTime, 2);
+
+        $logMessage = "Sync Infographic\n"
+            . "  Processed : {$totalProcessed}\n"
+            . "  Inserted  : {$createdCount}\n"
+            . "  Updated   : {$updatedCount}\n"
+            . "  Skipped   : {$skippedCount}\n"
+            . "  Chunks    : {$totalChunks}\n"
+            . "  Duration  : {$duration} sec";
+
+        echo "✅ {$logMessage}\n";
+        Log::info($logMessage);
+
         return ['created' => $createdCount, 'updated' => $updatedCount];
     }
 

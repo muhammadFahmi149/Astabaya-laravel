@@ -1,0 +1,319 @@
+.dashboard-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Chart scroll container - default no scroll for desktop */
+.chart-scroll-container {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.chart-scroll-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 10px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 10px;
+}
+
+.chart-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Ensure chart containers don't overlap dropdown */
+.dashboard-card #inflasiMtoMChart,
+.dashboard-card #inflasiYonYChart,
+.dashboard-card #inflasiPerKomoditasChart {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  width: 100% !important;
+}
+
+.chart-responsive {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.form-select:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+/* Download button responsive */
+@media (max-width: 768px) {
+  #downloadMtoMExcel, #downloadMtoMPNG,
+  #downloadYonYExcel, #downloadYonYPNG,
+  #downloadKomoditasExcel, #downloadKomoditasPNG {
+    padding: 3px 8px !important;
+    font-size: 11px !important;
+  }
+  
+  #downloadMtoMExcel i, #downloadMtoMPNG i,
+  #downloadYonYExcel i, #downloadYonYPNG i,
+  #downloadKomoditasExcel i, #downloadKomoditasPNG i {
+    font-size: 10px !important;
+  }
+  
+  #downloadMtoMExcel span, #downloadMtoMPNG span,
+  #downloadYonYExcel span, #downloadYonYPNG span,
+  #downloadKomoditasExcel span, #downloadKomoditasPNG span {
+    display: none;
+  }
+
+  /* Enable scroll on tablet and mobile only */
+  .chart-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+    padding-bottom: 10px;
+  }
+  
+  .chart-responsive {
+    min-width: 600px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  #downloadMtoMExcel, #downloadMtoMPNG,
+  #downloadYonYExcel, #downloadYonYPNG,
+  #downloadKomoditasExcel, #downloadKomoditasPNG {
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+  }
+  
+  #downloadMtoMExcel i, #downloadMtoMPNG i,
+  #downloadYonYExcel i, #downloadYonYPNG i,
+  #downloadKomoditasExcel i, #downloadKomoditasPNG i {
+    font-size: 12px !important;
+    margin: 0 !important;
+  }
+
+  /* Make charts more scrollable on mobile phones */
+  .chart-scroll-container {
+    padding-bottom: 12px;
+  }
+  
+  .chart-responsive {
+    min-width: 700px !important;
+  }
+
+  .dashboard-card {
+    padding: 15px !important;
+  }
+}
+
+/* Custom Dropdown Styles */
+.custom-dropdown {
+  position: relative;
+  z-index: 500;
+}
+
+.custom-dropdown .dropdown-toggle:hover {
+  border-color: #999;
+}
+
+.custom-dropdown .dropdown-menu {
+  max-height: 192px; /* 6 items * 32px (8px padding * 2 + 16px line height) */
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: absolute !important;
+  z-index: 500 !important;
+}
+
+.custom-dropdown .dropdown-item {
+  line-height: 1.5;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: background-color 0.2s ease;
+  z-index: 500;
+}
+
+.custom-dropdown .dropdown-item:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.custom-dropdown .dropdown-item:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.custom-dropdown .dropdown-item[data-selected="true"] {
+  background-color: #f0f0f0 !important;
+  font-weight: 500;
+}
+
+.custom-dropdown .dropdown-item[data-selected="true"]:hover {
+  background-color: #f0f0f0 !important;
+}
+
+/* Scrollbar styling for dropdown */
+.custom-dropdown .dropdown-menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-dropdown .dropdown-menu::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.custom-dropdown .dropdown-menu::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.custom-dropdown .dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Filter card exception - allow dropdown to overflow */
+.dashboard-card.filter-card {
+  overflow: visible !important;
+}
+
+/* Filter wrapper styles for Inflasi Komoditas - FIXED VERSION */
+#filterKomoditasTahunWrapper,
+#filterKomoditasWrapper {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* Dropdown styles - REFACTORED TO USE CLASSES INSTEAD OF !IMPORTANT AND INLINE STYLES */
+#filterKomoditasTahunDropdown,
+#filterKomoditasDropdown {
+  z-index: 1000;
+  position: absolute;
+  display: none;
+  left: 0;
+  right: 0;
+  max-width: 100%;
+}
+
+#filterKomoditasTahunDropdown.show,
+#filterKomoditasDropdown.show {
+  display: block;
+}
+
+/* Filter option styles */
+.filter-option-tahun {
+  transition: background-color 0.2s;
+}
+
+.filter-option-tahun:hover {
+  background-color: #f0f8ff !important;
+}
+
+.filter-option-tahun.selected {
+  background-color: #e7f3ff;
+}
+
+/* Input focus styles */
+#filterKomoditasTahunInput,
+#filterKomoditasUmumInput,
+#filterSubKomoditasInput,
+#filterKomoditasSpesifikInput {
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#filterKomoditasTahunInput:focus,
+#filterKomoditasTahunInput:focus-within,
+#filterKomoditasInput:focus,
+#filterKomoditasInput:focus-within {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+/* Filter tag styles */
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e7f3ff;
+  color: #0066cc;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  gap: 6px;
+}
+
+.filter-tag .tag-remove {
+  background: none;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+  margin-left: 4px;
+  transition: color 0.2s;
+}
+
+.filter-tag .tag-remove:hover {
+  color: #004499;
+}
+
+.filter-option-komoditas.selected {
+  background-color: #e7f3ff;
+}
+
+.filter-option-komoditas:hover {
+  background-color: #f0f8ff !important;
+}
+
+/* Komoditas search input styles */
+#filterKomoditasSearch:focus {
+  outline: none;
+}
+
+#filterKomoditasSearch::placeholder {
+  text-align: left;
+  color: #6c757d;
+}
+
+#filterKomoditasInput:focus-within {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+#filterKomoditasClear:hover {
+  color: #333 !important;
+}
+
+#filterKomoditasChevron:hover {
+  color: #333 !important;
+}
+
+/* Komoditas dropdown option with code and name */
+.filter-option-komoditas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-option-komoditas span:first-child {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}

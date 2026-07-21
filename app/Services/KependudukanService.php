@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Kependudukan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -132,6 +133,7 @@ class KependudukanService
     public function sync(string $sheetName = 'Kependudukan_gabungan'): array
     {
         try {
+            $startTime = microtime(true);
             echo "📊 Syncing Kependudukan data from sheet: {$sheetName}\n";
             $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
             
@@ -150,32 +152,49 @@ class KependudukanService
 
             echo "[OK] Data processed. Total records: " . count($processedRecords) . "\n";
             
-            $createdCount = 0;
-            $updatedCount = 0;
-
+            $now = now();
+            $records = [];
             foreach ($processedRecords as $record) {
-                try {
-                    $existing = Kependudukan::where('age_group', $record['age_group'])
-                        ->where('year', $record['year'])
-                        ->where('gender', $record['gender'])
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update($record);
-                        $updatedCount++;
-                    } else {
-                        Kependudukan::create($record);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    echo "❌ Error saving record: " . $e->getMessage() . "\n";
-                    Log::error("Error saving Kependudukan record: " . $e->getMessage(), ['record' => $record]);
-                    continue;
-                }
+                $records[] = $record + [
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
             }
 
-            echo "✅ Kependudukan sync completed. Created: {$createdCount}, Updated: {$updatedCount}\n";
-            Log::info("Kependudukan sync completed. Created: {$createdCount}, Updated: {$updatedCount}");
+            $totalProcessed = count($records);
+            $chunkSize = 500;
+            $chunks = array_chunk($records, $chunkSize);
+            $totalChunks = count($chunks);
+
+            // Count before upsert to calculate inserted vs updated
+            $countBefore = Kependudukan::count();
+
+            DB::transaction(function () use ($chunks) {
+                foreach ($chunks as $chunk) {
+                    Kependudukan::upsert(
+                        $chunk,
+                        ['age_group', 'year', 'gender'],
+                        ['population', 'updated_at']
+                    );
+                }
+            });
+
+            $countAfter = Kependudukan::count();
+            $createdCount = max(0, $countAfter - $countBefore);
+            $updatedCount = $totalProcessed - $createdCount;
+            $duration = round(microtime(true) - $startTime, 2);
+
+            $logMessage = "Sync Kependudukan\n"
+                . "  Processed : {$totalProcessed}\n"
+                . "  Inserted  : {$createdCount}\n"
+                . "  Updated   : {$updatedCount}\n"
+                . "  Skipped   : 0\n"
+                . "  Chunks    : {$totalChunks}\n"
+                . "  Duration  : {$duration} sec";
+
+            echo "✅ {$logMessage}\n";
+            Log::info($logMessage);
+
             return ['created' => $createdCount, 'updated' => $updatedCount];
         } catch (\Exception $e) {
             Log::error('Error syncing Kependudukan: ' . $e->getMessage());

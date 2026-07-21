@@ -247,41 +247,17 @@ class KetenagakerjaanController extends Controller
                     'total'
                 ])->orderBy('year', 'asc')->get();
                 
-                // Get latest TPT data - order by ID desc to get the most recent entry
-                $tpt_latest_data = KetenagakerjaanTPT::select([
-                    'id',
-                    'year',
-                    'laki_laki',
-                    'perempuan',
-                    'total'
-                ])->orderBy('id', 'desc')->first();
+                // Get latest TPT data
+                $tpt_latest_data = $tpt_data->last();
                 
-                // Get latest TPAK data - order by ID desc to get the most recent entry
-                $tpak_latest_data = KetenagakerjaanTPAK::select([
-                    'id',
-                    'year',
-                    'laki_laki',
-                    'perempuan',
-                    'total'
-                ])->orderBy('id', 'desc')->first();
+                // Get latest TPAK data
+                $tpak_latest_data = $tpak_data->last();
                 
-                // Get previous TPT data (second latest by ID) - optimized query
-                $tpt_previous_data = KetenagakerjaanTPT::select([
-                    'id',
-                    'year',
-                    'laki_laki',
-                    'perempuan',
-                    'total'
-                ])->orderBy('id', 'desc')->skip(1)->first();
+                // Get previous TPT data
+                $tpt_previous_data = $tpt_data->count() > 1 ? $tpt_data->slice(-2, 1)->first() : null;
                 
-                // Get previous TPAK data (second latest by ID) - optimized query
-                $tpak_previous_data = KetenagakerjaanTPAK::select([
-                    'id',
-                    'year',
-                    'laki_laki',
-                    'perempuan',
-                    'total'
-                ])->orderBy('id', 'desc')->skip(1)->first();
+                // Get previous TPAK data
+                $tpak_previous_data = $tpak_data->count() > 1 ? $tpak_data->slice(-2, 1)->first() : null;
                 
                 // Add detailed logging
                 Log::info('Ketenagakerjaan Data Details', [

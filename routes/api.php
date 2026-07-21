@@ -40,6 +40,7 @@ Route::get('/komoditas-by-flag', [InflasiController::class, 'getKomoditasByFlag'
 Route::get('/inflasi-summary', [InflasiController::class, 'getSummary'])->name('api.inflasi-summary');
 Route::get('/inflasi-years', [InflasiController::class, 'getYears'])->name('api.inflasi-years');
 Route::get('/inflasi-komoditas-years', [InflasiController::class, 'getKomoditasYears'])->name('api.inflasi-komoditas-years');
+Route::get('/inflasi-komoditas-tree', [InflasiController::class, 'getKomoditasTree'])->name('api.inflasi-komoditas-tree');
 
 // Ketenagakerjaan API endpoints (optimized with separate controller)
 Route::get('/ketenagakerjaan-tpt', [KetenagakerjaanController::class, 'getTPT'])->name('api.ketenagakerjaan-tpt');

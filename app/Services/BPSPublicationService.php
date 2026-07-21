@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Publication;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -159,15 +160,10 @@ class BPSPublicationService
         }
     }
 
-    /**
-     * Save publication data to database
-     */
     public function savePublicationToDb(array $publicationList): array
     {
-        $createdCount = 0;
-        $updatedCount = 0;
+        $startTime = microtime(true);
         $skippedCount = 0;
-        $errorCount = 0;
 
         echo "📝 Processing " . count($publicationList) . " publications...\n";
         Log::info("Processing " . count($publicationList) . " publications for database save");
@@ -180,6 +176,8 @@ class BPSPublicationService
             Log::info("Sample item data: " . json_encode($firstItem));
         }
 
+        $records = [];
+        $now = now();
         foreach ($publicationList as $index => $item) {
             $pubId = $item['pub_id'] ?? null;
             
@@ -205,7 +203,7 @@ class BPSPublicationService
                 $imageValue = substr($imageValue, 0, 500);
             }
 
-            $data = [
+            $records[] = [
                 'pub_id' => $pubId,
                 'title' => $item['title'] ?? '',
                 'abstract' => $this->cleanAbstract($item['abstract'] ?? ''),
@@ -213,38 +211,45 @@ class BPSPublicationService
                 'dl' => $dlValue,
                 'date' => $item['rl_date'] ?? null,
                 'size' => $item['size'] ?? null,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
-
-            try {
-                $publication = Publication::where('pub_id', $pubId)->first();
-                
-                if ($publication) {
-                    $publication->update($data);
-                    $updatedCount++;
-                } else {
-                    Publication::create($data);
-                    $createdCount++;
-                }
-            } catch (\Exception $e) {
-                $errorCount++;
-                echo "❌ Error saving publication {$pubId}: " . $e->getMessage() . "\n";
-                Log::error("Error saving publication {$pubId}: " . $e->getMessage());
-                Log::error("Stack trace: " . $e->getTraceAsString());
-            }
-
-            // Progress indicator every 100 items
-            if (($index + 1) % 100 == 0) {
-                echo "📊 Progress: " . ($index + 1) . "/" . count($publicationList) . " (Created: {$createdCount}, Updated: {$updatedCount}, Errors: {$errorCount})\n";
-            }
         }
 
-        echo "✅ Processing completed!\n";
-        echo "   Created: {$createdCount} records\n";
-        echo "   Updated: {$updatedCount} records\n";
-        echo "   Skipped: {$skippedCount} records (no ID)\n";
-        echo "   Errors: {$errorCount} records\n";
-        
-        Log::info("Publication sync completed. Created: {$createdCount}, Updated: {$updatedCount}, Skipped: {$skippedCount}, Errors: {$errorCount}");
+        $totalProcessed = count($records);
+        $chunkSize = 500;
+        $chunks = array_chunk($records, $chunkSize);
+        $totalChunks = count($chunks);
+
+        // Count before upsert to calculate inserted vs updated
+        $countBefore = Publication::count();
+
+        DB::transaction(function () use ($chunks) {
+            foreach ($chunks as $chunk) {
+                Publication::upsert(
+                    $chunk,
+                    ['pub_id'],
+                    ['title', 'abstract', 'image', 'dl', 'date', 'size', 'updated_at']
+                );
+            }
+        });
+
+        $countAfter = Publication::count();
+        $createdCount = max(0, $countAfter - $countBefore);
+        $updatedCount = $totalProcessed - $createdCount;
+        $duration = round(microtime(true) - $startTime, 2);
+
+        $logMessage = "Sync Publication\n"
+            . "  Processed : {$totalProcessed}\n"
+            . "  Inserted  : {$createdCount}\n"
+            . "  Updated   : {$updatedCount}\n"
+            . "  Skipped   : {$skippedCount}\n"
+            . "  Chunks    : {$totalChunks}\n"
+            . "  Duration  : {$duration} sec";
+
+        echo "✅ {$logMessage}\n";
+        Log::info($logMessage);
+
         return ['created' => $createdCount, 'updated' => $updatedCount];
     }
 

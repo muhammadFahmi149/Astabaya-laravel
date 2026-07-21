@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\HotelOccupancyYearly;
 use App\Models\HotelOccupancyCombined;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -24,13 +25,11 @@ class HotelOccupancyService
     public function syncYearly(string $sheetName = 'Tingkat Hunian Hotel_Y-to-Y'): array
     {
         try {
+            $startTime = microtime(true);
             echo "📊 Syncing Hotel Occupancy Yearly data from sheet: {$sheetName}\n";
             $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
             $processedData = $this->spreadsheetService->processSheetData($rawData);
             
-            $createdCount = 0;
-            $updatedCount = 0;
-
             if (empty($processedData)) {
                 echo "⚠️ No data found in sheet: {$sheetName}\n";
                 return ['created' => 0, 'updated' => 0];
@@ -38,6 +37,8 @@ class HotelOccupancyService
 
             echo "[OK] Data processed. Total records: " . count($processedData) . "\n";
 
+            $records = [];
+            $now = now();
             foreach ($processedData as $rowIndex => $row) {
                 // Try to find year with various possible field names
                 $year = $row['year'] ?? $row['tahun'] ?? null;
@@ -49,7 +50,7 @@ class HotelOccupancyService
                     continue;
                 }
 
-                $data = [
+                $records[] = [
                     'year' => (int) $year,
                     'mktj' => $this->parseDecimal($row['mktj'] ?? null),
                     'tpk' => $this->parseDecimal($row['tpk'] ?? null),
@@ -57,30 +58,50 @@ class HotelOccupancyService
                     'rlmtnus' => $this->parseDecimal($row['rlmtnus'] ?? null),
                     'rlmtgab' => $this->parseDecimal($row['rlmtgab'] ?? null),
                     'gpr' => $this->parseDecimal($row['gpr'] ?? null),
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
-
-                try {
-                    $existing = HotelOccupancyYearly::where('year', $data['year'])->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        HotelOccupancyYearly::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    echo "❌ Error saving row " . ($rowIndex + 1) . ": " . $e->getMessage() . "\n";
-                    Log::error("Error saving Hotel Occupancy Yearly row: " . $e->getMessage(), ['row' => $row, 'data' => $data]);
-                    continue;
-                }
             }
 
-            echo "✅ Hotel Occupancy Yearly sync completed. Created: {$createdCount}, Updated: {$updatedCount}\n";
-            Log::info("Hotel Occupancy Yearly sync completed. Created: {$createdCount}, Updated: {$updatedCount}");
+            $totalProcessed = count($records);
+            $chunkSize = 500;
+            $chunks = array_chunk($records, $chunkSize);
+            $totalChunks = count($chunks);
+
+            // Count before upsert to calculate inserted vs updated
+            $countBefore = HotelOccupancyYearly::count();
+
+            DB::transaction(function () use ($chunks) {
+                foreach ($chunks as $chunk) {
+                    HotelOccupancyYearly::upsert(
+                        $chunk,
+                        ['year'],
+                        ['mktj', 'tpk', 'rlmta', 'rlmtnus', 'rlmtgab', 'gpr', 'updated_at']
+                    );
+                }
+            });
+
+            $countAfter = HotelOccupancyYearly::count();
+            $createdCount = max(0, $countAfter - $countBefore);
+            $updatedCount = $totalProcessed - $createdCount;
+            $skippedCount = count($processedData) - $totalProcessed;
+            $duration = round(microtime(true) - $startTime, 2);
+
+            $logMessage = "Sync Hotel Occupancy Yearly\n"
+                . "  Processed : {$totalProcessed}\n"
+                . "  Inserted  : {$createdCount}\n"
+                . "  Updated   : {$updatedCount}\n"
+                . "  Skipped   : {$skippedCount}\n"
+                . "  Chunks    : {$totalChunks}\n"
+                . "  Duration  : {$duration} sec";
+
+            echo "✅ {$logMessage}\n";
+            Log::info($logMessage);
+
             return ['created' => $createdCount, 'updated' => $updatedCount];
         } catch (\Exception $e) {
             Log::error('Error syncing Hotel Occupancy Yearly: ' . $e->getMessage());
+            echo "❌ Error syncing Hotel Occupancy Yearly: " . $e->getMessage() . "\n";
             throw $e;
         }
     }
@@ -91,13 +112,11 @@ class HotelOccupancyService
     public function syncCombined(string $sheetName = 'Tingkat Hunian Hotel_M-to-M'): array
     {
         try {
+            $startTime = microtime(true);
             echo "📊 Syncing Hotel Occupancy Combined data from sheet: {$sheetName}\n";
             $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
             $processedData = $this->spreadsheetService->processSheetData($rawData);
             
-            $createdCount = 0;
-            $updatedCount = 0;
-
             if (empty($processedData)) {
                 echo "⚠️ No data found in sheet: {$sheetName}\n";
                 return ['created' => 0, 'updated' => 0];
@@ -105,6 +124,8 @@ class HotelOccupancyService
 
             echo "[OK] Data processed. Total records: " . count($processedData) . "\n";
 
+            $records = [];
+            $now = now();
             foreach ($processedData as $rowIndex => $row) {
                 // Try to find year and month with various possible field names
                 $year = $row['year'] ?? $row['tahun'] ?? null;
@@ -117,7 +138,7 @@ class HotelOccupancyService
                     continue;
                 }
 
-                $data = [
+                $records[] = [
                     'year' => (int) $year,
                     'month' => $this->normalizeMonth($month),
                     'mktj' => $this->parseDecimal($row['mktj'] ?? null),
@@ -126,32 +147,50 @@ class HotelOccupancyService
                     'rlmtnus' => $this->parseDecimal($row['rlmtnus'] ?? null),
                     'rlmtgab' => $this->parseDecimal($row['rlmtgab'] ?? null),
                     'gpr' => $this->parseDecimal($row['gpr'] ?? null),
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
-
-                try {
-                    $existing = HotelOccupancyCombined::where('year', $data['year'])
-                        ->where('month', $data['month'])
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        HotelOccupancyCombined::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    echo "❌ Error saving row " . ($rowIndex + 1) . ": " . $e->getMessage() . "\n";
-                    Log::error("Error saving Hotel Occupancy Combined row: " . $e->getMessage(), ['row' => $row, 'data' => $data]);
-                    continue;
-                }
             }
 
-            echo "✅ Hotel Occupancy Combined sync completed. Created: {$createdCount}, Updated: {$updatedCount}\n";
-            Log::info("Hotel Occupancy Combined sync completed. Created: {$createdCount}, Updated: {$updatedCount}");
+            $totalProcessed = count($records);
+            $chunkSize = 500;
+            $chunks = array_chunk($records, $chunkSize);
+            $totalChunks = count($chunks);
+
+            // Count before upsert to calculate inserted vs updated
+            $countBefore = HotelOccupancyCombined::count();
+
+            DB::transaction(function () use ($chunks) {
+                foreach ($chunks as $chunk) {
+                    HotelOccupancyCombined::upsert(
+                        $chunk,
+                        ['year', 'month'],
+                        ['mktj', 'tpk', 'rlmta', 'rlmtnus', 'rlmtgab', 'gpr', 'updated_at']
+                    );
+                }
+            });
+
+            $countAfter = HotelOccupancyCombined::count();
+            $createdCount = max(0, $countAfter - $countBefore);
+            $updatedCount = $totalProcessed - $createdCount;
+            $skippedCount = count($processedData) - $totalProcessed;
+            $duration = round(microtime(true) - $startTime, 2);
+
+            $logMessage = "Sync Hotel Occupancy Combined\n"
+                . "  Processed : {$totalProcessed}\n"
+                . "  Inserted  : {$createdCount}\n"
+                . "  Updated   : {$updatedCount}\n"
+                . "  Skipped   : {$skippedCount}\n"
+                . "  Chunks    : {$totalChunks}\n"
+                . "  Duration  : {$duration} sec";
+
+            echo "✅ {$logMessage}\n";
+            Log::info($logMessage);
+
             return ['created' => $createdCount, 'updated' => $updatedCount];
         } catch (\Exception $e) {
             Log::error('Error syncing Hotel Occupancy Combined: ' . $e->getMessage());
+            echo "❌ Error syncing Hotel Occupancy Combined: " . $e->getMessage() . "\n";
             throw $e;
         }
     }

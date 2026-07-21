@@ -22,3 +22,8 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Temporary AI Scripts
+*.cjs
+*.py
+test_sheet.php

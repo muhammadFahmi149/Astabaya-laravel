@@ -116,7 +116,7 @@
             shareButtons.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const platform = e.currentTarget.dataset.sharePlatform;
-                    this.shareToPlat form(platform, config);
+                    this.shareToPlatform(platform, config);
                 });
             });
 

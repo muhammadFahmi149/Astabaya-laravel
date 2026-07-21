@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\GiniRatio;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -120,6 +121,7 @@ class GiniRatioService
     public function sync(string $sheetName = 'Gini Ratio'): array
     {
         try {
+            $startTime = microtime(true);
             echo "📊 Syncing Gini Ratio data from sheet: {$sheetName}\n";
             $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
             
@@ -138,31 +140,49 @@ class GiniRatioService
 
             echo "[OK] Data processed. Total records: " . count($processedRecords) . "\n";
             
-            $createdCount = 0;
-            $updatedCount = 0;
-
+            $now = now();
+            $records = [];
             foreach ($processedRecords as $record) {
-                try {
-                    $existing = GiniRatio::where('location_name', $record['location_name'])
-                        ->where('year', $record['year'])
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update($record);
-                        $updatedCount++;
-                    } else {
-                        GiniRatio::create($record);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    echo "❌ Error saving record: " . $e->getMessage() . "\n";
-                    Log::error("Error saving Gini Ratio record: " . $e->getMessage(), ['record' => $record]);
-                    continue;
-                }
+                $records[] = $record + [
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
             }
 
-            echo "✅ Gini Ratio sync completed. Created: {$createdCount}, Updated: {$updatedCount}\n";
-            Log::info("Gini Ratio sync completed. Created: {$createdCount}, Updated: {$updatedCount}");
+            $totalProcessed = count($records);
+            $chunkSize = 500;
+            $chunks = array_chunk($records, $chunkSize);
+            $totalChunks = count($chunks);
+
+            // Count before upsert to calculate inserted vs updated
+            $countBefore = GiniRatio::count();
+
+            DB::transaction(function () use ($chunks) {
+                foreach ($chunks as $chunk) {
+                    GiniRatio::upsert(
+                        $chunk,
+                        ['location_name', 'year'],
+                        ['location_type', 'gini_ratio_value', 'updated_at']
+                    );
+                }
+            });
+
+            $countAfter = GiniRatio::count();
+            $createdCount = max(0, $countAfter - $countBefore);
+            $updatedCount = $totalProcessed - $createdCount;
+            $duration = round(microtime(true) - $startTime, 2);
+
+            $logMessage = "Sync Gini Ratio\n"
+                . "  Processed : {$totalProcessed}\n"
+                . "  Inserted  : {$createdCount}\n"
+                . "  Updated   : {$updatedCount}\n"
+                . "  Skipped   : 0\n"
+                . "  Chunks    : {$totalChunks}\n"
+                . "  Duration  : {$duration} sec";
+
+            echo "✅ {$logMessage}\n";
+            Log::info($logMessage);
+
             return ['created' => $createdCount, 'updated' => $updatedCount];
         } catch (\Exception $e) {
             Log::error('Error syncing Gini Ratio: ' . $e->getMessage());

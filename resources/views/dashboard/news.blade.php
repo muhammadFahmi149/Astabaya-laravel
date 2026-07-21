@@ -259,39 +259,39 @@
                         <!-- Mobile Layout -->
                         <div class="row d-md-none">
                             <div class="col-12">
-                                <div class="d-flex gap-2 align-items-start">
+                                <div class="d-flex gap-3 align-items-start mb-3">
                                     @if($item->picture_url)
                                         <img src="{{ $item->picture_url }}" alt="{{ $item->title }}" 
                                              class="rounded shadow-sm" 
-                                             style="width: 80px; height: 80px; min-width: 80px; min-height: 80px; object-fit: cover; cursor: pointer; flex-shrink: 0;"
+                                             style="width: 100px; height: 140px; min-width: 100px; min-height: 140px; object-fit: cover; cursor: pointer; flex-shrink: 0;"
                                              onclick="showNewsModal({{ $index }})">
                                     @else
                                         <div class="bg-light rounded d-flex align-items-center justify-content-center shadow-sm" 
-                                             style="width: 80px; height: 80px; min-width: 80px; min-height: 80px; cursor: pointer; flex-shrink: 0;"
+                                             style="width: 100px; height: 140px; min-width: 100px; min-height: 140px; cursor: pointer; flex-shrink: 0;"
                                              onclick="showNewsModal({{ $index }})">
-                                            <i class="bi bi-newspaper" style="font-size: 1.5rem; color: #ccc;"></i>
+                                            <i class="bi bi-newspaper" style="font-size: 2rem; color: #ccc;"></i>
                                         </div>
                                     @endif
                                     <div class="flex-grow-1">
-                                        <h6 class="card-title mb-1 fw-bold" style="font-size: 0.9rem; cursor: pointer; min-height: 40px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" onclick="showNewsModal({{ $index }})">{{ $item->title }}</h6>
+                                        <h6 class="card-title mb-1 fw-bold" style="font-size: 0.85rem; line-height: 1.3; cursor: pointer; min-height: 40px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" onclick="showNewsModal({{ $index }})">{{ $item->title }}</h6>
                                         <div class="mb-1">
                                             @if($item->category_name)
-                                                <span class="badge bg-primary me-1" style="font-size: 0.7rem;">{{ $item->category_name }}</span>
+                                                <span class="badge bg-primary me-1" style="font-size: 0.65rem; padding: 0.2rem 0.4rem;">{{ $item->category_name }}</span>
                                             @endif
                                             @if($item->release_date)
-                                                <span class="badge bg-info" style="font-size: 0.7rem;">
+                                                <span class="badge bg-info" style="font-size: 0.65rem; padding: 0.2rem 0.4rem;">
                                                     <i class="bi bi-calendar"></i> {{ \Carbon\Carbon::parse($item->release_date)->format('d M Y') }}
                                                 </span>
                                             @endif
                                         </div>
-                                        <p class="card-text text-muted mb-2" style="font-size: 0.85rem; min-height: 40px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                            {{ \Illuminate\Support\Str::words(strip_tags($item->content ?? ''), 20, '...') }}
+                                        <p class="card-text text-muted mb-2" style="font-size: 0.75rem; line-height: 1.4; min-height: 40px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                            {{ \Illuminate\Support\Str::words(strip_tags($item->content ?? ''), 25, '...') }}
                                         </p>
                                         <div class="d-flex gap-2 flex-wrap">
-                                            <button class="btn btn-sm btn-primary" onclick="showNewsModal({{ $index }})" style="font-size: 0.8rem;">
+                                            <button class="btn btn-sm btn-primary" onclick="showNewsModal({{ $index }})" style="font-size: 0.75rem; padding: 0.4rem 0.6rem;">
                                                 <i class="bi bi-book"></i> Baca
                                             </button>
-                                            <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="{{ $item->news_id }}" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)" style="font-size: 0.8rem;">
+                                            <button class="btn btn-sm btn-outline-secondary bookmark-btn" data-content-type="news" data-object-id="{{ $item->news_id }}" data-bookmark-id="" onclick="event.stopPropagation(); handleNewsBookmark(this)" style="font-size: 0.75rem; padding: 0.4rem 0.6rem;">
                                                 <i class="bi bi-bookmark"></i> Bookmark
                                             </button>
                                         </div>
@@ -473,11 +473,126 @@
 
     #newsCardModal #newsModalContent {
         margin-bottom: 1rem;
+        font-size: 1rem;
+        line-height: 1.8;
     }
 
     #newsCardModal .badge {
         font-size: 0.875rem;
         padding: 0.5rem 0.75rem;
+    }
+
+    /* Mobile Responsive Styles for News Modal */
+    @media (max-width: 767.98px) {
+        #newsCardModal .modal-dialog {
+            max-width: 95%;
+            margin: 0.5rem auto;
+        }
+
+        #newsCardModal .modal-content {
+            margin: 0 0.75rem;
+        }
+
+        #newsCardModal .modal-header {
+            padding: 0.75rem 1rem;
+        }
+
+        #newsCardModal .modal-header .modal-title {
+            font-size: 0.95rem;
+            padding-right: 1.5rem;
+        }
+
+        #newsCardModal .modal-body {
+            padding: 1rem 1rem;
+        }
+
+        #newsCardModal .modal-body .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        #newsCardModal .modal-body .row {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        #newsCardModal .modal-body .col-md-3,
+        #newsCardModal .modal-body .col-md-9 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        #newsCardModal #newsModalImageContainer {
+            margin-bottom: 1rem;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        #newsCardModal .modal-body .d-flex.align-items-center {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        #newsCardModal #newsModalImageContainer img {
+            max-height: 250px;
+        }
+
+        #newsCardModal #newsModalContent {
+            font-size: 0.8rem !important;
+            line-height: 1.6 !important;
+            margin-bottom: 0.75rem;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        #newsCardModal .badge {
+            font-size: 0.7rem !important;
+            padding: 0.3rem 0.5rem !important;
+        }
+
+        #newsCardModal .text-muted.small {
+            font-size: 0.7rem !important;
+        }
+
+        #newsCardModal .modal-footer {
+            padding: 0.75rem 1rem;
+        }
+
+        #newsCardModal .modal-footer .btn {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Mobile Responsive Styles for News */
+    @media (max-width: 767.98px) {
+        .news-item .card-body {
+            padding: 1rem;
+        }
+
+        .news-item .card-title {
+            font-size: 0.85rem !important;
+            line-height: 1.3 !important;
+        }
+
+        .news-item .card-text {
+            font-size: 0.75rem !important;
+            line-height: 1.4 !important;
+        }
+
+        .news-item .badge {
+            font-size: 0.65rem !important;
+            padding: 0.2rem 0.4rem !important;
+        }
+
+        .news-item .btn-sm {
+            font-size: 0.75rem !important;
+            padding: 0.4rem 0.6rem !important;
+        }
+
+        .news-item img {
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
     }
 </style>
 

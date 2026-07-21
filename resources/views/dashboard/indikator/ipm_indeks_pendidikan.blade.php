@@ -74,12 +74,12 @@
           <div class="chart-header-actions">
             <x-chart-share-button chartId="comparisonChart" title="Perbandingan Indeks Pendidikan Surabaya vs Jawa Timur" />
             <div class="dropdown">
-              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadPendidikanDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
+              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadChartData" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
                 <i class="fas fa-download"></i> <span>Unduh</span>
               </button>
               <ul class="dropdown-menu" aria-labelledby="downloadPendidikanDropdown" style="border-radius: 8px; min-width: 100%;">
-                <li><a class="dropdown-item" href="#" id="downloadChartPendidikan" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                <li><a class="dropdown-item" href="#" id="downloadImagePendidikan" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadChartData" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
+                <li><a class="dropdown-item" href="#" id="downloadImageData" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
               </ul>
             </div>
           </div>
@@ -90,348 +90,27 @@
   </div>
 </div>
 
-<style>
-  /* Ensure tooltip can appear - fix overflow issues */
-  .dashboard-card, .row, .container, .col-md-12, .col-md-6 {
-    overflow: visible !important;
-  }
-  
-  .dashboard-card { background-color: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 20px; margin-bottom: 20px; }
-  .summary-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-  .summary-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); }
-  
-  /* Responsive styles for summary cards */
-  @media (max-width: 768px) {
-    .summary-card {
-      padding: 15px !important;
-      min-height: 150px !important;
-    }
-    
-    .summary-card h5 {
-      font-size: 12px !important;
-      margin: 0 0 8px 0 !important;
-    }
-    
-    .summary-card h2 {
-      font-size: 24px !important;
-      margin: 0 0 8px 0 !important;
-    }
-    
-    .summary-card small {
-      font-size: 9px !important;
-    }
-    
-    .summary-card span {
-      font-size: 10px !important;
-    }
-    
-    .summary-card i[style*="font-size: 80px"] {
-      font-size: 50px !important;
-    }
-    
-    /* Download button responsive */
-    #downloadPendidikanDropdown {
-      padding: 3px 8px !important;
-      font-size: 11px !important;
-    }
-    
-    #downloadPendidikanDropdown i {
-      font-size: 10px !important;
-    }
-    
-    #downloadPendidikanDropdown span {
-      display: none;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    #downloadPendidikanDropdown {
-      padding: 4px 6px !important;
-      font-size: 10px !important;
-    }
-    
-    #downloadPendidikanDropdown i {
-      font-size: 12px !important;
-      margin: 0 !important;
-    }
-  }
-</style>
+@push('styles')
+    @vite('resources/css/dashboard/indikator-ipm.css')
+@endpush
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE = '{{ url("/api") }}';
-    let surabayaData = [];
-    let jatimData = [];
-    let comparisonChart = null;
-
-    // Load summary data for cards
-    async function loadSummaryData() {
-      try {
-        const response = await fetch(`${API_BASE}/ipm-indeks-pendidikan-summary`);
-        const result = await response.json();
+@push('scripts')
+    <script>
+        window.API_BASE = '{{ url("/api") }}';
+        window.AUTH_CHECK = @json(auth()->check());
+        window.LOGIN_ROUTE = '{{ route("login") }}';
         
-        if (result.success && result.data) {
-          const data = result.data;
-          
-          // Update Surabaya card
-          if (data.surabaya_latest) {
-            document.getElementById('surabaya-value').textContent = data.surabaya_latest.value !== null 
-              ? parseFloat(data.surabaya_latest.value).toFixed(2) 
-              : '-';
-            document.getElementById('surabaya-year').textContent = `Tahun ${data.surabaya_latest.year}`;
-            
-            // Update change indicator
-            const surabayaChangeEl = document.getElementById('surabaya-change');
-            if (data.surabaya_change !== null) {
-              const changeText = data.surabaya_change > 0 
-                ? `+${data.surabaya_change.toFixed(2)}` 
-                : `${data.surabaya_change.toFixed(2)}`;
-              const arrow = data.surabaya_change > 0 ? '▲' : '▼';
-              const previousYear = data.surabaya_previous ? data.surabaya_previous.year : '';
-              
-              surabayaChangeEl.innerHTML = `
-                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${arrow}</span>
-                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${changeText}</span>
-                ${previousYear ? `<span style="color: rgba(255, 255, 255, 0.7); font-size: 10px;">dari ${previousYear}</span>` : ''}
-              `;
-            } else {
-              surabayaChangeEl.innerHTML = '<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>';
-            }
-          }
-          
-          // Update Jawa Timur card
-          if (data.jatim_latest) {
-            document.getElementById('jatim-value').textContent = data.jatim_latest.value !== null 
-              ? parseFloat(data.jatim_latest.value).toFixed(2) 
-              : '-';
-            document.getElementById('jatim-year').textContent = `Tahun ${data.jatim_latest.year}`;
-            
-            // Update change indicator
-            const jatimChangeEl = document.getElementById('jatim-change');
-            if (data.jatim_change !== null) {
-              const changeText = data.jatim_change > 0 
-                ? `+${data.jatim_change.toFixed(2)}` 
-                : `${data.jatim_change.toFixed(2)}`;
-              const arrow = data.jatim_change > 0 ? '▲' : '▼';
-              const previousYear = data.jatim_previous ? data.jatim_previous.year : '';
-              
-              jatimChangeEl.innerHTML = `
-                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${arrow}</span>
-                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${changeText}</span>
-                ${previousYear ? `<span style="color: rgba(255, 255, 255, 0.7); font-size: 10px;">dari ${previousYear}</span>` : ''}
-              `;
-            } else {
-              jatimChangeEl.innerHTML = '<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>';
-            }
-          }
-          
-          // Store data for chart
-          surabayaData = data.surabaya_data || [];
-          jatimData = data.jatim_data || [];
-          
-          // Render chart
-          renderChart();
-        }
-      } catch (error) {
-        console.error('Error loading Indeks Pendidikan summary data:', error);
-      }
-    }
-
-    function renderChart() {
-      // Process data
-      const surabayaProcessed = surabayaData.map(d => ({
-        year: d.year,
-        value: d.value !== null ? parseFloat(d.value) : null
-      }));
-      
-      const jatimProcessed = jatimData.map(d => ({
-        year: d.year,
-        value: d.value !== null ? parseFloat(d.value) : null
-      }));
-
-      surabayaProcessed.sort((a, b) => a.year - b.year);
-      jatimProcessed.sort((a, b) => a.year - b.year);
-
-      const allYearsSet = new Set([
-        ...surabayaProcessed.map(d => d.year),
-        ...jatimProcessed.map(d => d.year)
-      ]);
-      const allYears = Array.from(allYearsSet).sort((a, b) => a - b);
-      
-      // Only show last 10 years if more than 10 years
-      const displayYears = allYears.length > 10 ? allYears.slice(-10) : allYears;
-      const years = displayYears.map(y => y.toString());
-      
-      // Store displayYears in global scope for export function
-      window.displayYearsPendidikan = displayYears;
-
-      const surabayaValues = displayYears.map(year => {
-        const data = surabayaProcessed.find(d => d.year === year);
-        return data && data.value !== null ? data.value : null;
-      });
-
-      const jatimValues = displayYears.map(year => {
-        const data = jatimProcessed.find(d => d.year === year);
-        return data && data.value !== null ? data.value : null;
-      });
-      
-      // Store values in global scope for export function
-      window.surabayaValuesPendidikan = surabayaValues;
-      window.jatimValuesPendidikan = jatimValues;
-
-      const comparisonChartDom = document.getElementById('comparisonChart');
-      comparisonChart = echarts.init(comparisonChartDom);
-      
-      comparisonChart.setOption({
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { type: 'line', snap: true, lineStyle: { type: 'dashed' } },
-          formatter: function(params) {
-            let result = 'Tahun: ' + params[0].axisValue + '<br/>';
-            params.forEach(function(item) {
-              result += item.marker + item.seriesName + ': ' + 
-                (item.value !== null ? item.value.toFixed(2) : 'Data tidak tersedia') + '<br/>';
-            });
-            return result;
-          }
-        },
-        legend: { data: ['Kota Surabaya', 'Jawa Timur'], top: 10 },
-        grid: { left: '12%', right: '4%', bottom: '10%', top: '20%', containLabel: false },
-        xAxis: { type: 'category', data: years, boundaryGap: false },
-        yAxis: {
-          type: 'value',
-          name: 'Indeks',
-          position: 'left',
-          nameLocation: 'end',
-          nameGap: 10,
-          min: 0,
-          max: 1,
-          axisLabel: { formatter: '{value}' }
-        },
-        series: [
-          {
-            name: 'Kota Surabaya',
-            type: 'line',
-            data: surabayaValues,
-            itemStyle: { color: 'rgb(245, 158, 11)' },
-            lineStyle: { width: 3 },
-            symbol: 'circle',
-            symbolSize: 8,
-            smooth: true,
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0, y: 0, x2: 0, y2: 1,
-                colorStops: [
-                  { offset: 0, color: 'rgba(245, 158, 11, 0.3)' },
-                  { offset: 1, color: 'rgba(245, 158, 11, 0.05)' }
-                ]
-              }
-            }
-          },
-          {
-            name: 'Jawa Timur',
-            type: 'line',
-            data: jatimValues,
-            itemStyle: { color: 'rgb(139, 92, 246)' },
-            lineStyle: { width: 3 },
-            symbol: 'circle',
-            symbolSize: 8,
-            smooth: true,
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0, y: 0, x2: 0, y2: 1,
-                colorStops: [
-                  { offset: 0, color: 'rgba(139, 92, 246, 0.3)' },
-                  { offset: 1, color: 'rgba(139, 92, 246, 0.05)' }
-                ]
-              }
-            }
-          }
-        ]
-      });
-
-      window.addEventListener('resize', function() {
-        comparisonChart.resize();
-      });
-    }
-    
-    function exportToExcelPendidikan() {
-      const exportData = [['Tahun', 'Kota Surabaya', 'Jawa Timur']];
-      if (window.displayYearsPendidikan && window.surabayaValuesPendidikan && window.jatimValuesPendidikan) {
-        window.displayYearsPendidikan.forEach((year, index) => {
-          const surabayaVal = window.surabayaValuesPendidikan[index] !== null 
-            ? window.surabayaValuesPendidikan[index].toFixed(2) 
-            : 'Data tidak tersedia';
-          const jatimVal = window.jatimValuesPendidikan[index] !== null 
-            ? window.jatimValuesPendidikan[index].toFixed(2) 
-            : 'Data tidak tersedia';
-          exportData.push([year.toString(), surabayaVal, jatimVal]);
-        });
-      }
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.aoa_to_sheet(exportData);
-      ws['!cols'] = [{ wch: 10 }, { wch: 25 }, { wch: 25 }];
-      XLSX.utils.book_append_sheet(wb, ws, 'Data Pendidikan');
-      const today = new Date();
-      XLSX.writeFile(wb, `Indeks_Pendidikan_Surabaya_vs_JawaTimur_${today.toISOString().split('T')[0]}.xlsx`);
-    }
-    
-    // Helper function to check authentication before download
-    function checkAuthBeforeDownload(callback, itemName = 'data') {
-      @auth
-      // User authenticated, proceed with download
-      callback();
-      return true;
-      @else
-      // User not authenticated, show login modal
-      if (typeof showLoginRequiredModal === 'function') {
-        showLoginRequiredModal(itemName);
-      } else {
-        alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
-        const loginModal = document.getElementById('loginModal');
-        if (loginModal) {
-          const modal = new bootstrap.Modal(loginModal);
-          modal.show();
-        } else {
-          window.location.href = '{{ route("login") }}';
-        }
-      }
-      return false;
-      @endauth
-    }
-
-    document.getElementById('downloadChartPendidikan').addEventListener('click', function(e) {
-      e.preventDefault();
-      checkAuthBeforeDownload(exportToExcelPendidikan, 'data indeks pendidikan');
-    });
-    
-    function exportToPNGPendidikan() {
-      if (!comparisonChart) {
-        alert('Grafik belum dimuat. Silakan tunggu sebentar.');
-        return;
-      }
-      
-      const url = comparisonChart.getDataURL({
-        type: 'png',
-        pixelRatio: 2,
-        backgroundColor: '#fff'
-      });
-      const link = document.createElement('a');
-      link.download = `Indeks_Pendidikan_Chart_Surabaya_vs_JawaTimur_${new Date().toISOString().split('T')[0]}.png`;
-      link.href = url;
-      link.click();
-    }
-    
-    document.getElementById('downloadImagePendidikan').addEventListener('click', function(e) {
-      e.preventDefault();
-      checkAuthBeforeDownload(exportToPNGPendidikan, 'grafik indeks pendidikan');
-    });
-
-    // Load data on page load
-    loadSummaryData();
-  });
-</script>
+        window.IPM_CONFIG = {
+            apiEndpoint: '/ipm-indeks-pendidikan-summary',
+            chartTitle: 'Indeks Pendidikan',
+            yAxisName: 'Indeks',
+            valuePrefix: '',
+            valueSuffix: '',
+            exportPrefix: 'Indeks Pendidikan',
+            isCurrency: false
+        };
+    </script>
+    @vite('resources/js/dashboard/indikator-ipm.js')
+@endpush
 
 @endsection

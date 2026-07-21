@@ -16,7 +16,7 @@
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="{{ asset('assets/vendors/ti-icons/css/themify-icons.css') }}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css" />
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
@@ -675,7 +675,7 @@
     <script src="{{ asset('assets/js/jquery.cookie.js') }}" type="text/javascript"></script>
     <script src="{{ asset('assets/js/dashboard.js') }}"></script>
     <!-- External JS from CDN -->
-    <script src="https://code.highcharts.com/highcharts.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -4257,67 +4257,6 @@
             }
           }, 100);
             
-            if (copySuccess) {
-              console.log('Fallback copy successful via execCommand');
-              showShareToast('Link "' + title + '" telah disalin ke clipboard');
-              
-              // Clean up immediately
-              setTimeout(() => {
-                if (textArea && textArea.parentNode) {
-                  textArea.parentNode.removeChild(textArea);
-                }
-              }, 0);
-              return;
-            } else {
-              throw new Error('execCommand copy returned false');
-            }
-          } catch (err) {
-            console.error('Fallback copy failed:', err);
-            
-            // Try alternative method: create a temporary input element
-            try {
-              const input = document.createElement('input');
-              input.type = 'text';
-              input.value = text;
-              input.style.position = 'fixed';
-              input.style.left = '0';
-              input.style.top = '0';
-              input.style.width = '2em';
-              input.style.height = '2em';
-              input.style.opacity = '0';
-              input.style.pointerEvents = 'none';
-              document.body.appendChild(input);
-              
-              input.focus();
-              input.select();
-              input.setSelectionRange(0, text.length);
-              
-              copySuccess = document.execCommand('copy');
-              document.body.removeChild(input);
-              
-              if (copySuccess) {
-                console.log('Fallback copy successful via input element');
-                showShareToast('Link "' + title + '" telah disalin ke clipboard');
-              } else {
-                throw new Error('Alternative method also failed');
-              }
-            } catch (err2) {
-              console.error('Alternative copy method failed:', err2);
-              
-              // Last resort: show the text in a prompt
-              const userInput = prompt('Salin link berikut (Ctrl+C untuk menyalin):', text);
-              if (userInput !== null) {
-                showShareToast('Silakan salin link secara manual');
-              }
-            }
-          }
-          
-          // Clean up textarea
-          setTimeout(() => {
-            if (textArea && textArea.parentNode) {
-              textArea.parentNode.removeChild(textArea);
-            }
-          }, 100);
         }
         
         // Global toast notification function

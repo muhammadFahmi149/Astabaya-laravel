@@ -1,488 +1,11 @@
-<?php $__env->startSection('title', 'Tingkat Hunian Hotel'); ?>
-
-<?php $__env->startPush('styles'); ?>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-<?php $__env->stopPush(); ?>
-
-<?php $__env->startPush('scripts'); ?>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<?php $__env->stopPush(); ?>
-
-<?php $__env->startSection('content'); ?>
-<div class="container py-4">
-  <h3 class="font-weight-bold mb-4">Tingkat Hunian Hotel</h3>
-  
-  <!-- Summary Cards -->
-  <div class="row mb-4 summary-cards-row">
-    <!-- TPK Total Card -->
-    <div class="col-6 col-md-4 col-lg mb-3 summary-card-mobile">
-      <div class="summary-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
-        <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
-          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">TPK Total</h6>
-          <h3 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
-            <span id="tpk-value">-</span>
-          </h3>
-          <div class="tpk-change-container" style="display: flex; align-items: center; gap: 5px; margin-top: 8px; flex-wrap: wrap;" id="tpk-change">
-          </div>
-          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: auto;" id="tpk-date">
-            Data tidak tersedia
-          </small>
-        </div>
-      </div>
-    </div>
-
-    <!-- MKTJ Card -->
-    <div class="col-6 col-md-4 col-lg mb-3 summary-card-mobile">
-      <div class="summary-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
-        <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
-          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">MKTJ</h6>
-          <h3 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
-            <span class="mktj-value" id="mktj-value">-</span>
-          </h3>
-          <div class="mktj-change-container" style="display: flex; align-items: center; gap: 5px; margin-top: 8px; flex-wrap: wrap;" id="mktj-change">
-          </div>
-          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: auto;" id="mktj-date">
-            Data tidak tersedia
-          </small>
-        </div>
-      </div>
-    </div>
-
-    <!-- RLMT Gabungan Card -->
-    <div class="col-6 col-md-4 col-lg mb-3 summary-card-mobile">
-      <div class="summary-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
-        <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
-          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">RLMT Gabungan</h6>
-          <h3 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
-            <span id="rlmtgab-value">-</span>
-          </h3>
-          <div class="rlmtgab-change-container" style="display: flex; align-items: center; gap: 5px; margin-top: 8px; flex-wrap: wrap;" id="rlmtgab-change">
-          </div>
-          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: auto;" id="rlmtgab-date">
-            Data tidak tersedia
-          </small>
-        </div>
-      </div>
-    </div>
-
-    <!-- GPR Card -->
-    <div class="col-6 col-md-4 col-lg mb-3 summary-card-mobile">
-      <div class="summary-card" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border-radius: 12px; padding: 20px; min-height: 160px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column;">
-        <div style="position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column;">
-          <h6 style="color: rgba(255, 255, 255, 0.9); font-size: 12px; font-weight: 500; margin: 0 0 10px 0;">GPR</h6>
-          <h3 style="font-size: 28px; font-weight: 700; line-height: 1.2; margin: 0 0 8px 0;">
-            <span id="gpr-value">-</span>
-          </h3>
-          <div class="gpr-change-container" style="display: flex; align-items: center; gap: 5px; margin-top: 8px; flex-wrap: wrap;" id="gpr-change">
-          </div>
-          <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px; margin-top: auto;" id="gpr-date">
-            Data tidak tersedia
-          </small>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Year Selector and Chart -->
-  <div class="row">
-    <div class="col-md-12">
-      <div class="dashboard-card" style="position: relative;">
-        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-          <h4 class="mb-2 mb-md-0" style="font-size: clamp(18px, 3vw, 24px);">Perkembangan Tingkat Penghunian Kamar (TPK)</h4>
-          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-            <div class="dropdown">
-              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                Tahun: <span id="selectedYear">-</span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="yearDropdown" id="yearDropdownMenu">
-              </ul>
-            </div>
-            <div class="chart-header-actions">
-              <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'tpkLineChart','title' => 'Perkembangan TPK']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('chart-share-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'tpkLineChart','title' => 'Perkembangan TPK']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkLineDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                  <i class="fas fa-download"></i> <span>Unduh</span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="downloadTpkLineDropdown" style="border-radius: 8px; min-width: 100%;">
-                  <li><a class="dropdown-item" href="#" id="downloadTpkLineExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                  <li><a class="dropdown-item" href="#" id="downloadTpkLinePNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="chart-container-wrapper">
-          <div id="tpkLineChart" class="chart-container"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Multi-Year Comparison Chart -->
-  <div class="row mt-4">
-    <div class="col-md-12">
-      <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-          <h4 class="mb-0" style="font-size: clamp(18px, 3vw, 24px);">Perbandingan TPK Beberapa Tahun</h4>
-          <div class="chart-header-actions">
-            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'tpkComparisonChart','title' => 'Perbandingan TPK Beberapa Tahun']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('chart-share-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'tpkComparisonChart','title' => 'Perbandingan TPK Beberapa Tahun']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-            <div class="dropdown">
-              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkComparisonDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                <i class="fas fa-download"></i> <span>Unduh</span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="downloadTpkComparisonDropdown" style="border-radius: 8px; min-width: 100%;">
-                <li><a class="dropdown-item" href="#" id="downloadTpkComparisonExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                <li><a class="dropdown-item" href="#" id="downloadTpkComparisonPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="chart-container-wrapper">
-          <div id="tpkComparisonChart" class="chart-container"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Annual TPK Chart -->
-  <div class="row mt-4">
-    <div class="col-md-12">
-      <div class="dashboard-card" style="position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
-          <h4 class="mb-0" style="font-size: clamp(18px, 3vw, 24px);">TPK Tahunan</h4>
-          <div class="chart-header-actions">
-            <?php if (isset($component)) { $__componentOriginala60c6223132f095f6d52f63b1384ef68 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginala60c6223132f095f6d52f63b1384ef68 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.chart-share-button','data' => ['chartId' => 'tpkYearlyChart','title' => 'TPK Tahunan']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('chart-share-button'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['chartId' => 'tpkYearlyChart','title' => 'TPK Tahunan']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $attributes = $__attributesOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__attributesOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginala60c6223132f095f6d52f63b1384ef68)): ?>
-<?php $component = $__componentOriginala60c6223132f095f6d52f63b1384ef68; ?>
-<?php unset($__componentOriginala60c6223132f095f6d52f63b1384ef68); ?>
-<?php endif; ?>
-            <div class="dropdown">
-              <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="downloadTpkYearlyDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 5px 10px; border-radius: 5px;">
-                <i class="fas fa-download"></i> <span>Unduh</span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="downloadTpkYearlyDropdown" style="border-radius: 8px; min-width: 100%;">
-                <li><a class="dropdown-item" href="#" id="downloadTpkYearlyExcel" style="border-radius: 4px;"><i class="fas fa-file-excel"></i> Excel</a></li>
-                <li><a class="dropdown-item" href="#" id="downloadTpkYearlyPNG" style="border-radius: 4px;"><i class="fas fa-image"></i> PNG</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="chart-container-wrapper">
-          <div id="tpkYearlyChart" class="chart-container"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Additional Info Card -->
-  <div class="row">
-    <div class="col-md-12">
-      <div class="dashboard-card" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-        <h5 class="mb-3"><i class="fas fa-info-circle"></i> Tentang Tingkat Hunian Hotel</h5>
-        <p style="margin-bottom: 0; line-height: 1.8;">
-          <strong>Tingkat Hunian Hotel</strong> mengukur kinerja industri perhotelan melalui berbagai indikator yang mencerminkan tingkat pemanfaatan fasilitas hotel. 
-          Indikator-indikator utama meliputi:
-        </p>
-        <ul style="margin-top: 12px; margin-bottom: 0; line-height: 1.8;">
-          <li><strong>Tingkat Penghunian Kamar (TPK)</strong>: Persentase kamar yang terisi dari total kamar yang tersedia. 
-            TPK yang tinggi menunjukkan permintaan yang baik terhadap akomodasi hotel.</li>
-          <li><strong>Jumlah Malam Tamu (MKTJ)</strong>: Total jumlah malam yang dihabiskan oleh tamu di hotel. 
-            Indikator ini mencerminkan durasi rata-rata kunjungan tamu.</li>
-          <li><strong>Rata-rata Lama Menginap Tamu Gabungan (RLMT Gabungan)</strong>: Rata-rata jumlah malam menginap per tamu, 
-            yang mengindikasikan pola kunjungan wisatawan atau pelaku bisnis.</li>
-          <li><strong>Gross Profit Ratio (GPR)</strong>: Rasio keuntungan kotor terhadap pendapatan, 
-            yang menunjukkan efisiensi operasional hotel.</li>
-        </ul>
-        <p style="margin-top: 12px; margin-bottom: 16px; line-height: 1.8;">
-          Indikator-indikator ini penting untuk menilai kesehatan sektor pariwisata dan perhotelan, 
-          serta dapat menjadi acuan dalam pengembangan kebijakan pariwisata dan investasi di sektor perhotelan.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<style>
-  .dashboard-card {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .summary-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  .summary-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  }
-
-  /* Mobile responsive: 3 baris x 2 kolom */
-  @media (max-width: 767.98px) {
-    .summary-card-mobile {
-      flex: 0 0 50% !important;
-      max-width: 50% !important;
-      padding-left: 8px !important;
-      padding-right: 8px !important;
-    }
-    
-    .summary-card-mobile .summary-card {
-      padding: 12px !important;
-      min-height: auto !important;
-      height: auto !important;
-    }
-    
-    .summary-card-mobile .summary-card[style*="min-height: 160px"] {
-      min-height: auto !important;
-    }
-    
-    .summary-card-mobile .summary-card > div[style*="position: relative"] {
-      margin: 0 !important;
-      padding: 0 !important;
-      flex: 0 0 auto !important;
-    }
-    
-    .summary-card-mobile .summary-card > div[style*="flex: 1"] {
-      flex: 0 0 auto !important;
-    }
-    
-    .summary-card-mobile h6 {
-      font-size: 11px !important;
-      margin-bottom: 6px !important;
-    }
-    
-    .summary-card-mobile h3 {
-      font-size: 20px !important;
-      margin-bottom: 4px !important;
-      line-height: 1.1 !important;
-    }
-    
-    .summary-card-mobile small {
-      font-size: 10px !important;
-      margin-top: 4px !important;
-    }
-  }
-
-  /* Chart container styles */
-  .chart-container-wrapper {
-    position: relative;
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    margin-bottom: 10px;
-  }
-
-  .chart-container {
-    position: relative;
-    min-height: 350px;
-    height: 400px;
-  }
-
-  /* Desktop: normal size */
-  @media (min-width: 768px) {
-    .chart-container {
-      width: 100%;
-      height: 450px;
-    }
-    
-    .chart-container-wrapper {
-      overflow-x: hidden;
-    }
-  }
-
-  /* Mobile: wider container for scrolling */
-  @media (max-width: 767px) {
-    .chart-container {
-      width: auto;
-      min-width: 100%;
-      max-width: none;
-      height: 350px;
-    }
-
-    .chart-container-wrapper {
-      border-radius: 8px;
-      overflow-x: auto;
-      overflow-y: hidden;
-    }
-
-    .chart-container-wrapper::-webkit-scrollbar {
-      height: 6px;
-    }
-
-    .chart-container-wrapper::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 10px;
-    }
-
-    .chart-container-wrapper::-webkit-scrollbar-thumb {
-      background: #888;
-      border-radius: 10px;
-    }
-
-    .chart-container-wrapper::-webkit-scrollbar-thumb:hover {
-      background: #555;
-    }
-
-    /* Adjust grid padding for mobile */
-    .dashboard-card {
-      padding: 15px;
-    }
-    
-    /* Download button responsive */
-    .dashboard-card button[id*="download"] {
-      padding: 3px 8px !important;
-      font-size: 11px !important;
-    }
-    
-    .dashboard-card button[id*="download"] i {
-      font-size: 10px !important;
-    }
-    
-    .dashboard-card button[id*="download"] span {
-      display: none;
-    }
-  }
-  
-  /* Download button styles */
-  .dashboard-card button[id*="download"] {
-    white-space: nowrap;
-  }
-  
-  @media (max-width: 576px) {
-    .dashboard-card button[id*="download"] {
-      padding: 4px 6px !important;
-      font-size: 10px !important;
-    }
-    
-    .dashboard-card button[id*="download"] i {
-      font-size: 12px !important;
-      margin: 0 !important;
-    }
-  }
-
-  /* Year Dropdown Menu - Scrollable */
-  #yearDropdownMenu {
-    max-height: 300px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    border-radius: 0.5rem;
-    /* Ensure scroll works on all browsers */
-    -webkit-overflow-scrolling: touch;
-    /* Firefox scrollbar */
-    scrollbar-width: thin;
-    scrollbar-color: #888 #f1f1f1;
-  }
-
-  /* Custom scrollbar for year dropdown menu - Webkit browsers (Chrome, Safari, Edge) */
-  #yearDropdownMenu::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  #yearDropdownMenu::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-    margin: 4px 0;
-  }
-
-  #yearDropdownMenu::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 10px;
-    min-height: 30px;
-  }
-
-  #yearDropdownMenu::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
-
-  /* Year dropdown item styling */
-  #yearDropdownMenu .dropdown-item {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-
-  #yearDropdownMenu .dropdown-item:hover {
-    background-color: #f8f9fa;
-  }
-
-  #yearDropdownMenu .dropdown-item.active {
-    background-color: #0d6efd;
-    color: white;
-  }
-
-  #yearDropdownMenu .dropdown-item.active:hover {
-    background-color: #0b5ed7;
-  }
-</style>
-
-<script>
-  document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async () => {
     // Wait for ECharts to be loaded
     if (typeof echarts === 'undefined') {
       console.error('ECharts library not loaded! Please check if the script is included.');
       return;
     }
     
-    const API_BASE = '<?php echo e(url("/api")); ?>';
+    const API_BASE = window.APP_CONFIG ? window.APP_CONFIG.apiUrl : '/api';
     
     // Initialize data variables
     let occupancyData = [];
@@ -499,7 +22,7 @@
     let selectedYear = null;
     
     // Check if user is authenticated (set from server side)
-    const isAuthenticated = <?php if(auth()->guard()->check()): ?> true <?php else: ?> false <?php endif; ?>;
+    const isAuthenticated = window.APP_CONFIG && window.APP_CONFIG.isAuthenticated;
 
     // Month order for sorting (chronological order) - using full names
     const monthOrder = ['JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 
@@ -1081,7 +604,7 @@
         }
       }
       
-      const recentYears = distinctYears.slice(-3);
+      const recentYears = distinctYears.slice(0, 3).reverse();
       
       const colorPalette = [
         'rgb(220, 38, 38)',   // Red
@@ -1582,7 +1105,7 @@
       // Adjust comparison chart container
       const comparisonChartEl = document.getElementById('tpkComparisonChart');
       if (comparisonChartEl) {
-        const recentYears = years.slice(-3);
+        const recentYears = distinctYears.slice(0, 3).reverse();
         const allMonths = new Set();
         recentYears.forEach(year => {
           const yearData = getDataByYear(year);
@@ -1669,7 +1192,7 @@
             const modal = new bootstrap.Modal(loginModal);
             modal.show();
           } else {
-            window.location.href = '<?php echo e(route("login")); ?>';
+            window.location.href = '{{ route("login") }}';
           }
         }
         return false;
@@ -1685,7 +1208,7 @@
 
     // Export functions for TPK Comparison Chart
     function exportTpkComparisonToExcel() {
-      const recentYears = distinctYears.slice(-3);
+      const recentYears = distinctYears.slice(0, 3).reverse();
       const allMonths = new Set();
       recentYears.forEach(year => {
         const yearData = getDataByYear(year);
@@ -1783,6 +1306,3 @@
       checkAuthBeforeDownload(exportTpkYearlyToPNG, 'grafik TPK tahunan hotel');
     });
   });
-</script>
-<?php $__env->stopSection(); ?>
-<?php echo $__env->make('layouts.main', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH D:\laragon\www\astabaya\resources\views/dashboard/indikator/hotel_occupancy.blade.php ENDPATH**/ ?>

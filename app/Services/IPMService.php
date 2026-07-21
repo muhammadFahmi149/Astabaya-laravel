@@ -26,88 +26,104 @@ class IPMService
     }
 
     /**
-     * Sync IPM UHH SP (Usia Harapan Hidup saat Lahir)
+     * Helper method to sync IPM data generically using transactions, bulk upserts, and chunking
      */
-    public function syncUHHSP(string $sheetName = 'IPM_UHH SP_Y-to-Y '): array
+    protected function syncGeneric(string $modelClass, string $sheetName, string $valueField = 'value'): array
     {
         try {
-            echo "📊 Syncing IPM UHH SP data from sheet: {$sheetName}\n";
+            $startTime = microtime(true);
+            $modelName = class_basename($modelClass);
+            echo "📊 Syncing {$modelName} data from sheet: {$sheetName}\n";
             $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
             $processedData = $this->spreadsheetService->processSheetData($rawData);
             
+            if (empty($processedData)) {
+                echo "⚠️ No data found in sheet: {$sheetName}\n";
+                return ['created' => 0, 'updated' => 0];
+            }
+
             // Transform from wide format to long format
             $transformedData = $this->transformWideToLong($processedData);
             
-            $createdCount = 0;
-            $updatedCount = 0;
-            $skippedCount = 0;
-            $errorCount = 0;
+            if (empty($transformedData)) {
+                echo "⚠️ No valid records found in sheet: {$sheetName}\n";
+                return ['created' => 0, 'updated' => 0];
+            }
 
             echo "📝 Processing " . count($processedData) . " wide rows -> " . count($transformedData) . " long rows...\n";
-            
-            // Log first row structure for debugging
-            if (!empty($processedData)) {
-                $firstRow = $processedData[0];
-                echo "🔍 Sample wide row structure: " . json_encode(array_keys($firstRow)) . "\n";
-                Log::info("IPM UHH SP - Sample wide row keys: " . json_encode(array_keys($firstRow)));
-            }
-            
-            if (!empty($transformedData)) {
-                $firstTransformed = $transformedData[0];
-                echo "🔍 Sample transformed row: " . json_encode($firstTransformed) . "\n";
-                Log::info("IPM UHH SP - Sample transformed row: " . json_encode($firstTransformed));
-            }
 
+            $records = [];
+            $now = now();
+            $skippedCount = 0;
             foreach ($transformedData as $index => $row) {
                 if (empty($row['location_name']) || empty($row['year']) || $row['value'] === null) {
                     $skippedCount++;
                     if ($skippedCount <= 5) {
                         echo "⚠️  Skipping row " . ($index + 1) . " - missing location_name, year, or value. Data: " . json_encode($row) . "\n";
-                        Log::warning("IPM UHH SP - Skipping row without location_name, year, or value. Row: " . json_encode($row));
+                        Log::warning("{$modelName} - Skipping row without location_name, year, or value. Row: " . json_encode($row));
                     }
                     continue;
                 }
 
-                $data = [
+                $records[] = [
                     'location_name' => $row['location_name'],
                     'location_type' => $row['location_type'] ?? 'REGENCY',
                     'year' => (int) $row['year'],
-                    'value' => $row['value'],
+                    $valueField => $row['value'],
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
-
-                try {
-                    $existing = IPM_UHH_SP::where('location_name', $data['location_name'])
-                        ->where('year', $data['year'])
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        IPM_UHH_SP::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    $errorCount++;
-                    echo "❌ Error saving row " . ($index + 1) . " (location: {$data['location_name']}, year: {$data['year']}): " . $e->getMessage() . "\n";
-                    Log::error("IPM UHH SP - Error saving row: " . $e->getMessage());
-                    Log::error("IPM UHH SP - Stack trace: " . $e->getTraceAsString());
-                }
             }
 
-            $totalProcessed = $createdCount + $updatedCount;
-            echo "✅ IPM UHH SP sync completed!\n";
-            echo "   Created: {$createdCount} records\n";
-            echo "   Updated: {$updatedCount} records\n";
-            echo "   Total processed: {$totalProcessed} records\n";
-            echo "   Skipped: {$skippedCount} records (missing location_name or year)\n";
-            echo "   Errors: {$errorCount} records\n";
-            Log::info("IPM UHH SP sync completed. Created: {$createdCount}, Updated: {$updatedCount}, Total: {$totalProcessed}, Skipped: {$skippedCount}, Errors: {$errorCount}");
+            $totalProcessed = count($records);
+            $chunkSize = 500;
+            $chunks = array_chunk($records, $chunkSize);
+            $totalChunks = count($chunks);
+
+            // Count before upsert to calculate inserted vs updated
+            $countBefore = $modelClass::count();
+
+            DB::transaction(function () use ($chunks, $modelClass, $valueField) {
+                foreach ($chunks as $chunk) {
+                    $modelClass::upsert(
+                        $chunk,
+                        ['location_name', 'year'],
+                        ['location_type', $valueField, 'updated_at']
+                    );
+                }
+            });
+
+            $countAfter = $modelClass::count();
+            $createdCount = max(0, $countAfter - $countBefore);
+            $updatedCount = $totalProcessed - $createdCount;
+            $duration = round(microtime(true) - $startTime, 2);
+
+            $logMessage = "Sync {$modelName}\n"
+                . "  Processed : {$totalProcessed}\n"
+                . "  Inserted  : {$createdCount}\n"
+                . "  Updated   : {$updatedCount}\n"
+                . "  Skipped   : {$skippedCount}\n"
+                . "  Chunks    : {$totalChunks}\n"
+                . "  Duration  : {$duration} sec";
+
+            echo "✅ {$logMessage}\n";
+            Log::info($logMessage);
+
             return ['created' => $createdCount, 'updated' => $updatedCount];
         } catch (\Exception $e) {
-            Log::error('Error syncing IPM UHH SP: ' . $e->getMessage());
+            $modelName = class_basename($modelClass);
+            Log::error("Error syncing {$modelName}: " . $e->getMessage());
+            echo "❌ Error syncing {$modelName}: " . $e->getMessage() . "\n";
             throw $e;
         }
+    }
+
+    /**
+     * Sync IPM UHH SP (Usia Harapan Hidup saat Lahir)
+     */
+    public function syncUHHSP(string $sheetName = 'IPM_UHH SP_Y-to-Y '): array
+    {
+        return $this->syncGeneric(IPM_UHH_SP::class, $sheetName, 'value');
     }
 
     /**
@@ -115,71 +131,7 @@ class IPMService
      */
     public function syncHLS(string $sheetName = 'IPM_HLS_Y-to-Y'): array
     {
-        try {
-            echo "📊 Syncing IPM HLS data from sheet: {$sheetName}\n";
-            $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
-            $processedData = $this->spreadsheetService->processSheetData($rawData);
-            
-            // Transform from wide format to long format
-            $transformedData = $this->transformWideToLong($processedData);
-            
-            $createdCount = 0;
-            $updatedCount = 0;
-            $skippedCount = 0;
-            $errorCount = 0;
-
-            echo "📝 Processing " . count($processedData) . " wide rows -> " . count($transformedData) . " long rows...\n";
-
-            foreach ($transformedData as $index => $row) {
-                if (empty($row['location_name']) || empty($row['year']) || $row['value'] === null) {
-                    $skippedCount++;
-                    if ($skippedCount <= 5) {
-                        echo "⚠️  Skipping row " . ($index + 1) . " - missing location_name, year, or value. Data: " . json_encode($row) . "\n";
-                        Log::warning("IPM HLS - Skipping row without location_name, year, or value. Row: " . json_encode($row));
-                    }
-                    continue;
-                }
-
-                $data = [
-                    'location_name' => $row['location_name'],
-                    'location_type' => $row['location_type'] ?? 'REGENCY',
-                    'year' => (int) $row['year'],
-                    'value' => $row['value'],
-                ];
-
-                try {
-                    $existing = IPM_HLS::where('location_name', $data['location_name'])
-                        ->where('year', $data['year'])
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        IPM_HLS::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    $errorCount++;
-                    echo "❌ Error saving row " . ($index + 1) . " (location: {$data['location_name']}, year: {$data['year']}): " . $e->getMessage() . "\n";
-                    Log::error("IPM HLS - Error saving row: " . $e->getMessage());
-                    Log::error("IPM HLS - Stack trace: " . $e->getTraceAsString());
-                }
-            }
-
-            $totalProcessed = $createdCount + $updatedCount;
-            echo "✅ IPM HLS sync completed!\n";
-            echo "   Created: {$createdCount} records\n";
-            echo "   Updated: {$updatedCount} records\n";
-            echo "   Total processed: {$totalProcessed} records\n";
-            echo "   Skipped: {$skippedCount} records (missing location_name or year)\n";
-            echo "   Errors: {$errorCount} records\n";
-            Log::info("IPM HLS sync completed. Created: {$createdCount}, Updated: {$updatedCount}, Total: {$totalProcessed}, Skipped: {$skippedCount}, Errors: {$errorCount}");
-            return ['created' => $createdCount, 'updated' => $updatedCount];
-        } catch (\Exception $e) {
-            Log::error('Error syncing IPM HLS: ' . $e->getMessage());
-            throw $e;
-        }
+        return $this->syncGeneric(IPM_HLS::class, $sheetName, 'value');
     }
 
     /**
@@ -187,71 +139,7 @@ class IPMService
      */
     public function syncRLS(string $sheetName = 'IPM_RLS_Y-to-Y'): array
     {
-        try {
-            echo "📊 Syncing IPM RLS data from sheet: {$sheetName}\n";
-            $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
-            $processedData = $this->spreadsheetService->processSheetData($rawData);
-            
-            // Transform from wide format to long format
-            $transformedData = $this->transformWideToLong($processedData);
-            
-            $createdCount = 0;
-            $updatedCount = 0;
-            $skippedCount = 0;
-            $errorCount = 0;
-
-            echo "📝 Processing " . count($processedData) . " wide rows -> " . count($transformedData) . " long rows...\n";
-
-            foreach ($transformedData as $index => $row) {
-                if (empty($row['location_name']) || empty($row['year']) || $row['value'] === null) {
-                    $skippedCount++;
-                    if ($skippedCount <= 5) {
-                        echo "⚠️  Skipping row " . ($index + 1) . " - missing location_name, year, or value. Data: " . json_encode($row) . "\n";
-                        Log::warning("IPM RLS - Skipping row without location_name, year, or value. Row: " . json_encode($row));
-                    }
-                    continue;
-                }
-
-                $data = [
-                    'location_name' => $row['location_name'],
-                    'location_type' => $row['location_type'] ?? 'REGENCY',
-                    'year' => (int) $row['year'],
-                    'value' => $row['value'],
-                ];
-
-                try {
-                    $existing = IPM_RLS::where('location_name', $data['location_name'])
-                        ->where('year', $data['year'])
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        IPM_RLS::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    $errorCount++;
-                    echo "❌ Error saving row " . ($index + 1) . " (location: {$data['location_name']}, year: {$data['year']}): " . $e->getMessage() . "\n";
-                    Log::error("IPM RLS - Error saving row: " . $e->getMessage());
-                    Log::error("IPM RLS - Stack trace: " . $e->getTraceAsString());
-                }
-            }
-
-            $totalProcessed = $createdCount + $updatedCount;
-            echo "✅ IPM RLS sync completed!\n";
-            echo "   Created: {$createdCount} records\n";
-            echo "   Updated: {$updatedCount} records\n";
-            echo "   Total processed: {$totalProcessed} records\n";
-            echo "   Skipped: {$skippedCount} records (missing location_name or year)\n";
-            echo "   Errors: {$errorCount} records\n";
-            Log::info("IPM RLS sync completed. Created: {$createdCount}, Updated: {$updatedCount}, Total: {$totalProcessed}, Skipped: {$skippedCount}, Errors: {$errorCount}");
-            return ['created' => $createdCount, 'updated' => $updatedCount];
-        } catch (\Exception $e) {
-            Log::error('Error syncing IPM RLS: ' . $e->getMessage());
-            throw $e;
-        }
+        return $this->syncGeneric(IPM_RLS::class, $sheetName, 'value');
     }
 
     /**
@@ -259,70 +147,7 @@ class IPMService
      */
     public function syncPengeluaranPerKapita(string $sheetName = 'IPM_Pengeluaran per kapita_Y-to-Y'): array
     {
-        try {
-            echo "📊 Syncing IPM Pengeluaran Per Kapita data from sheet: {$sheetName}\n";
-            $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
-            $processedData = $this->spreadsheetService->processSheetData($rawData);
-            
-            // Transform from wide format to long format
-            $transformedData = $this->transformWideToLong($processedData);
-            
-            $createdCount = 0;
-            $updatedCount = 0;
-            $skippedCount = 0;
-            $errorCount = 0;
-
-            echo "📝 Processing " . count($processedData) . " wide rows -> " . count($transformedData) . " long rows...\n";
-
-            foreach ($transformedData as $index => $row) {
-                if (empty($row['location_name']) || empty($row['year']) || $row['value'] === null) {
-                    $skippedCount++;
-                    if ($skippedCount <= 5) {
-                        echo "⚠️  Skipping row " . ($index + 1) . " - missing location_name, year, or value. Data: " . json_encode($row) . "\n";
-                        Log::warning("IPM Pengeluaran Per Kapita - Skipping row without location_name, year, or value. Row: " . json_encode($row));
-                    }
-                    continue;
-                }
-
-                $data = [
-                    'location_name' => $row['location_name'],
-                    'location_type' => $row['location_type'] ?? 'REGENCY',
-                    'year' => (int) $row['year'],
-                    'value' => $row['value'],
-                ];
-                
-                try {
-                    $existing = IPM_PengeluaranPerKapita::where('location_name', $data['location_name'])
-                        ->where('year', $data['year'])
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        IPM_PengeluaranPerKapita::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    $errorCount++;
-                    echo "❌ Error saving row " . ($index + 1) . ": " . $e->getMessage() . "\n";
-                    Log::error("IPM Pengeluaran Per Kapita - Error: " . $e->getMessage());
-                }
-            }
-
-            $totalProcessed = $createdCount + $updatedCount;
-            echo "✅ IPM Pengeluaran Per Kapita sync completed!\n";
-            echo "   Created: {$createdCount} records\n";
-            echo "   Updated: {$updatedCount} records\n";
-            echo "   Total processed: {$totalProcessed} records\n";
-            echo "   Skipped: {$skippedCount} records\n";
-            echo "   Errors: {$errorCount} records\n";
-            Log::info("IPM Pengeluaran Per Kapita sync completed. Created: {$createdCount}, Updated: {$updatedCount}, Total: {$totalProcessed}, Skipped: {$skippedCount}, Errors: {$errorCount}");
-            return ['created' => $createdCount, 'updated' => $updatedCount];
-        } catch (\Exception $e) {
-            Log::error('Error syncing IPM Pengeluaran Per Kapita: ' . $e->getMessage());
-            throw $e;
-        }
+        return $this->syncGeneric(IPM_PengeluaranPerKapita::class, $sheetName, 'value');
     }
 
     /**
@@ -330,70 +155,7 @@ class IPMService
      */
     public function syncIndeksKesehatan(string $sheetName = 'IPM_Indeks Kesehatan_Y-to-Y'): array
     {
-        try {
-            echo "📊 Syncing IPM Indeks Kesehatan data from sheet: {$sheetName}\n";
-            $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
-            $processedData = $this->spreadsheetService->processSheetData($rawData);
-            
-            // Transform from wide format to long format
-            $transformedData = $this->transformWideToLong($processedData);
-            
-            $createdCount = 0;
-            $updatedCount = 0;
-            $skippedCount = 0;
-            $errorCount = 0;
-
-            echo "📝 Processing " . count($processedData) . " wide rows -> " . count($transformedData) . " long rows...\n";
-
-            foreach ($transformedData as $index => $row) {
-                if (empty($row['location_name']) || empty($row['year']) || $row['value'] === null) {
-                    $skippedCount++;
-                    if ($skippedCount <= 5) {
-                        echo "⚠️  Skipping row " . ($index + 1) . " - missing location_name, year, or value. Data: " . json_encode($row) . "\n";
-                        Log::warning("IPM Indeks Kesehatan - Skipping row without location_name, year, or value. Row: " . json_encode($row));
-                    }
-                    continue;
-                }
-
-                $data = [
-                    'location_name' => $row['location_name'],
-                    'location_type' => $row['location_type'] ?? 'REGENCY',
-                    'year' => (int) $row['year'],
-                    'value' => $row['value'],
-                ];
-                
-                try {
-                    $existing = IPM_IndeksKesehatan::where('location_name', $data['location_name'])
-                        ->where('year', $data['year'])
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        IPM_IndeksKesehatan::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    $errorCount++;
-                    echo "❌ Error saving row " . ($index + 1) . ": " . $e->getMessage() . "\n";
-                    Log::error("IPM Indeks Kesehatan - Error: " . $e->getMessage());
-                }
-            }
-
-            $totalProcessed = $createdCount + $updatedCount;
-            echo "✅ IPM Indeks Kesehatan sync completed!\n";
-            echo "   Created: {$createdCount} records\n";
-            echo "   Updated: {$updatedCount} records\n";
-            echo "   Total processed: {$totalProcessed} records\n";
-            echo "   Skipped: {$skippedCount} records\n";
-            echo "   Errors: {$errorCount} records\n";
-            Log::info("IPM Indeks Kesehatan sync completed. Created: {$createdCount}, Updated: {$updatedCount}, Total: {$totalProcessed}, Skipped: {$skippedCount}, Errors: {$errorCount}");
-            return ['created' => $createdCount, 'updated' => $updatedCount];
-        } catch (\Exception $e) {
-            Log::error('Error syncing IPM Indeks Kesehatan: ' . $e->getMessage());
-            throw $e;
-        }
+        return $this->syncGeneric(IPM_IndeksKesehatan::class, $sheetName, 'value');
     }
 
     /**
@@ -401,70 +163,7 @@ class IPMService
      */
     public function syncIndeksPendidikan(string $sheetName = 'IPM_Indeks Pendidikan_Y-to-Y'): array
     {
-        try {
-            echo "📊 Syncing IPM Indeks Pendidikan data from sheet: {$sheetName}\n";
-            $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
-            $processedData = $this->spreadsheetService->processSheetData($rawData);
-            
-            // Transform from wide format to long format
-            $transformedData = $this->transformWideToLong($processedData);
-            
-            $createdCount = 0;
-            $updatedCount = 0;
-            $skippedCount = 0;
-            $errorCount = 0;
-
-            echo "📝 Processing " . count($processedData) . " wide rows -> " . count($transformedData) . " long rows...\n";
-
-            foreach ($transformedData as $index => $row) {
-                if (empty($row['location_name']) || empty($row['year']) || $row['value'] === null) {
-                    $skippedCount++;
-                    if ($skippedCount <= 5) {
-                        echo "⚠️  Skipping row " . ($index + 1) . " - missing location_name, year, or value. Data: " . json_encode($row) . "\n";
-                        Log::warning("IPM Indeks Pendidikan - Skipping row without location_name, year, or value. Row: " . json_encode($row));
-                    }
-                    continue;
-                }
-
-                $data = [
-                    'location_name' => $row['location_name'],
-                    'location_type' => $row['location_type'] ?? 'REGENCY',
-                    'year' => (int) $row['year'],
-                    'value' => $row['value'],
-                ];
-                
-                try {
-                    $existing = IPM_IndeksPendidikan::where('location_name', $data['location_name'])
-                        ->where('year', $data['year'])
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        IPM_IndeksPendidikan::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    $errorCount++;
-                    echo "❌ Error saving row " . ($index + 1) . ": " . $e->getMessage() . "\n";
-                    Log::error("IPM Indeks Pendidikan - Error: " . $e->getMessage());
-                }
-            }
-
-            $totalProcessed = $createdCount + $updatedCount;
-            echo "✅ IPM Indeks Pendidikan sync completed!\n";
-            echo "   Created: {$createdCount} records\n";
-            echo "   Updated: {$updatedCount} records\n";
-            echo "   Total processed: {$totalProcessed} records\n";
-            echo "   Skipped: {$skippedCount} records\n";
-            echo "   Errors: {$errorCount} records\n";
-            Log::info("IPM Indeks Pendidikan sync completed. Created: {$createdCount}, Updated: {$updatedCount}, Total: {$totalProcessed}, Skipped: {$skippedCount}, Errors: {$errorCount}");
-            return ['created' => $createdCount, 'updated' => $updatedCount];
-        } catch (\Exception $e) {
-            Log::error('Error syncing IPM Indeks Pendidikan: ' . $e->getMessage());
-            throw $e;
-        }
+        return $this->syncGeneric(IPM_IndeksPendidikan::class, $sheetName, 'value');
     }
 
     /**
@@ -472,70 +171,7 @@ class IPMService
      */
     public function syncIndeksHidupLayak(string $sheetName = 'IPM_Indeks Hidup Layak_Y-to-Y'): array
     {
-        try {
-            echo "📊 Syncing IPM Indeks Hidup Layak data from sheet: {$sheetName}\n";
-            $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
-            $processedData = $this->spreadsheetService->processSheetData($rawData);
-            
-            // Transform from wide format to long format
-            $transformedData = $this->transformWideToLong($processedData);
-            
-            $createdCount = 0;
-            $updatedCount = 0;
-            $skippedCount = 0;
-            $errorCount = 0;
-
-            echo "📝 Processing " . count($processedData) . " wide rows -> " . count($transformedData) . " long rows...\n";
-
-            foreach ($transformedData as $index => $row) {
-                if (empty($row['location_name']) || empty($row['year']) || $row['value'] === null) {
-                    $skippedCount++;
-                    if ($skippedCount <= 5) {
-                        echo "⚠️  Skipping row " . ($index + 1) . " - missing location_name, year, or value. Data: " . json_encode($row) . "\n";
-                        Log::warning("IPM Indeks Hidup Layak - Skipping row without location_name, year, or value. Row: " . json_encode($row));
-                    }
-                    continue;
-                }
-
-                $data = [
-                    'location_name' => $row['location_name'],
-                    'location_type' => $row['location_type'] ?? 'REGENCY',
-                    'year' => (int) $row['year'],
-                    'value' => $row['value'],
-                ];
-                
-                try {
-                    $existing = IPM_IndeksHidupLayak::where('location_name', $data['location_name'])
-                        ->where('year', $data['year'])
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        IPM_IndeksHidupLayak::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    $errorCount++;
-                    echo "❌ Error saving row " . ($index + 1) . ": " . $e->getMessage() . "\n";
-                    Log::error("IPM Indeks Hidup Layak - Error: " . $e->getMessage());
-                }
-            }
-
-            $totalProcessed = $createdCount + $updatedCount;
-            echo "✅ IPM Indeks Hidup Layak sync completed!\n";
-            echo "   Created: {$createdCount} records\n";
-            echo "   Updated: {$updatedCount} records\n";
-            echo "   Total processed: {$totalProcessed} records\n";
-            echo "   Skipped: {$skippedCount} records\n";
-            echo "   Errors: {$errorCount} records\n";
-            Log::info("IPM Indeks Hidup Layak sync completed. Created: {$createdCount}, Updated: {$updatedCount}, Total: {$totalProcessed}, Skipped: {$skippedCount}, Errors: {$errorCount}");
-            return ['created' => $createdCount, 'updated' => $updatedCount];
-        } catch (\Exception $e) {
-            Log::error('Error syncing IPM Indeks Hidup Layak: ' . $e->getMessage());
-            throw $e;
-        }
+        return $this->syncGeneric(IPM_IndeksHidupLayak::class, $sheetName, 'value');
     }
 
     /**
@@ -543,78 +179,7 @@ class IPMService
      */
     public function syncMainIPM(string $sheetName = 'Indeks Pembangunan Manusia Menu_Y-to-Y'): array
     {
-        try {
-            echo "📊 Syncing IPM main data (Human Development Index) from sheet: {$sheetName}\n";
-            $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
-            $processedData = $this->spreadsheetService->processSheetData($rawData);
-            
-            // Transform from wide format to long format
-            $transformedData = $this->transformWideToLong($processedData);
-            
-            $createdCount = 0;
-            $updatedCount = 0;
-            $skippedCount = 0;
-            $errorCount = 0;
-
-            echo "📝 Processing " . count($processedData) . " wide rows -> " . count($transformedData) . " long rows...\n";
-            
-            // Log first row structure for debugging
-            if (!empty($transformedData)) {
-                $firstRow = $transformedData[0];
-                echo "🔍 Sample transformed row: " . json_encode($firstRow) . "\n";
-                Log::info("IPM Main - Sample transformed row: " . json_encode($firstRow));
-            }
-
-            foreach ($transformedData as $index => $row) {
-                if (empty($row['location_name']) || empty($row['year']) || $row['value'] === null) {
-                    $skippedCount++;
-                    if ($skippedCount <= 5) {
-                        echo "⚠️  Skipping row " . ($index + 1) . " - missing location_name, year, or value. Row: " . json_encode($row) . "\n";
-                        Log::warning("IPM Main - Skipping row without location_name, year, or value. Row: " . json_encode($row));
-                    }
-                    continue;
-                }
-
-                $data = [
-                    'location_name' => $row['location_name'],
-                    'location_type' => $row['location_type'] ?? 'REGENCY',
-                    'year' => (int) $row['year'],
-                    'ipm_value' => $row['value'],
-                ];
-
-                try {
-                    $existing = HumanDevelopmentIndex::where('location_name', $data['location_name'])
-                        ->where('year', $data['year'])
-                        ->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        HumanDevelopmentIndex::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    $errorCount++;
-                    echo "❌ Error saving row " . ($index + 1) . " (location: {$data['location_name']}, year: {$data['year']}): " . $e->getMessage() . "\n";
-                    Log::error("IPM Main - Error saving row: " . $e->getMessage());
-                    Log::error("IPM Main - Stack trace: " . $e->getTraceAsString());
-                }
-            }
-
-            $totalProcessed = $createdCount + $updatedCount;
-            echo "✅ IPM Main (Human Development Index) sync completed!\n";
-            echo "   Created: {$createdCount} records\n";
-            echo "   Updated: {$updatedCount} records\n";
-            echo "   Total processed: {$totalProcessed} records\n";
-            echo "   Skipped: {$skippedCount} records (missing location_name, year, or value)\n";
-            echo "   Errors: {$errorCount} records\n";
-            Log::info("IPM Main sync completed. Created: {$createdCount}, Updated: {$updatedCount}, Total: {$totalProcessed}, Skipped: {$skippedCount}, Errors: {$errorCount}");
-            return ['created' => $createdCount, 'updated' => $updatedCount];
-        } catch (\Exception $e) {
-            Log::error('Error syncing IPM Main: ' . $e->getMessage());
-            throw $e;
-        }
+        return $this->syncGeneric(HumanDevelopmentIndex::class, $sheetName, 'ipm_value');
     }
 
     /**

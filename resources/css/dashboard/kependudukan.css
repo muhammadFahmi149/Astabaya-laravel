@@ -1,0 +1,214 @@
+.dashboard-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  /* Samakan tinggi card di row yang sama */
+  .row.mb-4 {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .row.mb-4 > .col-md-6 {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .row.mb-4 > .col-md-6 > .dashboard-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .row.mb-4 > .col-md-6 > .dashboard-card > .chart-container-mobile {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .row.mb-4 > .col-md-6 > .dashboard-card > .chart-container-mobile > div {
+    flex: 1;
+  }
+  
+  .summary-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Mobile responsive: 2 baris x 2 kolom */
+  @media (max-width: 767.98px) {
+    .summary-card-mobile {
+      flex: 0 0 50% !important;
+      max-width: 50% !important;
+      padding-left: 8px !important;
+      padding-right: 8px !important;
+    }
+    
+    .summary-card-mobile .summary-card {
+      padding: 12px !important;
+      min-height: auto !important;
+      height: auto !important;
+    }
+    
+    .summary-card-mobile .summary-card[style*="min-height: 160px"] {
+      min-height: auto !important;
+    }
+    
+    .summary-card-mobile .summary-card > div[style*="position: relative"] {
+      margin: 0 !important;
+      padding: 0 !important;
+      flex: 0 0 auto !important;
+    }
+    
+    .summary-card-mobile .summary-card > div[style*="flex: 1"] {
+      flex: 0 0 auto !important;
+    }
+    
+    .summary-card-mobile h6 {
+      font-size: 11px !important;
+      margin-bottom: 6px !important;
+    }
+    
+    .summary-card-mobile h3 {
+      font-size: 20px !important;
+      margin-bottom: 4px !important;
+      line-height: 1.1 !important;
+    }
+    
+    .summary-card-mobile small {
+      font-size: 10px !important;
+      margin-top: 4px !important;
+      margin-bottom: 0 !important;
+      line-height: 1.2 !important;
+    }
+    
+    .summary-card-mobile span[style*="font-size: 12px"] {
+      font-size: 10px !important;
+    }
+    
+    .summary-card-mobile span[style*="font-size: 11px"] {
+      font-size: 9px !important;
+    }
+    
+    .summary-card-mobile > div[style*="display: flex"][style*="align-items: center"] {
+      margin-top: 4px !important;
+      margin-bottom: 0 !important;
+    }
+    
+    /* Hilangkan space kosong di bawah */
+    .summary-card-mobile .summary-card {
+      padding-bottom: 10px !important;
+    }
+    
+    .summary-card-mobile .summary-card > div[style*="position: relative"] > *:last-child {
+      margin-bottom: 0 !important;
+      padding-bottom: 0 !important;
+    }
+    
+    .summary-card-mobile .summary-card > div[style*="position: relative"] > small[style*="margin-top: auto"] {
+      margin-top: 4px !important;
+    }
+    
+    /* Chart responsive dengan horizontal scroll */
+    .chart-container-mobile {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    .chart-container-mobile > div {
+      min-width: 500px !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      box-sizing: border-box;
+    }
+    
+    .dashboard-card {
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    
+    .dashboard-card h5 {
+      font-size: 16px !important;
+      white-space: normal !important;
+      word-wrap: break-word !important;
+    }
+    
+    /* Download button responsive */
+    .dashboard-card button[id*="download"] {
+      padding: 3px 8px !important;
+      font-size: 11px !important;
+    }
+    
+    .dashboard-card button[id*="download"] i {
+      font-size: 10px !important;
+    }
+    
+    .dashboard-card button[id*="download"] span {
+      display: none;
+    }
+  }
+  
+  /* Download button styles */
+  .dashboard-card button[id*="download"] {
+    white-space: nowrap;
+  }
+  
+  @media (max-width: 576px) {
+    .dashboard-card button[id*="download"] {
+      padding: 4px 6px !important;
+      font-size: 10px !important;
+    }
+    
+    .dashboard-card button[id*="download"] i {
+      font-size: 12px !important;
+      margin: 0 !important;
+    }
+  }
+  
+  /* Desktop: chart container normal - tidak scroll */
+  @media (min-width: 768px) {
+    .chart-container-mobile {
+      width: 100%;
+      max-width: 100%;
+      overflow: visible;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .chart-container-mobile > div {
+      min-width: auto !important;
+      width: 100% !important;
+    }
+    
+    .dashboard-card {
+      overflow: visible;
+    }
+  }
+  
+  /* Pastikan container tidak overflow saat sidebar dibuka */
+  .container {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  
+  .dashboard-card {
+    max-width: 100%;
+    box-sizing: border-box;
+  }

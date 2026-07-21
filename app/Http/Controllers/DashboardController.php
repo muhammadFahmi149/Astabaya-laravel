@@ -20,7 +20,14 @@ class DashboardController extends Controller
             // Get latest news, publications, and infographics for carousel and cards
             $latestNews = News::orderBy('release_date', 'desc')->limit(6)->get();
             $latestPublications = Publication::orderBy('date', 'desc')->limit(6)->get();
-            $latestInfographics = Infographic::orderBy('created_at', 'desc')->limit(6)->get();
+            // Order by bps_id desc (highest bps_id first) - same as infographics page
+            // This ensures bps_id 1121 appears before 999, 99, etc.
+            // Only get infographics with valid bps_id, then order by bps_id desc
+            $latestInfographics = Infographic::whereNotNull('bps_id')
+                ->where('bps_id', '!=', '')
+                ->orderByRaw('CAST(bps_id AS UNSIGNED) DESC')
+                ->limit(6)
+                ->get();
             
             // Get carousel items for each type
             $carouselNews = $latestNews->map(function($news) {

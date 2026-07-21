@@ -1235,9 +1235,13 @@ class PDRBController extends Controller
                     $query->addSelect('quarter');
                 }
 
-                $results = $query->orderBy('year', 'asc')
-                    ->orderBy('expenditure_category', 'asc')
-                    ->get();
+                $query->orderBy('year', 'asc');
+                
+                if ($isQuarterly) {
+                    $query->orderByRaw("FIELD(quarter, 'I', 'II', 'III', 'IV')");
+                }
+                
+                $results = $query->orderBy('expenditure_category', 'asc')->get();
 
                 // Group by category
                 $grouped = [];
@@ -2620,9 +2624,13 @@ class PDRBController extends Controller
                     $query->addSelect('quarter');
                 }
 
-                $results = $query->orderBy('year', 'asc')
-                    ->orderBy('industry_category', 'asc')
-                    ->get();
+                $query->orderBy('year', 'asc');
+                
+                if ($isQuarterly) {
+                    $query->orderByRaw("FIELD(quarter, 'I', 'II', 'III', 'IV')");
+                }
+                
+                $results = $query->orderBy('industry_category', 'asc')->get();
 
                 // Group by category
                 $grouped = [];

@@ -227,72 +227,50 @@ class GiniRatioController extends Controller
             $cacheKey = "gini_ratio_summary_api";
 
             // Clear cache first to ensure fresh data
-            Cache::forget($cacheKey);
+            // Cache::forget removed for production
 
             // Try to get from cache
             $summary = Cache::remember($cacheKey, self::CACHE_DURATION_SUMMARY, function () {
-                // First, get ALL data from database to see what we have
-                $allRecords = GiniRatio::select([
-                    'id',
-                    'location_name',
-                    'location_type',
-                    'year',
-                    'gini_ratio_value'
-                ])
-                ->orderBy('id', 'desc')
-                ->get();
-                
-                Log::info('Gini Ratio - All records in database', [
-                    'total_count' => $allRecords->count(),
-                    'sample_records' => $allRecords->take(10)->map(function($r) {
-                        return [
-                            'id' => $r->id,
-                            'location_name' => $r->location_name,
-                            'location_type' => $r->location_type,
-                            'year' => $r->year,
-                            'gini_ratio_value' => $r->gini_ratio_value
+                // Efficiently query data from database instead of filtering in PHP
+                $surabaya_data = GiniRatio::select(['id', 'year', 'gini_ratio_value'])
+                    ->where('location_name', 'like', '%surabaya%')
+                    ->orderBy('year', 'asc')
+                    ->get()
+                    ->map(function($item) {
+                        return (object)[
+                            'id' => $item->id,
+                            'year' => $item->year,
+                            'gini_ratio_value' => $item->gini_ratio_value
                         ];
-                    })->toArray()
-                ]);
+                    });
                 
-                // Filter data manually (case-insensitive)
-                $surabaya_data = $allRecords->filter(function($item) {
-                    $name = strtolower($item->location_name ?? '');
-                    return strpos($name, 'surabaya') !== false;
-                })->map(function($item) {
-                    return (object)[
-                        'id' => $item->id,
-                        'year' => $item->year,
-                        'gini_ratio_value' => $item->gini_ratio_value
-                    ];
-                })->sortBy('year')->values();
+                $jatim_data = GiniRatio::select(['id', 'year', 'gini_ratio_value'])
+                    ->where(function($q) {
+                        $q->where('location_name', 'like', '%jawa timur%')
+                          ->orWhere('location_name', 'like', '%jatim%');
+                    })
+                    ->orderBy('year', 'asc')
+                    ->get()
+                    ->map(function($item) {
+                        return (object)[
+                            'id' => $item->id,
+                            'year' => $item->year,
+                            'gini_ratio_value' => $item->gini_ratio_value
+                        ];
+                    });
                 
-                $jatim_data = $allRecords->filter(function($item) {
-                    $name = strtolower($item->location_name ?? '');
-                    return strpos($name, 'jawa timur') !== false || 
-                           strpos($name, 'jatim') !== false;
-                })->map(function($item) {
-                    return (object)[
-                        'id' => $item->id,
-                        'year' => $item->year,
-                        'gini_ratio_value' => $item->gini_ratio_value
-                    ];
-                })->sortBy('year')->values();
-                
-                Log::info('Gini Ratio - Filtered data', [
+                Log::info('Gini Ratio - DB Queried data', [
                     'surabaya_count' => $surabaya_data->count(),
                     'jatim_count' => $jatim_data->count(),
-                    'surabaya_sample' => $surabaya_data->take(3)->toArray(),
-                    'jatim_sample' => $jatim_data->take(3)->toArray(),
                 ]);
                 
-                // Get latest data (by ID desc)
-                $surabaya_latest = $surabaya_data->sortByDesc('id')->first();
-                $jatim_latest = $jatim_data->sortByDesc('id')->first();
+                // Get latest data safely using the last item (already sorted by year ascending)
+                $surabaya_latest = $surabaya_data->last();
+                $jatim_latest = $jatim_data->last();
                 
-                // Get previous data (second latest by ID)
-                $surabaya_previous = $surabaya_data->sortByDesc('id')->skip(1)->first();
-                $jatim_previous = $jatim_data->sortByDesc('id')->skip(1)->first();
+                // Get previous data
+                $surabaya_previous = $surabaya_data->slice(-2, 1)->first();
+                $jatim_previous = $jatim_data->slice(-2, 1)->first();
                 
                 // Calculate changes
                 $surabaya_change = null;

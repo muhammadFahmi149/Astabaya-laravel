@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\KemiskinanSurabaya;
 use App\Models\KemiskinanJawaTimur;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -133,12 +134,14 @@ class KemiskinanService
     }
 
     /**
-     * Sync Kemiskinan Surabaya data
+     * Helper method to sync Kemiskinan data generically using transactions, bulk upserts, and chunking
      */
-    public function syncSurabaya(string $sheetName = 'Kemiskinan(Surabaya)_YtoY'): array
+    protected function syncGeneric(string $modelClass, string $sheetName): array
     {
         try {
-            echo "📊 Syncing Kemiskinan Surabaya data from sheet: {$sheetName}\n";
+            $startTime = microtime(true);
+            $modelName = class_basename($modelClass);
+            echo "📊 Syncing {$modelName} data from sheet: {$sheetName}\n";
             $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
             
             if (empty($rawData)) {
@@ -156,35 +159,71 @@ class KemiskinanService
 
             echo "[OK] Data processed. Total records: " . count($processedRecords) . "\n";
             
-            $createdCount = 0;
-            $updatedCount = 0;
-
+            $now = now();
+            $records = [];
             foreach ($processedRecords as $record) {
-                try {
-                    $existing = KemiskinanSurabaya::where('year', $record['year'])->first();
-
-                    if ($existing) {
-                        $existing->update($record);
-                        $updatedCount++;
-                    } else {
-                        KemiskinanSurabaya::create($record);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    echo "❌ Error saving record: " . $e->getMessage() . "\n";
-                    Log::error("Error saving Kemiskinan Surabaya record: " . $e->getMessage(), ['record' => $record]);
-                    continue;
-                }
+                $records[] = $record + [
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
             }
 
-            echo "✅ Kemiskinan Surabaya sync completed. Created: {$createdCount}, Updated: {$updatedCount}\n";
-            Log::info("Kemiskinan Surabaya sync completed. Created: {$createdCount}, Updated: {$updatedCount}");
+            $totalProcessed = count($records);
+            $chunkSize = 500;
+            $chunks = array_chunk($records, $chunkSize);
+            $totalChunks = count($chunks);
+
+            // Count before upsert to calculate inserted vs updated
+            $countBefore = $modelClass::count();
+
+            DB::transaction(function () use ($chunks, $modelClass) {
+                foreach ($chunks as $chunk) {
+                    $modelClass::upsert(
+                        $chunk,
+                        ['year'],
+                        [
+                            'jumlah_penduduk_miskin',
+                            'persentase_penduduk_miskin',
+                            'indeks_kedalaman_kemiskinan_p1',
+                            'indeks_keparahan_kemiskinan_p2',
+                            'garis_kemiskinan',
+                            'updated_at'
+                        ]
+                    );
+                }
+            });
+
+            $countAfter = $modelClass::count();
+            $createdCount = max(0, $countAfter - $countBefore);
+            $updatedCount = $totalProcessed - $createdCount;
+            $duration = round(microtime(true) - $startTime, 2);
+
+            $logMessage = "Sync {$modelName}\n"
+                . "  Processed : {$totalProcessed}\n"
+                . "  Inserted  : {$createdCount}\n"
+                . "  Updated   : {$updatedCount}\n"
+                . "  Skipped   : 0\n"
+                . "  Chunks    : {$totalChunks}\n"
+                . "  Duration  : {$duration} sec";
+
+            echo "✅ {$logMessage}\n";
+            Log::info($logMessage);
+
             return ['created' => $createdCount, 'updated' => $updatedCount];
         } catch (\Exception $e) {
-            Log::error('Error syncing Kemiskinan Surabaya: ' . $e->getMessage());
-            echo "❌ Error syncing Kemiskinan Surabaya: " . $e->getMessage() . "\n";
+            $modelName = class_basename($modelClass);
+            Log::error("Error syncing {$modelName}: " . $e->getMessage());
+            echo "❌ Error syncing {$modelName}: " . $e->getMessage() . "\n";
             throw $e;
         }
+    }
+
+    /**
+     * Sync Kemiskinan Surabaya data
+     */
+    public function syncSurabaya(string $sheetName = 'Kemiskinan(Surabaya)_YtoY'): array
+    {
+        return $this->syncGeneric(KemiskinanSurabaya::class, $sheetName);
     }
 
     /**
@@ -192,54 +231,7 @@ class KemiskinanService
      */
     public function syncJawaTimur(string $sheetName = 'Kemiskinan(JawaTimur)_YtoY_'): array
     {
-        try {
-            echo "📊 Syncing Kemiskinan Jawa Timur data from sheet: {$sheetName}\n";
-            $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
-            
-            if (empty($rawData)) {
-                echo "⚠️ No data found in sheet: {$sheetName}\n";
-                return ['created' => 0, 'updated' => 0];
-            }
-
-            // Process data dengan format khusus Kemiskinan (matrix format)
-            $processedRecords = $this->processKemiskinanData($rawData);
-            
-            if (empty($processedRecords)) {
-                echo "⚠️ No valid records found in sheet: {$sheetName}\n";
-                return ['created' => 0, 'updated' => 0];
-            }
-
-            echo "[OK] Data processed. Total records: " . count($processedRecords) . "\n";
-            
-            $createdCount = 0;
-            $updatedCount = 0;
-
-            foreach ($processedRecords as $record) {
-                try {
-                    $existing = KemiskinanJawaTimur::where('year', $record['year'])->first();
-
-                    if ($existing) {
-                        $existing->update($record);
-                        $updatedCount++;
-                    } else {
-                        KemiskinanJawaTimur::create($record);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    echo "❌ Error saving record: " . $e->getMessage() . "\n";
-                    Log::error("Error saving Kemiskinan Jawa Timur record: " . $e->getMessage(), ['record' => $record]);
-                    continue;
-                }
-            }
-
-            echo "✅ Kemiskinan Jawa Timur sync completed. Created: {$createdCount}, Updated: {$updatedCount}\n";
-            Log::info("Kemiskinan Jawa Timur sync completed. Created: {$createdCount}, Updated: {$updatedCount}");
-            return ['created' => $createdCount, 'updated' => $updatedCount];
-        } catch (\Exception $e) {
-            Log::error('Error syncing Kemiskinan Jawa Timur: ' . $e->getMessage());
-            echo "❌ Error syncing Kemiskinan Jawa Timur: " . $e->getMessage() . "\n";
-            throw $e;
-        }
+        return $this->syncGeneric(KemiskinanJawaTimur::class, $sheetName);
     }
 
     /**

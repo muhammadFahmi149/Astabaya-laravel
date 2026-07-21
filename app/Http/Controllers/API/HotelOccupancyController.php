@@ -51,8 +51,8 @@ class HotelOccupancyController extends Controller
 
             // Try to get from cache
             $summary = Cache::remember($cacheKey, self::CACHE_DURATION_SUMMARY, function () {
-                // Get all combined data (monthly) - optimized query with only needed columns
-                $combinedData = HotelOccupancyCombined::select([
+                // Get all combined data (monthly) - ordered properly for latest tracking
+                $combinedDataQuery = HotelOccupancyCombined::select([
                     'id',
                     'year',
                     'month',
@@ -61,53 +61,29 @@ class HotelOccupancyController extends Controller
                     'rlmtgab',
                     'gpr'
                 ])
-                ->orderBy('year', 'asc')
-                ->orderByRaw("FIELD(month, 'JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOPEMBER', 'DESEMBER')")
+                ->orderBy('year', 'desc')
+                ->orderByRaw("FIELD(UPPER(month), 'DESEMBER', 'DES', 'NOPEMBER', 'NOVEMBER', 'NOV', 'OKTOBER', 'OKT', 'SEPTEMBER', 'SEPT', 'SEP', 'AGUSTUS', 'AGST', 'AGS', 'JULI', 'JUL', 'JUNI', 'JUN', 'MEI', 'APRIL', 'APR', 'MARET', 'MAR', 'FEBRUARI', 'FEB', 'JANUARI', 'JAN')")
                 ->get();
                 
                 // Get all yearly data - optimized query
-                // Get the latest entry for each year (by ID desc) then sort by year
                 $yearlyData = HotelOccupancyYearly::select([
                     'id',
                     'year',
                     'tpk'
                 ])
-                ->orderBy('id', 'desc')
+                ->orderBy('year', 'asc')
+                ->orderBy('id', 'desc') // in case of duplicates, take latest ID for that year
                 ->get()
-                ->groupBy('year')
-                ->map(function ($group) {
-                    // Get the first (latest by ID) entry for each year
-                    return $group->first();
-                })
-                ->sortBy('year')
+                ->unique('year')
                 ->values();
                 
-                // Get latest monthly data - order by ID desc to get the most recent entry
-                $latestMonthly = HotelOccupancyCombined::select([
-                    'id',
-                    'year',
-                    'month',
-                    'mktj',
-                    'tpk',
-                    'rlmtgab',
-                    'gpr'
-                ])
-                ->orderBy('id', 'desc')
-                ->first();
+                // Get latest and previous from the combined collection
+                $latestMonthly = $combinedDataQuery->first();
+                $previousMonthly = $combinedDataQuery->skip(1)->first();
                 
-                // Get previous monthly data (second latest by ID) - optimized query
-                $previousMonthly = HotelOccupancyCombined::select([
-                    'id',
-                    'year',
-                    'month',
-                    'mktj',
-                    'tpk',
-                    'rlmtgab',
-                    'gpr'
-                ])
-                ->orderBy('id', 'desc')
-                ->skip(1)
-                ->first();
+                // We must sort combinedData back to ascending order for the chart (if needed by UI)
+                // Actually, the UI parses and sorts it using its own `monthOrder`.
+                $combinedData = $combinedDataQuery;
                 
                 // Calculate changes
                 $changes = [
@@ -132,15 +108,11 @@ class HotelOccupancyController extends Controller
                     }
                 }
                 
-                // Get distinct years for dropdown
-                $distinctYears = HotelOccupancyCombined::select('year')
-                    ->distinct()
-                    ->orderBy('year', 'desc')
-                    ->pluck('year')
-                    ->toArray();
+                // Get distinct years for dropdown from the collection
+                $distinctYears = $combinedDataQuery->pluck('year')->unique()->values()->toArray();
                 
                 // Get latest year
-                $latestYear = !empty($distinctYears) ? $distinctYears[0] : null;
+                $latestYear = !empty($distinctYears) ? max($distinctYears) : null;
                 
                 // Add detailed logging
                 Log::info('Hotel Occupancy Data Details', [

@@ -120,21 +120,6 @@ class KependudukanController extends Controller
 
             // Try to get from cache
             $summary = Cache::remember($cacheKey, self::CACHE_DURATION_SUMMARY, function () use ($selectedYear) {
-                // Get total population for selected year
-                $totalPopulation = Kependudukan::where('year', $selectedYear)
-                    ->where('gender', 'TOTAL')
-                    ->sum('population');
-
-                // Get total male population
-                $totalMale = Kependudukan::where('year', $selectedYear)
-                    ->where('gender', 'LK')
-                    ->sum('population');
-
-                // Get total female population
-                $totalFemale = Kependudukan::where('year', $selectedYear)
-                    ->where('gender', 'PR')
-                    ->sum('population');
-
                 // Get previous year
                 $previousYear = Kependudukan::select('year')
                     ->distinct()
@@ -142,23 +127,28 @@ class KependudukanController extends Controller
                     ->orderBy('year', 'desc')
                     ->value('year');
 
-                // Get previous year data
+                $yearsToFetch = [$selectedYear];
+                if ($previousYear) {
+                    $yearsToFetch[] = $previousYear;
+                }
+
+                $aggregatedData = Kependudukan::whereIn('year', $yearsToFetch)
+                    ->select('year', 'gender', DB::raw('SUM(population) as total'))
+                    ->groupBy('year', 'gender')
+                    ->get();
+
+                $totalPopulation = $aggregatedData->where('year', $selectedYear)->where('gender', 'TOTAL')->sum('total');
+                $totalMale = $aggregatedData->where('year', $selectedYear)->where('gender', 'LK')->sum('total');
+                $totalFemale = $aggregatedData->where('year', $selectedYear)->where('gender', 'PR')->sum('total');
+
                 $prevTotalPopulation = null;
                 $prevTotalMale = null;
                 $prevTotalFemale = null;
                 
                 if ($previousYear) {
-                    $prevTotalPopulation = Kependudukan::where('year', $previousYear)
-                        ->where('gender', 'TOTAL')
-                        ->sum('population');
-                    
-                    $prevTotalMale = Kependudukan::where('year', $previousYear)
-                        ->where('gender', 'LK')
-                        ->sum('population');
-                    
-                    $prevTotalFemale = Kependudukan::where('year', $previousYear)
-                        ->where('gender', 'PR')
-                        ->sum('population');
+                    $prevTotalPopulation = $aggregatedData->where('year', $previousYear)->where('gender', 'TOTAL')->sum('total');
+                    $prevTotalMale = $aggregatedData->where('year', $previousYear)->where('gender', 'LK')->sum('total');
+                    $prevTotalFemale = $aggregatedData->where('year', $previousYear)->where('gender', 'PR')->sum('total');
                 }
 
                 // Calculate changes
@@ -179,7 +169,7 @@ class KependudukanController extends Controller
                 $populationRatioDisplay = null;
                 if ($totalFemale > 0 && $totalMale > 0) {
                     $populationRatio = ($totalMale / $totalFemale) * 100;
-                    $populationRatioDisplay = number_format($populationRatio, 2) . ':100';
+                    $populationRatioDisplay = number_format($populationRatio, 2);
                 }
 
                 // Previous year ratio
@@ -187,7 +177,7 @@ class KependudukanController extends Controller
                 $prevPopulationRatioDisplay = null;
                 if ($prevTotalFemale > 0 && $prevTotalMale > 0) {
                     $prevPopulationRatio = ($prevTotalMale / $prevTotalFemale) * 100;
-                    $prevPopulationRatioDisplay = number_format($prevPopulationRatio, 2) . ':100';
+                    $prevPopulationRatioDisplay = number_format($prevPopulationRatio, 2);
                 }
 
                 return [
@@ -261,25 +251,22 @@ class KependudukanController extends Controller
                     ->values()
                     ->toArray();
 
+                $aggregatedData = Kependudukan::whereIn('year', $years)
+                    ->select('year', 'gender', DB::raw('SUM(population) as total'))
+                    ->groupBy('year', 'gender')
+                    ->get();
+
                 $result = [];
                 foreach ($years as $year) {
-                    $total = Kependudukan::where('year', $year)
-                        ->where('gender', 'TOTAL')
-                        ->sum('population');
-                    
-                    $male = Kependudukan::where('year', $year)
-                        ->where('gender', 'LK')
-                        ->sum('population');
-                    
-                    $female = Kependudukan::where('year', $year)
-                        ->where('gender', 'PR')
-                        ->sum('population');
+                    $total = $aggregatedData->where('year', $year)->where('gender', 'TOTAL')->sum('total');
+                    $male = $aggregatedData->where('year', $year)->where('gender', 'LK')->sum('total');
+                    $female = $aggregatedData->where('year', $year)->where('gender', 'PR')->sum('total');
 
                     $result[] = [
                         'year' => $year,
-                        'total' => $total ?: 0,
-                        'male' => $male ?: 0,
-                        'female' => $female ?: 0,
+                        'total' => (int) ($total ?: 0),
+                        'male' => (int) ($male ?: 0),
+                        'female' => (int) ($female ?: 0),
                     ];
                 }
 
@@ -357,7 +344,7 @@ class KependudukanController extends Controller
                     ->where('year', $selectedYear)
                     ->where('gender', 'TOTAL')
                     ->groupBy('age_group')
-                    ->orderBy('age_group')
+                    ->orderByRaw("CAST(SUBSTRING_INDEX(age_group, '-', 1) AS UNSIGNED)")
                     ->get()
                     ->map(function ($item) {
                         return [
@@ -440,7 +427,7 @@ class KependudukanController extends Controller
                     ->where('year', $selectedYear)
                     ->where('gender', 'TOTAL')
                     ->groupBy('age_group')
-                    ->orderBy('age_group')
+                    ->orderByRaw("CAST(SUBSTRING_INDEX(age_group, '-', 1) AS UNSIGNED)")
                     ->get();
 
                 return $distribution->map(function ($item) {
@@ -523,21 +510,20 @@ class KependudukanController extends Controller
                 $ageGroups = Kependudukan::select('age_group')
                     ->where('year', $selectedYear)
                     ->distinct()
-                    ->orderBy('age_group')
+                    ->orderByRaw("CAST(SUBSTRING_INDEX(age_group, '-', 1) AS UNSIGNED)")
                     ->pluck('age_group')
                     ->toArray();
 
+                $aggregatedData = Kependudukan::where('year', $selectedYear)
+                    ->whereIn('gender', ['LK', 'PR'])
+                    ->select('age_group', 'gender', DB::raw('SUM(population) as total'))
+                    ->groupBy('age_group', 'gender')
+                    ->get();
+
                 $result = [];
                 foreach ($ageGroups as $ageGroup) {
-                    $male = Kependudukan::where('year', $selectedYear)
-                        ->where('age_group', $ageGroup)
-                        ->where('gender', 'LK')
-                        ->sum('population');
-                    
-                    $female = Kependudukan::where('year', $selectedYear)
-                        ->where('age_group', $ageGroup)
-                        ->where('gender', 'PR')
-                        ->sum('population');
+                    $male = $aggregatedData->where('age_group', $ageGroup)->where('gender', 'LK')->sum('total');
+                    $female = $aggregatedData->where('age_group', $ageGroup)->where('gender', 'PR')->sum('total');
 
                     $result[] = [
                         'age_group' => $ageGroup,

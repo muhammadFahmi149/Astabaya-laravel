@@ -23,6 +23,7 @@ use App\Models\PDRBLapanganUsahaLajuImplisit;
 use App\Models\PDRBLapanganUsahaADHBTriwulanan;
 use App\Models\PDRBLapanganUsahaADHKTriwulanan;
 use App\Models\PDRBLapanganUsahaDistribusiTriwulanan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -93,7 +94,7 @@ class PDRBService
         return $this->syncGeneric(
             PDRBPengeluaranLajuYtoY::class,
             $sheetName,
-            ['expenditure_category', 'year', 'preliminary_flag', 'value']
+            ['expenditure_category', 'year', 'quarter', 'preliminary_flag', 'value']
         );
     }
 
@@ -213,7 +214,7 @@ class PDRBService
         return $this->syncGeneric(
             PDRBLapanganUsahaLajuYtoY::class,
             $sheetName,
-            ['industry_category', 'year', 'preliminary_flag', 'value']
+            ['industry_category', 'year', 'quarter', 'preliminary_flag', 'value']
         );
     }
 
@@ -291,20 +292,28 @@ class PDRBService
 
     /**
      * Parse year with preliminary flag from string (e.g., "2023*" -> 2023, "*")
+     * Only accepts cells that consist entirely of a 4-digit year with optional
+     * trailing asterisks (e.g. "2010", "2024*", "2025**").
+     * Rejects long strings that merely contain a year (e.g. "PDRB 2010-2025").
      */
     protected function parseYearWithFlag(string $yearStr): array
     {
         $yearStr = trim($yearStr);
         
-        // Remove asterisks and other flags
+        if ($yearStr === '') {
+            return [null, ''];
+        }
+
+        // Remove trailing asterisks (preliminary flags)
         $flag = '';
         if (preg_match('/(\*+)$/', $yearStr, $matches)) {
             $flag = $matches[1];
-            $yearStr = str_replace($flag, '', $yearStr);
+            $yearStr = rtrim($yearStr, '*');
+            $yearStr = trim($yearStr);
         }
         
-        // Extract year (4 digits)
-        if (preg_match('/(\d{4})/', $yearStr, $matches)) {
+        // Strict match: the remaining string must be exactly 4 digits
+        if (preg_match('/^(\d{4})$/', $yearStr, $matches)) {
             $year = (int) $matches[1];
             if ($year >= 2000 && $year <= 2100) {
                 return [$year, $flag];
@@ -312,6 +321,31 @@ class PDRBService
         }
         
         return [null, ''];
+    }
+
+    /**
+     * Count how many cells in a row parse as valid year columns.
+     * Used to determine whether a row is a genuine year-header row
+     * rather than a title row that happens to contain a year.
+     *
+     * @param array $row         The row to inspect
+     * @param int   $skipColIdx  Column index to skip (category column)
+     * @param int   $startCol    First column index to inspect
+     * @return int  Number of cells that are valid years
+     */
+    protected function countYearColumns(array $row, int $skipColIdx = -1, int $startCol = 0): int
+    {
+        $count = 0;
+        foreach ($row as $idx => $cell) {
+            if ($idx < $startCol || $idx === $skipColIdx) {
+                continue;
+            }
+            [$year, ] = $this->parseYearWithFlag(trim((string) ($cell ?? '')));
+            if ($year !== null) {
+                $count++;
+            }
+        }
+        return $count;
     }
 
     /**
@@ -384,7 +418,8 @@ class PDRBService
             // For Pengeluaran: start from column after category column
             $startCol = ($categoryField === 'industry_category') ? 1 : $categoryColIdx + 1;
             
-            for ($colIdx = $startCol; $colIdx < count($yearRow); $colIdx++) {
+            $maxColCount = max(count($yearRow), count($quarterRow));
+            for ($colIdx = $startCol; $colIdx < $maxColCount; $colIdx++) {
                 $yearVal = trim($yearRow[$colIdx] ?? '');
                 $quarterVal = trim(strtoupper($quarterRow[$colIdx] ?? ''));
 
@@ -483,63 +518,47 @@ class PDRBService
             $headerRowIdx = null;
             $dataStartRow = null;
 
-            // For Lapangan Usaha, check row 2 (index 1) first for year headers
-            // Based on image: Row 1 = empty, Row 2 = "JENIS LAPANGAN USAHA" in A2 and years in B2-J2, Row 3 = merged header, Row 4+ = Data
-            if ($categoryField === 'industry_category' && count($rawData) > 1) {
-                $row1 = $rawData[1];
-                $yearFound = false;
-                // Check columns starting from B (index 1), skip column A (index 0)
-                for ($colIdx = 1; $colIdx < count($row1); $colIdx++) {
-                    $val = trim((string) ($row1[$colIdx] ?? ''));
-                    [$year, ] = $this->parseYearWithFlag($val);
-                    if ($year !== null) {
-                        $yearFound = true;
-                        break;
-                    }
-                }
+            // Minimum number of year columns required to consider a row as a header
+            $minYearCols = 3;
 
-                if ($yearFound) {
+            // For Lapangan Usaha, check row 1 (index 1) first for year headers
+            // Layout: Row 0 = title, Row 1 = years in B1-onwards, Row 2 = merged header, Row 3+ = Data
+            if ($categoryField === 'industry_category' && count($rawData) > 1) {
+                $yearCount = $this->countYearColumns($rawData[1], $categoryColIdx, 1);
+                if ($yearCount >= $minYearCols) {
                     $headerRowIdx = 1;
                     $dataStartRow = 3; // Data starts from row 4 (index 3), skip row 3 which is merged header
+                    Log::info("PDRB Parser: Lapangan Usaha header detected at row 1 with {$yearCount} year columns");
                 }
             }
 
-            // If not found or not Lapangan Usaha, check row 0
-            if ($headerRowIdx === null && count($rawData) > 0) {
-                $row0 = $rawData[0];
-                $yearFound = false;
-                foreach ($row0 as $val) {
-                    [$year, ] = $this->parseYearWithFlag(trim((string) $val));
-                    if ($year !== null) {
-                        $yearFound = true;
-                        break;
+            // If not found yet, scan rows 0-4 to find the row with the most year columns
+            if ($headerRowIdx === null) {
+                $bestRowIdx = null;
+                $bestYearCount = 0;
+
+                $maxScanRows = min(5, count($rawData));
+                for ($scanIdx = 0; $scanIdx < $maxScanRows; $scanIdx++) {
+                    $yearCount = $this->countYearColumns($rawData[$scanIdx], $categoryColIdx);
+                    if ($yearCount > $bestYearCount) {
+                        $bestYearCount = $yearCount;
+                        $bestRowIdx = $scanIdx;
                     }
                 }
 
-                if ($yearFound) {
-                    $headerRowIdx = 0;
-                    $dataStartRow = 1;
-                } elseif (count($rawData) > 1) {
-                    // Check row 1 for year headers
-                    $row1 = $rawData[1];
-                    $yearFound = false;
-                    foreach ($row1 as $val) {
-                        [$year, ] = $this->parseYearWithFlag(trim((string) $val));
-                        if ($year !== null) {
-                            $yearFound = true;
-                            break;
-                        }
-                    }
-
-                    if ($yearFound) {
-                        $headerRowIdx = 1;
-                        $dataStartRow = 2;
-                    }
+                if ($bestRowIdx !== null && $bestYearCount >= $minYearCols) {
+                    $headerRowIdx = $bestRowIdx;
+                    $dataStartRow = $bestRowIdx + 1;
+                    Log::info("PDRB Parser: Header detected at row {$bestRowIdx} with {$bestYearCount} year columns");
                 }
             }
 
             if ($headerRowIdx === null) {
-                echo "⚠️ No year columns found in headers\n";
+                echo "⚠️ No year columns found in headers (need at least {$minYearCols} year columns in a single row)\n";
+                Log::warning('PDRB Parser: No valid header row found', [
+                    'rows_scanned' => min(5, count($rawData)),
+                    'categoryField' => $categoryField,
+                ]);
                 return [];
             }
 
@@ -569,9 +588,22 @@ class PDRBService
             }
 
             if (empty($yearCols)) {
-                echo "⚠️ No valid year columns found\n";
+                echo "⚠️ No valid year columns found in header row {$headerRowIdx}\n";
+                Log::warning('PDRB Parser: Header row found but no year columns extracted', [
+                    'headerRowIdx' => $headerRowIdx,
+                    'headerContent' => $headers,
+                ]);
                 return [];
             }
+
+            echo "📋 Header row {$headerRowIdx}: found " . count($yearCols) . " year columns";
+            $yearValues = array_map(fn($v) => $v[0], $yearCols);
+            echo " (" . min($yearValues) . "-" . max($yearValues) . ")\n";
+            Log::info("PDRB Parser: Year columns mapped", [
+                'headerRowIdx' => $headerRowIdx,
+                'yearCount' => count($yearCols),
+                'yearRange' => min($yearValues) . '-' . max($yearValues),
+            ]);
 
             // Process data rows
             foreach ($dataRows as $row) {
@@ -625,11 +657,15 @@ class PDRBService
     }
 
     /**
-     * Generic sync method for PDRB models
+     * Generic sync method for PDRB models.
+     *
+     * Uses Model::upsert() with chunking and DB::transaction() for
+     * efficient bulk insert/update instead of per-record SELECT+UPDATE/INSERT.
      */
     protected function syncGeneric(string $modelClass, string $sheetName, array $requiredFields): array
     {
         try {
+            $startTime = microtime(true);
             $modelName = class_basename($modelClass);
             echo "📊 Syncing {$modelName} data from sheet: {$sheetName}\n";
             $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
@@ -655,40 +691,71 @@ class PDRBService
                 return ['created' => 0, 'updated' => 0];
             }
 
-            echo "[OK] Data processed. Total records: " . count($processedRecords) . "\n";
-            
-            $createdCount = 0;
-            $updatedCount = 0;
+            // --- Build upsert parameters ---
 
-            foreach ($processedRecords as $record) {
-                try {
-                    // Build query for finding existing record
-                    $query = call_user_func([$modelClass, 'query']);
-                    
-                    foreach ($requiredFields as $field) {
-                        if ($field !== 'value' && $field !== 'preliminary_flag' && isset($record[$field])) {
-                            $query->where($field, $record[$field]);
-                        }
-                    }
-                    
-                    $existing = $query->first();
+            // Unique key columns: all required fields except 'value' and 'preliminary_flag'
+            $uniqueBy = array_values(array_filter($requiredFields, function ($field) {
+                return $field !== 'value' && $field !== 'preliminary_flag';
+            }));
 
-                    if ($existing) {
-                        $existing->update($record);
-                        $updatedCount++;
-                    } else {
-                        call_user_func([$modelClass, 'create'], $record);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    echo "❌ Error saving record: " . $e->getMessage() . "\n";
-                    Log::error("Error saving PDRB record: " . $e->getMessage(), ['record' => $record, 'model' => $modelName]);
-                    continue;
-                }
+            // Columns to update on conflict
+            $updateColumns = ['value', 'preliminary_flag', 'updated_at'];
+
+            // Add timestamps to each record
+            $now = now();
+            foreach ($processedRecords as &$record) {
+                $record['created_at'] = $now;
+                $record['updated_at'] = $now;
             }
+            unset($record);
 
-            echo "✅ PDRB {$modelName} sync completed. Created: {$createdCount}, Updated: {$updatedCount}\n";
-            Log::info("PDRB {$modelName} sync completed. Created: {$createdCount}, Updated: {$updatedCount}");
+            // --- Count existing records before upsert for created/updated estimation ---
+            $existingCount = call_user_func([$modelClass, 'count']);
+
+            // --- Chunked upsert inside a transaction ---
+            $chunkSize = 500;
+            $totalRecords = count($processedRecords);
+            $chunks = array_chunk($processedRecords, $chunkSize);
+            $totalBatches = count($chunks);
+
+            echo "[OK] Data processed. Total records: {$totalRecords} | Batches: {$totalBatches} (chunk size: {$chunkSize})\n";
+            Log::info("PDRB {$modelName}: Starting upsert", [
+                'total_records' => $totalRecords,
+                'batches' => $totalBatches,
+                'chunk_size' => $chunkSize,
+                'unique_by' => $uniqueBy,
+            ]);
+
+            DB::transaction(function () use ($chunks, $modelClass, $uniqueBy, $updateColumns, $modelName, $totalBatches) {
+                foreach ($chunks as $batchIdx => $chunk) {
+                    $batchNum = $batchIdx + 1;
+                    try {
+                        call_user_func([$modelClass, 'upsert'], $chunk, $uniqueBy, $updateColumns);
+                    } catch (\Exception $e) {
+                        Log::error("PDRB {$modelName}: Batch {$batchNum}/{$totalBatches} failed", [
+                            'error' => $e->getMessage(),
+                            'batch_size' => count($chunk),
+                        ]);
+                        echo "❌ Batch {$batchNum}/{$totalBatches} failed: " . $e->getMessage() . "\n";
+                        throw $e; // Re-throw to trigger transaction rollback
+                    }
+                }
+            });
+
+            // --- Estimate created vs updated ---
+            $newCount = call_user_func([$modelClass, 'count']);
+            $createdCount = max(0, $newCount - $existingCount);
+            $updatedCount = $totalRecords - $createdCount;
+
+            $elapsedMs = round((microtime(true) - $startTime) * 1000, 2);
+
+            echo "✅ PDRB {$modelName} sync completed. Created: {$createdCount}, Updated: {$updatedCount} ({$elapsedMs}ms)\n";
+            Log::info("PDRB {$modelName} sync completed", [
+                'created' => $createdCount,
+                'updated' => $updatedCount,
+                'total_records' => $totalRecords,
+                'execution_time_ms' => $elapsedMs,
+            ]);
             return ['created' => $createdCount, 'updated' => $updatedCount];
         } catch (\Exception $e) {
             $modelName = class_basename($modelClass);

@@ -1,0 +1,339 @@
+  .dashboard-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-height: 500px;
+  }
+
+  /* Chart scroll container - default no scroll for desktop */
+  .chart-scroll-container {
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+
+  .chart-scroll-container::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .chart-scroll-container::-webkit-scrollbar-track {
+    background: #f7fafc;
+    border-radius: 10px;
+  }
+
+  .chart-scroll-container::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 10px;
+  }
+
+  .chart-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+  }
+
+  .chart-responsive {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  
+  /* Exception for filter card - allow dropdown to overflow */
+  .dashboard-card.filter-card {
+    overflow: visible !important;
+  }
+  
+  .dashboard-card > div[id$="Chart"] {
+    flex: 1;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  
+  .dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+ 
+  
+  @media (max-width: 768px) {
+    .indicator-card {
+      padding: 12px !important;
+      min-width: 200px !important;
+    }
+    
+    .indicator-card h6 {
+      font-size: 11px !important;
+      margin-bottom: 6px !important;
+    }
+    
+    .indicator-card h3 {
+      font-size: 20px !important;
+      margin-bottom: 6px !important;
+    }
+    
+    .indicator-card small {
+      font-size: 10px !important;
+    }
+    
+    /* Ensure filter cards are below header */
+    .filter-card {
+      position: relative !important;
+      z-index: 1 !important;
+    }
+    
+    /* Ensure dropdowns are below header but above content */
+    #filterJenisPDRBDropdown,
+    #filterJenisPengeluaranDropdown,
+    #filterJenisPDRBTriwulananDropdown,
+    #filterJenisPengeluaranTriwulananDropdown {
+      z-index: 1000 !important;
+    }
+    
+    /* Chart responsive adjustments */
+    .dashboard-card > div[id$="Chart"] {
+      min-height: 300px !important;
+    }
+    
+    #filteredChart,
+    #filteredChartTriwulanan {
+      min-height: 350px !important;
+    }
+
+    /* Enable scroll on tablet and mobile only */
+    .chart-scroll-container {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e0 #f7fafc;
+      padding-bottom: 10px;
+    }
+    
+    .chart-responsive {
+      min-width: 600px !important;
+    }
+  }
+
+  @media (max-width: 576px) {
+    /* Make charts more scrollable on mobile phones */
+    .chart-scroll-container {
+      padding-bottom: 12px;
+    }
+    
+    .chart-responsive {
+      min-width: 700px !important;
+    }
+
+    .dashboard-card {
+      padding: 15px !important;
+    }
+  }
+
+  /* Filter wrapper - ensure dropdown is visible */
+  #filterJenisPengeluaranWrapper {
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 9999 !important;
+  }
+  
+  /* Ensure parent containers allow overflow */
+  .filter-card,
+  .filter-card .row,
+  .filter-card .col-md-6,
+  .filter-card .col-md-6 > div {
+    overflow: visible !important;
+  }
+  
+  /* Dropdown should appear above everything but below header */
+  #filterJenisPengeluaranDropdown {
+    z-index: 1000 !important;
+    position: fixed !important;
+    display: none !important;
+  }
+  
+  #filterJenisPengeluaranDropdown[style*="display: block"] {
+    display: block !important;
+  }
+
+  /* Multi-select tag styling */
+  .filter-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e7f3ff;
+    color: #0066cc;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .filter-tag .tag-remove {
+    cursor: pointer;
+    color: #0066cc;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+    background: none;
+    border: none;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .filter-tag .tag-remove:hover {
+    color: #004499;
+  }
+
+  .filter-option {
+    transition: background-color 0.2s;
+  }
+
+  .filter-option:hover {
+    background-color: #f0f8ff !important;
+  }
+
+  .filter-option.selected {
+    background-color: #e7f3ff;
+  }
+
+  #filterJenisPengeluaranInput {
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  #filterJenisPengeluaranInput:focus,
+  #filterJenisPengeluaranInput:focus-within {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
+
+  /* Filter wrapper for triwulanan - ensure dropdown is visible */
+  #filterJenisPengeluaranTriwulananWrapper {
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 9999 !important;
+  }
+  
+  /* Dropdown should appear above everything but below header for triwulanan */
+  #filterJenisPengeluaranTriwulananDropdown {
+    z-index: 1000 !important;
+    position: fixed !important;
+    display: none !important;
+  }
+  
+  #filterJenisPengeluaranTriwulananDropdown[style*="display: block"] {
+    display: block !important;
+  }
+
+  .filter-option-triwulanan {
+    transition: background-color 0.2s;
+  }
+
+  .filter-option-triwulanan:hover {
+    background-color: #f0f8ff !important;
+  }
+
+  .filter-option-triwulanan.selected {
+    background-color: #e7f3ff;
+  }
+
+  #filterJenisPengeluaranTriwulananInput {
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  #filterJenisPengeluaranTriwulananInput:focus,
+  #filterJenisPengeluaranTriwulananInput:focus-within {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
+
+  /* Filter wrapper for PDRB - ensure dropdown is visible */
+  #filterJenisPDRBWrapper {
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 9999 !important;
+  }
+  
+  /* Dropdown should appear above everything but below header for PDRB */
+  #filterJenisPDRBDropdown {
+    z-index: 1000 !important;
+    position: fixed !important;
+    display: none !important;
+  }
+  
+  #filterJenisPDRBDropdown[style*="display: block"] {
+    display: block !important;
+  }
+
+  .filter-option-pdrb {
+    transition: background-color 0.2s;
+  }
+
+  .filter-option-pdrb:hover {
+    background-color: #f0f8ff !important;
+  }
+
+  .filter-option-pdrb.selected {
+    background-color: #e7f3ff;
+  }
+
+  #filterJenisPDRBInput {
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  #filterJenisPDRBInput:focus,
+  #filterJenisPDRBInput:focus-within {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
+
+  /* Filter wrapper for PDRB Triwulanan - ensure dropdown is visible */
+  #filterJenisPDRBTriwulananWrapper {
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 9999 !important;
+  }
+  
+  /* Dropdown should appear above everything but below header for PDRB Triwulanan */
+  #filterJenisPDRBTriwulananDropdown {
+    z-index: 1000 !important;
+    position: fixed !important;
+    display: none !important;
+  }
+  
+  #filterJenisPDRBTriwulananDropdown[style*="display: block"] {
+    display: block !important;
+  }
+
+  .filter-option-pdrb-triwulanan {
+    transition: background-color 0.2s;
+  }
+
+  .filter-option-pdrb-triwulanan:hover {
+    background-color: #f0f8ff !important;
+  }
+
+  .filter-option-pdrb-triwulanan.selected {
+    background-color: #e7f3ff;
+  }
+
+  #filterJenisPDRBTriwulananInput {
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  #filterJenisPDRBTriwulananInput:focus,
+  #filterJenisPDRBTriwulananInput:focus-within {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }

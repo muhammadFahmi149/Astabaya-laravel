@@ -336,7 +336,7 @@ class InflasiController extends Controller
             $data = Cache::remember($cacheKey, self::CACHE_DURATION, function () {
                 // Get latest inflasi data
                 $latest = Inflasi::orderBy('year', 'desc')
-                    ->orderByRaw("FIELD(month, 'JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOPEMBER', 'DESEMBER')")
+                    ->orderByRaw("FIELD(month, 'JANUARI', 'FEBRUARI', 'MARET', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOPEMBER', 'DESEMBER') DESC")
                     ->first();
 
                 if (!$latest) {
@@ -516,6 +516,65 @@ class InflasiController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while fetching Inflasi Komoditas Years data',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+            ], 500);
+        }
+    }
+
+    /**
+     * Get a tree of Komoditas Umum (flag=1) and their Sub Komoditas (flag=2).
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getKomoditasTree(Request $request)
+    {
+        $startTime = microtime(true);
+        
+        try {
+            $year = $request->input('year');
+            
+            // Get all komoditas for flag 1 and 2
+            $query = InflasiPerKomoditas::whereIn('flag', [1, 2]);
+            if ($year) {
+                $query->where('year', $year);
+            }
+            
+            $data = $query->select('commodity_code', 'commodity_name', 'flag')
+                ->distinct()
+                ->get();
+                
+            $umumList = $data->where('flag', 1)->unique('commodity_code')->sortBy(function ($item) {
+                return intval($item->commodity_code) ?: $item->commodity_code;
+            });
+            $subList = $data->where('flag', 2)->unique('commodity_code')->sortBy('commodity_name');
+            
+            $tree = [];
+            foreach ($umumList as $umum) {
+                $subs = $subList->filter(function ($sub) use ($umum) {
+                    $umumStr = (string)$umum->commodity_code;
+                    $subStr = (string)$sub->commodity_code;
+                    return str_starts_with($subStr, $umumStr) && strlen($subStr) === strlen($umumStr) + 1;
+                })->pluck('commodity_name')->values()->toArray();
+                
+                $tree[] = [
+                    'umum' => [
+                        'code' => $umum->commodity_code,
+                        'name' => $umum->commodity_name
+                    ],
+                    'sub' => $subs
+                ];
+            }
+            
+            return response()->json([
+                'status' => 'success',
+                'data' => $tree
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while fetching Inflasi Komoditas Tree data',
                 'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
             ], 500);
         }

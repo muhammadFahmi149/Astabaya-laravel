@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\News;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -172,15 +173,10 @@ class BPSNewsService
         }
     }
 
-    /**
-     * Save news data to database
-     */
     public function saveNewsToDb(array $newsList): array
     {
-        $createdCount = 0;
-        $updatedCount = 0;
+        $startTime = microtime(true);
         $skippedCount = 0;
-        $errorCount = 0;
 
         echo "📝 Processing " . count($newsList) . " news...\n";
         Log::info("Processing " . count($newsList) . " news for database save");
@@ -193,6 +189,8 @@ class BPSNewsService
             Log::info("Sample item data: " . json_encode($firstItem));
         }
 
+        $records = [];
+        $now = now();
         foreach ($newsList as $index => $item) {
             $newsId = $item['news_id'] ?? null;
             
@@ -208,7 +206,7 @@ class BPSNewsService
             // Convert newsId to string if it's not already
             $newsId = (string) $newsId;
 
-            $data = [
+            $records[] = [
                 'news_id' => $newsId,
                 'title' => $this->cleanTextField($item['title'] ?? '', 255),
                 'content' => $this->cleanHtmlContent($item['news'] ?? $item['content'] ?? ''),
@@ -216,38 +214,45 @@ class BPSNewsService
                 'category_name' => $this->cleanTextField($item['newscat_name'] ?? $item['cat_name'] ?? '', 100),
                 'release_date' => $item['rl_date'] ?? null,
                 'picture_url' => $item['picture'] ?? $item['img'] ?? null,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
-
-            try {
-                $news = News::where('news_id', $newsId)->first();
-                
-                if ($news) {
-                    $news->update($data);
-                    $updatedCount++;
-                } else {
-                    News::create($data);
-                    $createdCount++;
-                }
-            } catch (\Exception $e) {
-                $errorCount++;
-                echo "❌ Error saving news {$newsId}: " . $e->getMessage() . "\n";
-                Log::error("Error saving news {$newsId}: " . $e->getMessage());
-                Log::error("Stack trace: " . $e->getTraceAsString());
-            }
-
-            // Progress indicator every 100 items
-            if (($index + 1) % 100 == 0) {
-                echo "📊 Progress: " . ($index + 1) . "/" . count($newsList) . " (Created: {$createdCount}, Updated: {$updatedCount}, Errors: {$errorCount})\n";
-            }
         }
 
-        echo "✅ Processing completed!\n";
-        echo "   Created: {$createdCount} records\n";
-        echo "   Updated: {$updatedCount} records\n";
-        echo "   Skipped: {$skippedCount} records (no ID)\n";
-        echo "   Errors: {$errorCount} records\n";
-        
-        Log::info("News sync completed. Created: {$createdCount}, Updated: {$updatedCount}, Skipped: {$skippedCount}, Errors: {$errorCount}");
+        $totalProcessed = count($records);
+        $chunkSize = 500;
+        $chunks = array_chunk($records, $chunkSize);
+        $totalChunks = count($chunks);
+
+        // Count before upsert to calculate inserted vs updated
+        $countBefore = News::count();
+
+        DB::transaction(function () use ($chunks) {
+            foreach ($chunks as $chunk) {
+                News::upsert(
+                    $chunk,
+                    ['news_id'],
+                    ['title', 'content', 'category_id', 'category_name', 'release_date', 'picture_url', 'updated_at']
+                );
+            }
+        });
+
+        $countAfter = News::count();
+        $createdCount = max(0, $countAfter - $countBefore);
+        $updatedCount = $totalProcessed - $createdCount;
+        $duration = round(microtime(true) - $startTime, 2);
+
+        $logMessage = "Sync News\n"
+            . "  Processed : {$totalProcessed}\n"
+            . "  Inserted  : {$createdCount}\n"
+            . "  Updated   : {$updatedCount}\n"
+            . "  Skipped   : {$skippedCount}\n"
+            . "  Chunks    : {$totalChunks}\n"
+            . "  Duration  : {$duration} sec";
+
+        echo "✅ {$logMessage}\n";
+        Log::info($logMessage);
+
         return ['created' => $createdCount, 'updated' => $updatedCount];
     }
 

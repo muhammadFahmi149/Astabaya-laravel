@@ -255,49 +255,13 @@ class KemiskinanController extends Controller
                     'garis_kemiskinan'
                 ])->orderBy('year', 'asc')->get();
                 
-                // Get latest Surabaya data (optimized query)
-                $surabaya_latest = KemiskinanSurabaya::select([
-                    'id',
-                    'year',
-                    'jumlah_penduduk_miskin',
-                    'persentase_penduduk_miskin',
-                    'indeks_kedalaman_kemiskinan_p1',
-                    'indeks_keparahan_kemiskinan_p2',
-                    'garis_kemiskinan'
-                ])->orderBy('year', 'desc')->first();
+                // Get latest data from collection
+                $surabaya_latest = $surabaya_data->last();
+                $jatim_latest = $jatim_data->last();
                 
-                // Get latest Jawa Timur data (optimized query)
-                $jatim_latest = KemiskinanJawaTimur::select([
-                    'id',
-                    'year',
-                    'jumlah_penduduk_miskin',
-                    'persentase_penduduk_miskin',
-                    'indeks_kedalaman_kemiskinan_p1',
-                    'indeks_keparahan_kemiskinan_p2',
-                    'garis_kemiskinan'
-                ])->orderBy('year', 'desc')->first();
-                
-                // Get previous Surabaya data (second latest) - optimized query
-                $surabaya_previous = KemiskinanSurabaya::select([
-                    'id',
-                    'year',
-                    'jumlah_penduduk_miskin',
-                    'persentase_penduduk_miskin',
-                    'indeks_kedalaman_kemiskinan_p1',
-                    'indeks_keparahan_kemiskinan_p2',
-                    'garis_kemiskinan'
-                ])->orderBy('year', 'desc')->skip(1)->first();
-                
-                // Get previous Jawa Timur data (second latest) - optimized query
-                $jatim_previous = KemiskinanJawaTimur::select([
-                    'id',
-                    'year',
-                    'jumlah_penduduk_miskin',
-                    'persentase_penduduk_miskin',
-                    'indeks_kedalaman_kemiskinan_p1',
-                    'indeks_keparahan_kemiskinan_p2',
-                    'garis_kemiskinan'
-                ])->orderBy('year', 'desc')->skip(1)->first();
+                // Get previous data from collection (second latest)
+                $surabaya_previous = $surabaya_data->count() > 1 ? $surabaya_data[$surabaya_data->count() - 2] : null;
+                $jatim_previous = $jatim_data->count() > 1 ? $jatim_data[$jatim_data->count() - 2] : null;
                 
                 // Calculate changes for Surabaya
                 $surabaya_changes = [

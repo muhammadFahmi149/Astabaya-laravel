@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\KetenagakerjaanTPT;
 use App\Models\KetenagakerjaanTPAK;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -24,13 +25,11 @@ class KetenagakerjaanService
     public function syncTPT(string $sheetName = 'Ketenagakerjaan_TPT'): array
     {
         try {
+            $startTime = microtime(true);
             echo "📊 Syncing Ketenagakerjaan TPT data from sheet: {$sheetName}\n";
             $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
             $processedData = $this->spreadsheetService->processSheetData($rawData);
             
-            $createdCount = 0;
-            $updatedCount = 0;
-
             if (empty($processedData)) {
                 echo "⚠️ No data found in sheet: {$sheetName}\n";
                 return ['created' => 0, 'updated' => 0];
@@ -38,6 +37,8 @@ class KetenagakerjaanService
 
             echo "[OK] Data processed. Total records: " . count($processedData) . "\n";
 
+            $records = [];
+            $now = now();
             foreach ($processedData as $rowIndex => $row) {
                 // Try to find year with various possible field names
                 $year = $row['year'] ?? $row['tahun'] ?? null;
@@ -49,35 +50,55 @@ class KetenagakerjaanService
                     continue;
                 }
 
-                $data = [
+                $records[] = [
                     'year' => (int) $year,
                     'laki_laki' => $this->parseDecimal($row['laki_laki'] ?? $row['laki-laki'] ?? $row['tpt_laki_laki'] ?? null),
                     'perempuan' => $this->parseDecimal($row['perempuan'] ?? $row['tpt_perempuan'] ?? null),
                     'total' => $this->parseDecimal($row['total'] ?? $row['tpt_total'] ?? null),
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
-
-                try {
-                    $existing = KetenagakerjaanTPT::where('year', $data['year'])->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        KetenagakerjaanTPT::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    echo "❌ Error saving row " . ($rowIndex + 1) . ": " . $e->getMessage() . "\n";
-                    Log::error("Error saving Ketenagakerjaan TPT row: " . $e->getMessage(), ['row' => $row, 'data' => $data]);
-                    continue;
-                }
             }
 
-            echo "✅ Ketenagakerjaan TPT sync completed. Created: {$createdCount}, Updated: {$updatedCount}\n";
-            Log::info("Ketenagakerjaan TPT sync completed. Created: {$createdCount}, Updated: {$updatedCount}");
+            $totalProcessed = count($records);
+            $chunkSize = 500;
+            $chunks = array_chunk($records, $chunkSize);
+            $totalChunks = count($chunks);
+
+            // Count before upsert to calculate inserted vs updated
+            $countBefore = KetenagakerjaanTPT::count();
+
+            DB::transaction(function () use ($chunks) {
+                foreach ($chunks as $chunk) {
+                    KetenagakerjaanTPT::upsert(
+                        $chunk,
+                        ['year'],
+                        ['laki_laki', 'perempuan', 'total', 'updated_at']
+                    );
+                }
+            });
+
+            $countAfter = KetenagakerjaanTPT::count();
+            $createdCount = max(0, $countAfter - $countBefore);
+            $updatedCount = $totalProcessed - $createdCount;
+            $skippedCount = count($processedData) - $totalProcessed;
+            $duration = round(microtime(true) - $startTime, 2);
+
+            $logMessage = "Sync Ketenagakerjaan TPT\n"
+                . "  Processed : {$totalProcessed}\n"
+                . "  Inserted  : {$createdCount}\n"
+                . "  Updated   : {$updatedCount}\n"
+                . "  Skipped   : {$skippedCount}\n"
+                . "  Chunks    : {$totalChunks}\n"
+                . "  Duration  : {$duration} sec";
+
+            echo "✅ {$logMessage}\n";
+            Log::info($logMessage);
+
             return ['created' => $createdCount, 'updated' => $updatedCount];
         } catch (\Exception $e) {
             Log::error('Error syncing Ketenagakerjaan TPT: ' . $e->getMessage());
+            echo "❌ Error syncing Ketenagakerjaan TPT: " . $e->getMessage() . "\n";
             throw $e;
         }
     }
@@ -88,13 +109,11 @@ class KetenagakerjaanService
     public function syncTPAK(string $sheetName = 'Ketenagakerjaan_TPAK'): array
     {
         try {
+            $startTime = microtime(true);
             echo "📊 Syncing Ketenagakerjaan TPAK data from sheet: {$sheetName}\n";
             $rawData = $this->spreadsheetService->fetchWorksheetData($sheetName);
             $processedData = $this->spreadsheetService->processSheetData($rawData);
             
-            $createdCount = 0;
-            $updatedCount = 0;
-
             if (empty($processedData)) {
                 echo "⚠️ No data found in sheet: {$sheetName}\n";
                 return ['created' => 0, 'updated' => 0];
@@ -102,6 +121,8 @@ class KetenagakerjaanService
 
             echo "[OK] Data processed. Total records: " . count($processedData) . "\n";
 
+            $records = [];
+            $now = now();
             foreach ($processedData as $rowIndex => $row) {
                 // Try to find year with various possible field names
                 $year = $row['year'] ?? $row['tahun'] ?? null;
@@ -113,35 +134,55 @@ class KetenagakerjaanService
                     continue;
                 }
 
-                $data = [
+                $records[] = [
                     'year' => (int) $year,
                     'laki_laki' => $this->parseDecimal($row['laki_laki'] ?? $row['laki-laki'] ?? $row['tpak_laki_laki'] ?? null),
                     'perempuan' => $this->parseDecimal($row['perempuan'] ?? $row['tpak_perempuan'] ?? null),
                     'total' => $this->parseDecimal($row['total'] ?? $row['tpak_total'] ?? null),
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
-
-                try {
-                    $existing = KetenagakerjaanTPAK::where('year', $data['year'])->first();
-
-                    if ($existing) {
-                        $existing->update($data);
-                        $updatedCount++;
-                    } else {
-                        KetenagakerjaanTPAK::create($data);
-                        $createdCount++;
-                    }
-                } catch (\Exception $e) {
-                    echo "❌ Error saving row " . ($rowIndex + 1) . ": " . $e->getMessage() . "\n";
-                    Log::error("Error saving Ketenagakerjaan TPAK row: " . $e->getMessage(), ['row' => $row, 'data' => $data]);
-                    continue;
-                }
             }
 
-            echo "✅ Ketenagakerjaan TPAK sync completed. Created: {$createdCount}, Updated: {$updatedCount}\n";
-            Log::info("Ketenagakerjaan TPAK sync completed. Created: {$createdCount}, Updated: {$updatedCount}");
+            $totalProcessed = count($records);
+            $chunkSize = 500;
+            $chunks = array_chunk($records, $chunkSize);
+            $totalChunks = count($chunks);
+
+            // Count before upsert to calculate inserted vs updated
+            $countBefore = KetenagakerjaanTPAK::count();
+
+            DB::transaction(function () use ($chunks) {
+                foreach ($chunks as $chunk) {
+                    KetenagakerjaanTPAK::upsert(
+                        $chunk,
+                        ['year'],
+                        ['laki_laki', 'perempuan', 'total', 'updated_at']
+                    );
+                }
+            });
+
+            $countAfter = KetenagakerjaanTPAK::count();
+            $createdCount = max(0, $countAfter - $countBefore);
+            $updatedCount = $totalProcessed - $createdCount;
+            $skippedCount = count($processedData) - $totalProcessed;
+            $duration = round(microtime(true) - $startTime, 2);
+
+            $logMessage = "Sync Ketenagakerjaan TPAK\n"
+                . "  Processed : {$totalProcessed}\n"
+                . "  Inserted  : {$createdCount}\n"
+                . "  Updated   : {$updatedCount}\n"
+                . "  Skipped   : {$skippedCount}\n"
+                . "  Chunks    : {$totalChunks}\n"
+                . "  Duration  : {$duration} sec";
+
+            echo "✅ {$logMessage}\n";
+            Log::info($logMessage);
+
             return ['created' => $createdCount, 'updated' => $updatedCount];
         } catch (\Exception $e) {
             Log::error('Error syncing Ketenagakerjaan TPAK: ' . $e->getMessage());
+            echo "❌ Error syncing Ketenagakerjaan TPAK: " . $e->getMessage() . "\n";
             throw $e;
         }
     }
