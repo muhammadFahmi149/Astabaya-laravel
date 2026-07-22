@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         isCurrency = false
     } = window.IPM_CONFIG;
 
-    const API_BASE = window.API_BASE || '/api';
+    const API_BASE = window.APP_CONFIG ? window.APP_CONFIG.apiUrl : '/api';
     let surabayaData = [];
     let jatimData = [];
     let comparisonChart = null;
@@ -81,6 +81,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             changeEl.innerHTML = '<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>';
                         }
                     }
+                } else {
+                    const valEl = document.getElementById('surabaya-value');
+                    if (valEl) valEl.textContent = '-';
+                    const yearEl = document.getElementById('surabaya-year');
+                    if (yearEl) yearEl.textContent = 'Data tidak tersedia';
+                    const changeEl = document.getElementById('surabaya-change');
+                    if (changeEl) changeEl.innerHTML = '';
                 }
                 
                 // Update Jatim card
@@ -128,6 +135,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             changeEl.innerHTML = '<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>';
                         }
                     }
+                } else {
+                    const valEl = document.getElementById('jatim-value');
+                    if (valEl) valEl.textContent = '-';
+                    const yearEl = document.getElementById('jatim-year');
+                    if (yearEl) yearEl.textContent = 'Data tidak tersedia';
+                    const changeEl = document.getElementById('jatim-change');
+                    if (changeEl) changeEl.innerHTML = '';
                 }
                 
                 // Store data for chart

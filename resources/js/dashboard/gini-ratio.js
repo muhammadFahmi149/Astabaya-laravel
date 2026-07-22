@@ -168,8 +168,14 @@
               changeHtml += `<span style="font-size: 14px; color: rgba(255, 255, 255, 0.9);"> dari ${escapeHtml(surabayaPrevious.year)}</span>`;
             }
             changeEl.innerHTML = changeHtml;
+          } else {
+            changeEl.innerHTML = '';
           }
         }
+      } else {
+        document.getElementById('surabaya-value').textContent = '-';
+        document.getElementById('surabaya-year').textContent = 'Data tidak tersedia';
+        document.getElementById('surabaya-change').innerHTML = '';
       }
 
       // Update Jawa Timur card
@@ -197,8 +203,14 @@
               changeHtml += `<span style="font-size: 14px; color: rgba(255, 255, 255, 0.9);"> dari ${escapeHtml(jatimPrevious.year)}</span>`;
             }
             changeEl.innerHTML = changeHtml;
+          } else {
+            changeEl.innerHTML = '';
           }
         }
+      } else {
+        document.getElementById('jatim-value').textContent = '-';
+        document.getElementById('jatim-year').textContent = 'Data tidak tersedia';
+        document.getElementById('jatim-change').innerHTML = '';
       }
     }
 

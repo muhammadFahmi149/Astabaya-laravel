@@ -449,8 +449,6 @@
     // Handle apply button click
     if (btnTerapkanFilterPDRB) {
       btnTerapkanFilterPDRB.addEventListener('click', function() {
-        console.log('Jenis PDRB:', selectedJenisPDRB);
-        console.log('Jenis Pengeluaran:', selectedPengeluaran);
         
         // Show chart section
         if (filteredChartSection) {
@@ -503,8 +501,6 @@
           
           // Create new chart with filtered categories
           setTimeout(() => {
-            console.log('Data categories available:', Object.keys(dataByCategory));
-            console.log('Selected pengeluaran:', selectedPengeluaran);
             filteredChartInstance = createLineChart('filteredChart', dataByCategory, isPercentage, isQuarterly, selectedPengeluaran);
             if (filteredChartInstance) {
               setTimeout(() => {
@@ -906,8 +902,6 @@
     // Handle apply button click for triwulanan
     if (btnTerapkanFilterPDRBTriwulanan) {
       btnTerapkanFilterPDRBTriwulanan.addEventListener('click', function() {
-        console.log('Jenis PDRB Triwulanan:', selectedJenisPDRBTriwulanan);
-        console.log('Jenis Pengeluaran Triwulanan:', selectedPengeluaranTriwulanan);
         
         if (filteredChartSectionTriwulanan) {
           filteredChartSectionTriwulanan.style.display = 'block';
@@ -953,8 +947,6 @@
           }
           
           setTimeout(() => {
-            console.log('Data categories available:', Object.keys(dataByCategory));
-            console.log('Selected pengeluaran:', selectedPengeluaranTriwulanan);
             // Use createLineChart with isQuarterly=true and selectedCategories for triwulanan filtered chart
             filteredChartInstanceTriwulanan = createLineChart('filteredChartTriwulanan', dataByCategory, isPercentage, true, selectedPengeluaranTriwulanan);
             if (filteredChartInstanceTriwulanan) {
@@ -1104,7 +1096,7 @@
           fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_ytoy`).then(r => r.json()),
           fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_ctoc`).then(r => r.json()),
           fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-summary`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-years`).then(r => r.json())
+          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-years?t=${new Date().getTime()}`).then(r => r.json())
         ]);
 
         // Process responses
@@ -1158,10 +1150,17 @@
       const yearFilterDistribusiTriwulanan = document.getElementById('yearFilterDistribusiTriwulanan');
       const globalYearFilter = document.getElementById('globalYearFilter');
 
-      // Sort allYears descending (terbesar ke terkecil)
+      // Sort allYears descending (terbesar ke terkecil) - for Tahunan
       const sortedYearsDesc = [...allYears].sort((a, b) => b - a);
-
       const yearOptions = sortedYearsDesc.map(year => `<option value="${year}">${year}</option>`).join('');
+
+      // Get Triwulanan years specifically
+      let triwulananYearsSet = new Set();
+      Object.values(adhbTriwulananByCategory || {}).forEach(list => {
+        list.forEach(item => triwulananYearsSet.add(item.year));
+      });
+      const sortedTriwulananYearsDesc = Array.from(triwulananYearsSet).sort((a, b) => b - a);
+      const triwulananYearOptions = sortedTriwulananYearsDesc.map(year => `<option value="${year}">${year}</option>`).join('');
 
       if (yearFilterDistribusi) {
         yearFilterDistribusi.innerHTML = '<option value="">Semua Tahun</option>' + sortedYearsDesc.map(year => `<option value="${year}" ${year === latestYear ? 'selected' : ''}>${year}</option>`).join('');
@@ -1171,14 +1170,14 @@
       }
 
       if (yearFilterDistribusiTriwulanan) {
-        yearFilterDistribusiTriwulanan.innerHTML = '<option value="">Pilih Tahun</option>' + yearOptions;
+        yearFilterDistribusiTriwulanan.innerHTML = '<option value="">Pilih Tahun</option>' + triwulananYearOptions;
         if (selectedYearDistribusiTriwulanan) {
           yearFilterDistribusiTriwulanan.value = selectedYearDistribusiTriwulanan;
         }
       }
 
       if (globalYearFilter) {
-        globalYearFilter.innerHTML = '<option value="">4 Triwulan Terakhir</option>' + yearOptions;
+        globalYearFilter.innerHTML = '<option value="">4 Triwulan Terakhir</option>' + triwulananYearOptions;
       }
     }
 
@@ -1788,7 +1787,6 @@
       let categories = Object.keys(dataByCategory);
       
       // Debug: log all available categories
-      console.log(`[${canvasId}] All available categories:`, categories);
       
       // Filter out empty or invalid categories
       categories = categories.filter(cat => cat && cat.trim() !== '');
@@ -1801,8 +1799,6 @@
         console.warn(`[${canvasId}] No categories available. Data:`, dataByCategory);
         return null;
       }
-      
-      console.log(`[${canvasId}] Using categories:`, categories);
       
       // Prepare x-axis data and series
       let xAxisData = [];
@@ -1861,9 +1857,6 @@
       // Create x-axis labels
       xAxisData = selectedQuarters.map(q => `${q.year} Q${q.quarter}`);
       
-      console.log(`[${canvasId}] Selected quarters:`, selectedQuarters);
-      console.log(`[${canvasId}] X-axis data:`, xAxisData);
-      
       // Prepare series data for each category
       series = categories.map((category, index) => {
         // Double-check: ensure category exists in dataByCategory
@@ -1876,7 +1869,6 @@
         const values = selectedQuarters.map(q => {
           const item = categoryData.find(d => d.year === q.year && d.quarter === q.quarter);
           if (!item) {
-            console.log(`[${canvasId}] No data for ${category} at ${q.year} Q${q.quarter}`);
             return null;
           }
           return item.value;
@@ -1888,8 +1880,6 @@
           console.warn(`[${canvasId}] No data for category:`, category);
           return null;
         }
-        
-        console.log(`[${canvasId}] Category ${category} values:`, values);
         
         return {
           name: category.length > 30 ? category.substring(0, 30) + '...' : category,
@@ -1907,25 +1897,12 @@
         };
       }).filter(s => s !== null); // Remove any null entries
       
-      const hasData = series.length > 0;
-      
-      if (!hasData) {
-        console.warn(`[${canvasId}] No series data available after filtering`);
+      if (series.length === 0) {
+        console.error(`[${canvasId}] No series data available after filtering`);
+        return null;
       }
-      
-      console.log(`[${canvasId}] Final series count:`, series.length);
 
       const option = {
-        title: hasData ? undefined : {
-          text: 'Data tidak tersedia',
-          left: 'center',
-          top: 'center',
-          textStyle: {
-            color: '#999',
-            fontSize: 16,
-            fontWeight: 'normal'
-          }
-        },
         tooltip: {
           trigger: 'axis',
           confine: true,
@@ -2106,23 +2083,13 @@
         });
       }
 
-      // If no categories or chartData, show fallback
-      const hasData = categories.length > 0 && chartData.length > 0;
-      if (!hasData) {
+      // If no categories or chartData, return null
+      if (categories.length === 0 || chartData.length === 0) {
         console.warn(`No data to display for chart: ${canvasId}`);
+        return null;
       }
 
       const option = {
-        title: hasData ? undefined : {
-          text: 'Data tidak tersedia',
-          left: 'center',
-          top: 'center',
-          textStyle: {
-            color: '#999',
-            fontSize: 16,
-            fontWeight: 'normal'
-          }
-        },
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -2340,9 +2307,9 @@
         };
       });
       
-      const hasData = pieData.length > 0;
-      if (!hasData) {
+      if (pieData.length === 0) {
         console.warn(`No data to display for pie chart: ${canvasId}`);
+        return null;
       }
       
       // Color palette - matching card colors
@@ -2352,16 +2319,6 @@
       const legendData = pieData.map(item => item.name);
       
       const option = {
-        title: hasData ? undefined : {
-          text: 'Data tidak tersedia',
-          left: 'center',
-          top: 'center',
-          textStyle: {
-            color: '#999',
-            fontSize: 16,
-            fontWeight: 'normal'
-          }
-        },
         tooltip: {
           trigger: 'item',
           confine: true,

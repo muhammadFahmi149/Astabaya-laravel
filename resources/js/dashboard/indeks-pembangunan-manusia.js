@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE = window.API_BASE;
+    const API_BASE = window.APP_CONFIG ? window.APP_CONFIG.apiUrl : '/api';
     
     // ========== Load all IPM data from APIs ==========
     async function loadAllIPMData() {
@@ -71,6 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const yearEl = document.getElementById('uhh-sp-year');
         if (el) el.textContent = latest.value != null ? Number(latest.value).toFixed(2) : '-';
         if (yearEl) yearEl.textContent = latest.year != null ? `Tahun ${latest.year}` : 'Data tidak tersedia';
+      } else {
+        const el = document.getElementById('uhh-sp-value');
+        const yearEl = document.getElementById('uhh-sp-year');
+        if (el) el.textContent = '-';
+        if (yearEl) yearEl.textContent = 'Data tidak tersedia';
       }
 
       // Update HLS
@@ -81,6 +86,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const yearEl = document.getElementById('hls-year');
         if (el) el.textContent = latest.value != null ? Number(latest.value).toFixed(2) : '-';
         if (yearEl) yearEl.textContent = latest.year != null ? `Tahun ${latest.year}` : 'Data tidak tersedia';
+      } else {
+        const el = document.getElementById('hls-value');
+        const yearEl = document.getElementById('hls-year');
+        if (el) el.textContent = '-';
+        if (yearEl) yearEl.textContent = 'Data tidak tersedia';
       }
 
       // Update RLS
@@ -91,6 +101,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const yearEl = document.getElementById('rls-year');
         if (el) el.textContent = latest.value != null ? Number(latest.value).toFixed(2) : '-';
         if (yearEl) yearEl.textContent = latest.year != null ? `Tahun ${latest.year}` : 'Data tidak tersedia';
+      } else {
+        const el = document.getElementById('rls-value');
+        const yearEl = document.getElementById('rls-year');
+        if (el) el.textContent = '-';
+        if (yearEl) yearEl.textContent = 'Data tidak tersedia';
       }
 
       // Update Pengeluaran per Kapita
@@ -101,6 +116,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const yearEl = document.getElementById('pengeluaran-year');
         if (el) el.textContent = latest.value != null ? `Rp ${Number(latest.value).toFixed(2)} Juta` : '-';
         if (yearEl) yearEl.textContent = latest.year != null ? `Tahun ${latest.year}` : 'Data tidak tersedia';
+      } else {
+        const el = document.getElementById('pengeluaran-value');
+        const yearEl = document.getElementById('pengeluaran-year');
+        if (el) el.textContent = '-';
+        if (yearEl) yearEl.textContent = 'Data tidak tersedia';
       }
 
       // Update Indeks Kesehatan
@@ -111,6 +131,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const yearEl = document.getElementById('indeks-kesehatan-year');
         if (el) el.textContent = latest.value != null ? Number(latest.value).toFixed(2) : '-';
         if (yearEl) yearEl.textContent = latest.year != null ? `Tahun ${latest.year}` : 'Data tidak tersedia';
+      } else {
+        const el = document.getElementById('indeks-kesehatan-value');
+        const yearEl = document.getElementById('indeks-kesehatan-year');
+        if (el) el.textContent = '-';
+        if (yearEl) yearEl.textContent = 'Data tidak tersedia';
       }
 
       // Update Indeks Pendidikan
@@ -121,6 +146,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const yearEl = document.getElementById('indeks-pendidikan-year');
         if (el) el.textContent = latest.value != null ? Number(latest.value).toFixed(2) : '-';
         if (yearEl) yearEl.textContent = latest.year != null ? `Tahun ${latest.year}` : 'Data tidak tersedia';
+      } else {
+        const el = document.getElementById('indeks-pendidikan-value');
+        const yearEl = document.getElementById('indeks-pendidikan-year');
+        if (el) el.textContent = '-';
+        if (yearEl) yearEl.textContent = 'Data tidak tersedia';
       }
 
       // Update Indeks Hidup Layak
@@ -131,6 +161,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const yearEl = document.getElementById('indeks-hidup-layak-year');
         if (el) el.textContent = latest.value != null ? Number(latest.value).toFixed(2) : '-';
         if (yearEl) yearEl.textContent = latest.year != null ? `Tahun ${latest.year}` : 'Data tidak tersedia';
+      } else {
+        const el = document.getElementById('indeks-hidup-layak-value');
+        const yearEl = document.getElementById('indeks-hidup-layak-year');
+        if (el) el.textContent = '-';
+        if (yearEl) yearEl.textContent = 'Data tidak tersedia';
       }
 
       // Update Surabaya IPM
@@ -141,6 +176,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const yearEl = document.getElementById('surabaya-year');
         if (el) el.textContent = latest.ipm_value ? Number(latest.ipm_value).toFixed(2) : '-';
         if (yearEl) yearEl.textContent = latest.year != null ? `Tahun ${latest.year}` : '-';
+      } else {
+        const el = document.getElementById('surabaya-ipm-value');
+        const yearEl = document.getElementById('surabaya-year');
+        if (el) el.textContent = '-';
+        if (yearEl) yearEl.textContent = 'Data tidak tersedia';
       }
 
       // Update Jatim IPM
@@ -151,6 +191,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const yearEl = document.getElementById('jatim-year');
         if (el) el.textContent = latest.ipm_value ? Number(latest.ipm_value).toFixed(2) : '-';
         if (yearEl) yearEl.textContent = latest.year != null ? `Tahun ${latest.year}` : '-';
+      } else {
+        const el = document.getElementById('jatim-ipm-value');
+        const yearEl = document.getElementById('jatim-year');
+        if (el) el.textContent = '-';
+        if (yearEl) yearEl.textContent = 'Data tidak tersedia';
       }
     }
 
@@ -391,8 +436,8 @@ document.addEventListener("DOMContentLoaded", () => {
             margin: 12
           },
           name: 'Nilai IPM',
-          nameLocation: 'middle',
-          nameGap: 60
+          nameLocation: 'end',
+          nameGap: 15
         },
         series: [
           {
@@ -493,8 +538,8 @@ document.addEventListener("DOMContentLoaded", () => {
           scale: true,
           boundaryGap: ['10%', '10%'],
           name: 'Nilai',
-          nameLocation: 'middle',
-          nameGap: 40
+          nameLocation: 'end',
+          nameGap: 15
         },
         series: [{
           name: title,
@@ -589,6 +634,8 @@ document.addEventListener("DOMContentLoaded", () => {
             color: ['#8b5cf6', '#3b82f6', '#10b981']
           }]
         });
+      } else {
+        compositionChart.clear();
       }
 
       window.chartInstances = window.chartInstances || {};

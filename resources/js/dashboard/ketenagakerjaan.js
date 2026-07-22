@@ -18,11 +18,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     let tpakLakiLakiChange = null;
     let tptPerempuanChange = null;
     let tpakPerempuanChange = null;
-    tptPieChart = null;
-    tptLineChart = null;
-    tpakPieChart = null;
-    tpakLineChart = null;
-    comparisonChart = null;
+    let tptPieChart = null;
+    let tptLineChart = null;
+    let tpakPieChart = null;
+    let tpakLineChart = null;
+    let comparisonChart = null;
 
 
     // Load summary data from API
@@ -147,12 +147,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     const allYears = [...new Set([...originalTptData.map(d => d.year), ...originalTpakData.map(d => d.year)])].sort((a, b) => b - a);
     const yearFilter = document.getElementById('yearFilter');
     if (yearFilter) {
+      yearFilter.innerHTML = ''; // Remove "Loading..." option
       allYears.forEach(year => {
         const option = document.createElement('option');
         option.value = year;
         option.textContent = year;
         yearFilter.appendChild(option);
       });
+      if (allYears.length > 0) {
+        yearFilter.value = allYears[0];
+      }
       yearFilter.addEventListener('change', function() {
         applyYearFilter(this.value);
       });
@@ -212,21 +216,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (tptPerempuanEl) tptPerempuanEl.textContent = tptLatestData.perempuan !== null ? tptLatestData.perempuan.toFixed(2) + '%' : '-';
         if (tptYearEl) tptYearEl.textContent = tptLatestData.year ? `Tahun ${tptLatestData.year}` : 'Data tidak tersedia';
         
-        if (tptChangeEl && tptTotalChange !== null) {
-          let changeHtml = '';
-          if (tptTotalChange > 0) {
-            changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
-              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tptTotalChange.toFixed(2)}%</span>`;
-          } else if (tptTotalChange < 0) {
-            changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
-              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tptTotalChange.toFixed(2)}%</span>`;
+        if (tptChangeEl) {
+          if (tptTotalChange !== null) {
+            let changeHtml = '';
+            if (tptTotalChange > 0) {
+              changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tptTotalChange.toFixed(2)}%</span>`;
+            } else if (tptTotalChange < 0) {
+              changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tptTotalChange.toFixed(2)}%</span>`;
+            } else {
+              changeHtml = '<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>';
+            }
+            if (tptPreviousData && tptPreviousData.year) {
+              changeHtml += `<span style="color: rgba(255, 255, 255, 0.7); font-size: 10px;"> dari ${tptPreviousData.year}</span>`;
+            }
+            tptChangeEl.innerHTML = changeHtml;
           } else {
-            changeHtml = '<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>';
+            tptChangeEl.innerHTML = '';
           }
-          if (tptPreviousData && tptPreviousData.year) {
-            changeHtml += `<span style="color: rgba(255, 255, 255, 0.7); font-size: 10px;"> dari ${tptPreviousData.year}</span>`;
-          }
-          tptChangeEl.innerHTML = changeHtml;
         }
       }
       
@@ -243,21 +251,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (tpakPerempuanEl) tpakPerempuanEl.textContent = tpakLatestData.perempuan !== null ? tpakLatestData.perempuan.toFixed(2) + '%' : '-';
         if (tpakYearEl) tpakYearEl.textContent = tpakLatestData.year ? `Tahun ${tpakLatestData.year}` : 'Data tidak tersedia';
         
-        if (tpakChangeEl && tpakTotalChange !== null) {
-          let changeHtml = '';
-          if (tpakTotalChange > 0) {
-            changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
-              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tpakTotalChange.toFixed(2)}%</span>`;
-          } else if (tpakTotalChange < 0) {
-            changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
-              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tpakTotalChange.toFixed(2)}%</span>`;
+        if (tpakChangeEl) {
+          if (tpakTotalChange !== null) {
+            let changeHtml = '';
+            if (tpakTotalChange > 0) {
+              changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tpakTotalChange.toFixed(2)}%</span>`;
+            } else if (tpakTotalChange < 0) {
+              changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tpakTotalChange.toFixed(2)}%</span>`;
+            } else {
+              changeHtml = '<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>';
+            }
+            if (tpakPreviousData && tpakPreviousData.year) {
+              changeHtml += `<span style="color: rgba(255, 255, 255, 0.7); font-size: 10px;"> dari ${tpakPreviousData.year}</span>`;
+            }
+            tpakChangeEl.innerHTML = changeHtml;
           } else {
-            changeHtml = '<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>';
+            tpakChangeEl.innerHTML = '';
           }
-          if (tpakPreviousData && tpakPreviousData.year) {
-            changeHtml += `<span style="color: rgba(255, 255, 255, 0.7); font-size: 10px;"> dari ${tpakPreviousData.year}</span>`;
-          }
-          tpakChangeEl.innerHTML = changeHtml;
         }
       }
       
@@ -281,21 +293,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         tptTabTotalEl.textContent = tptLatestData.total !== null ? tptLatestData.total.toFixed(2) + '%' : '-';
       }
       
-      if (tptTabTotalChangeEl && tptTotalChange !== null) {
-        let changeHtml = '';
-        if (tptTotalChange > 0) {
-          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tptTotalChange.toFixed(2)}%</span>`;
-        } else if (tptTotalChange < 0) {
-          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tptTotalChange.toFixed(2)}%</span>`;
+      if (tptTabTotalChangeEl) {
+        if (tptTotalChange !== null) {
+          let changeHtml = '';
+          if (tptTotalChange > 0) {
+            changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tptTotalChange.toFixed(2)}%</span>`;
+          } else if (tptTotalChange < 0) {
+            changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tptTotalChange.toFixed(2)}%</span>`;
+          } else {
+            changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          }
+          if (tptPreviousData && tptPreviousData.year) {
+            changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tptPreviousData.year}</span>`;
+          }
+          tptTabTotalChangeEl.innerHTML = changeHtml;
         } else {
-          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          tptTabTotalChangeEl.innerHTML = '';
         }
-        if (tptPreviousData && tptPreviousData.year) {
-          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tptPreviousData.year}</span>`;
-        }
-        tptTabTotalChangeEl.innerHTML = changeHtml;
       }
       
       if (tptTabTotalYearEl) {
@@ -311,21 +327,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         tptTabLakiEl.textContent = tptLatestData.laki_laki !== null ? tptLatestData.laki_laki.toFixed(2) + '%' : '-';
       }
       
-      if (tptTabLakiChangeEl && tptLakiLakiChange !== null) {
-        let changeHtml = '';
-        if (tptLakiLakiChange > 0) {
-          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tptLakiLakiChange.toFixed(2)}%</span>`;
-        } else if (tptLakiLakiChange < 0) {
-          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tptLakiLakiChange.toFixed(2)}%</span>`;
+      if (tptTabLakiChangeEl) {
+        if (tptLakiLakiChange !== null) {
+          let changeHtml = '';
+          if (tptLakiLakiChange > 0) {
+            changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tptLakiLakiChange.toFixed(2)}%</span>`;
+          } else if (tptLakiLakiChange < 0) {
+            changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tptLakiLakiChange.toFixed(2)}%</span>`;
+          } else {
+            changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          }
+          if (tptPreviousData && tptPreviousData.year) {
+            changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tptPreviousData.year}</span>`;
+          }
+          tptTabLakiChangeEl.innerHTML = changeHtml;
         } else {
-          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          tptTabLakiChangeEl.innerHTML = '';
         }
-        if (tptPreviousData && tptPreviousData.year) {
-          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tptPreviousData.year}</span>`;
-        }
-        tptTabLakiChangeEl.innerHTML = changeHtml;
       }
       
       if (tptTabLakiYearEl) {
@@ -341,21 +361,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         tptTabPerempuanEl.textContent = tptLatestData.perempuan !== null ? tptLatestData.perempuan.toFixed(2) + '%' : '-';
       }
       
-      if (tptTabPerempuanChangeEl && tptPerempuanChange !== null) {
-        let changeHtml = '';
-        if (tptPerempuanChange > 0) {
-          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tptPerempuanChange.toFixed(2)}%</span>`;
-        } else if (tptPerempuanChange < 0) {
-          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tptPerempuanChange.toFixed(2)}%</span>`;
+      if (tptTabPerempuanChangeEl) {
+        if (tptPerempuanChange !== null) {
+          let changeHtml = '';
+          if (tptPerempuanChange > 0) {
+            changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tptPerempuanChange.toFixed(2)}%</span>`;
+          } else if (tptPerempuanChange < 0) {
+            changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tptPerempuanChange.toFixed(2)}%</span>`;
+          } else {
+            changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          }
+          if (tptPreviousData && tptPreviousData.year) {
+            changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tptPreviousData.year}</span>`;
+          }
+          tptTabPerempuanChangeEl.innerHTML = changeHtml;
         } else {
-          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          tptTabPerempuanChangeEl.innerHTML = '';
         }
-        if (tptPreviousData && tptPreviousData.year) {
-          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tptPreviousData.year}</span>`;
-        }
-        tptTabPerempuanChangeEl.innerHTML = changeHtml;
       }
       
       if (tptTabPerempuanYearEl) {
@@ -382,21 +406,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         tpakTabTotalEl.textContent = tpakLatestData.total !== null ? tpakLatestData.total.toFixed(2) + '%' : '-';
       }
       
-      if (tpakTabTotalChangeEl && tpakTotalChange !== null) {
-        let changeHtml = '';
-        if (tpakTotalChange > 0) {
-          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tpakTotalChange.toFixed(2)}%</span>`;
-        } else if (tpakTotalChange < 0) {
-          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tpakTotalChange.toFixed(2)}%</span>`;
+      if (tpakTabTotalChangeEl) {
+        if (tpakTotalChange !== null) {
+          let changeHtml = '';
+          if (tpakTotalChange > 0) {
+            changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tpakTotalChange.toFixed(2)}%</span>`;
+          } else if (tpakTotalChange < 0) {
+            changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tpakTotalChange.toFixed(2)}%</span>`;
+          } else {
+            changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          }
+          if (tpakPreviousData && tpakPreviousData.year) {
+            changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tpakPreviousData.year}</span>`;
+          }
+          tpakTabTotalChangeEl.innerHTML = changeHtml;
         } else {
-          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          tpakTabTotalChangeEl.innerHTML = '';
         }
-        if (tpakPreviousData && tpakPreviousData.year) {
-          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tpakPreviousData.year}</span>`;
-        }
-        tpakTabTotalChangeEl.innerHTML = changeHtml;
       }
       
       if (tpakTabTotalYearEl) {
@@ -412,21 +440,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         tpakTabLakiEl.textContent = tpakLatestData.laki_laki !== null ? tpakLatestData.laki_laki.toFixed(2) + '%' : '-';
       }
       
-      if (tpakTabLakiChangeEl && tpakLakiLakiChange !== null) {
-        let changeHtml = '';
-        if (tpakLakiLakiChange > 0) {
-          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tpakLakiLakiChange.toFixed(2)}%</span>`;
-        } else if (tpakLakiLakiChange < 0) {
-          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tpakLakiLakiChange.toFixed(2)}%</span>`;
+      if (tpakTabLakiChangeEl) {
+        if (tpakLakiLakiChange !== null) {
+          let changeHtml = '';
+          if (tpakLakiLakiChange > 0) {
+            changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tpakLakiLakiChange.toFixed(2)}%</span>`;
+          } else if (tpakLakiLakiChange < 0) {
+            changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tpakLakiLakiChange.toFixed(2)}%</span>`;
+          } else {
+            changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          }
+          if (tpakPreviousData && tpakPreviousData.year) {
+            changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tpakPreviousData.year}</span>`;
+          }
+          tpakTabLakiChangeEl.innerHTML = changeHtml;
         } else {
-          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          tpakTabLakiChangeEl.innerHTML = '';
         }
-        if (tpakPreviousData && tpakPreviousData.year) {
-          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tpakPreviousData.year}</span>`;
-        }
-        tpakTabLakiChangeEl.innerHTML = changeHtml;
       }
       
       if (tpakTabLakiYearEl) {
@@ -442,21 +474,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         tpakTabPerempuanEl.textContent = tpakLatestData.perempuan !== null ? tpakLatestData.perempuan.toFixed(2) + '%' : '-';
       }
       
-      if (tpakTabPerempuanChangeEl && tpakPerempuanChange !== null) {
-        let changeHtml = '';
-        if (tpakPerempuanChange > 0) {
-          changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tpakPerempuanChange.toFixed(2)}%</span>`;
-        } else if (tpakPerempuanChange < 0) {
-          changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
-            <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tpakPerempuanChange.toFixed(2)}%</span>`;
+      if (tpakTabPerempuanChangeEl) {
+        if (tpakPerempuanChange !== null) {
+          let changeHtml = '';
+          if (tpakPerempuanChange > 0) {
+            changeHtml = `<span style="color: #28a745; font-size: 12px;">▲</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">+${tpakPerempuanChange.toFixed(2)}%</span>`;
+          } else if (tpakPerempuanChange < 0) {
+            changeHtml = `<span style="color: #dc3545; font-size: 12px;">▼</span>
+              <span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">${tpakPerempuanChange.toFixed(2)}%</span>`;
+          } else {
+            changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          }
+          if (tpakPreviousData && tpakPreviousData.year) {
+            changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tpakPreviousData.year}</span>`;
+          }
+          tpakTabPerempuanChangeEl.innerHTML = changeHtml;
         } else {
-          changeHtml = `<span style="color: rgba(255, 255, 255, 0.9); font-size: 12px;">-</span>`;
+          tpakTabPerempuanChangeEl.innerHTML = '';
         }
-        if (tpakPreviousData && tpakPreviousData.year) {
-          changeHtml += `<span style="color: rgba(255, 255, 255, 0.8); font-size: 11px;"> dari ${tpakPreviousData.year}</span>`;
-        }
-        tpakTabPerempuanChangeEl.innerHTML = changeHtml;
       }
       
       if (tpakTabPerempuanYearEl) {
@@ -605,8 +641,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       tptLineChart = echarts.getInstanceByDom(tptLineChartDom) || echarts.init(tptLineChartDom);
     }
     
-    // Filter TPT data starting from 2017
-    const tptFilteredData = tptData.filter(d => d.year >= 2017);
+    // Filter TPT data for the last 10 years
+    const tptFilteredData = tptData.slice(-10);
     const tptYears = tptFilteredData.map(d => d.year.toString());
     const tptTotalValues = tptFilteredData.map(d => {
       if (d.total !== null && d.total !== undefined) {
@@ -834,8 +870,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       tpakLineChart = echarts.getInstanceByDom(tpakLineChartDom) || echarts.init(tpakLineChartDom);
     }
     
-    // Filter TPAK data starting from 2017
-    const tpakFilteredData = tpakData.filter(d => d.year >= 2017);
+    // Filter TPAK data for the last 10 years
+    const tpakFilteredData = tpakData.slice(-10);
     const tpakYears = tpakFilteredData.map(d => d.year.toString());
     const tpakTotalValues = tpakFilteredData.map(d => {
       if (d.total !== null && d.total !== undefined) {
@@ -974,8 +1010,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const allYearsSet = new Set([...tptData.map(d => d.year), ...tpakData.map(d => d.year)]);
     const allYears = Array.from(allYearsSet).sort((a, b) => a - b);
     
-    // Filter years starting from 2017
-    const filteredYears = allYears.filter(year => year >= 2017);
+    // Filter years for the last 10 years
+    const filteredYears = allYears.slice(-10);
     const years = filteredYears.map(y => y.toString());
     
     // Get TPT total values for years from 2017
@@ -1315,8 +1351,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Export functions for Comparison Chart
     function exportComparisonToExcel() {
       const allYears = [...new Set([...tptData.map(d => d.year), ...tpakData.map(d => d.year)])].sort();
-      // Filter years starting from 2017
-      const filteredYears = allYears.filter(year => year >= 2017);
+      // Filter years for the last 10 years
+      const filteredYears = allYears.slice(-10);
       const exportData = [];
       exportData.push(['Tahun', 'TPT (%)', 'TPAK (%)']);
       filteredYears.forEach(year => {

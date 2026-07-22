@@ -13,7 +13,15 @@
 
 @section('content')
 <div class="container py-4">
-  <h3 class="font-weight-bold mb-4">Ketenagakerjaan</h3>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="font-weight-bold mb-0">Ketenagakerjaan</h3>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <label for="yearFilter" style="margin: 0; font-weight: 500; color: #333; font-size: 13px; white-space: nowrap;"><i class="fas fa-filter me-1"></i>Tahun:</label>
+      <select id="yearFilter" class="form-control" style="width: auto; max-width: 200px;">
+        <option value="">Loading...</option>
+      </select>
+    </div>
+  </div>
   
   <!-- Rangkuman Data Ketenagakerjaan -->
   <div class="row mb-4">

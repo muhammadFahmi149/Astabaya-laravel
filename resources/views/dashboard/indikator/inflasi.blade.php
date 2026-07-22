@@ -74,10 +74,10 @@
     </div>
   </div>
 
-  <div class="filter-layer"><!-- Filter Tahun untuk Grafik -->
+  <div class="filter-layer" style="position: relative; z-index: 1001;"><!-- Filter Tahun untuk Grafik -->
   <div class="row mb-4">
     <div class="col-md-12">
-      <div class="dashboard-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 20px; position: relative; z-index: 1;">
+      <div class="dashboard-card filter-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 20px; position: relative; z-index: 1001; overflow: visible;">
         <div class="row align-items-center">
           <div class="col-md-3">
             <label for="filterYear" class="form-label mb-2" style="font-weight: 600; color: #333;">
@@ -160,9 +160,9 @@
   </div>
 
   <!-- Filter Komoditas (Fleksibel) -->
-  <div class="row mb-4">
+  <div class="row mb-4" style="position: relative; z-index: 1000;">
     <div class="col-md-12">
-      <div class="dashboard-card filter-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; min-height: auto; overflow: visible;">
+      <div class="dashboard-card filter-card" style="background-color: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 25px; min-height: auto; overflow: visible; position: relative; z-index: 1000;">
         <h5 class="mb-4">
           <i class="fas fa-search me-2"></i>Filter Inflasi Per Komoditas
         </h5>

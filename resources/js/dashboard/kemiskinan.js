@@ -362,6 +362,9 @@
       yAxis: [
         {
           type: 'value',
+          max: function (value) {
+            return Math.ceil(value.max + Math.abs(value.max * 0.2));
+          },
           name: 'Jumlah (Ribu)',
           position: 'left',
           nameLocation: 'end',
@@ -377,6 +380,9 @@
         },
         {
           type: 'value',
+          max: function (value) {
+            return Math.ceil(value.max + Math.abs(value.max * 0.2));
+          },
           name: 'Persentase (%)',
           position: 'right',
           nameLocation: 'end',
@@ -459,6 +465,9 @@
       },
       yAxis: {
         type: 'value',
+        max: function (value) {
+          return Math.ceil(value.max + Math.abs(value.max * 0.2));
+        },
         name: 'Rupiah',
         position: 'left',
         nameLocation: 'end',
@@ -545,6 +554,9 @@
       },
       yAxis: {
         type: 'value',
+        max: function (value) {
+          return value.max + Math.abs(value.max * 0.2);
+        },
         name: 'Indeks Kedalaman (P1)',
         position: 'left',
         nameLocation: 'end',
@@ -616,6 +628,9 @@
       },
       yAxis: {
         type: 'value',
+        max: function (value) {
+          return value.max + Math.abs(value.max * 0.2);
+        },
         name: 'Indeks Keparahan (P2)',
         position: 'left',
         nameLocation: 'end',
@@ -784,6 +799,9 @@
           yAxis: [
             {
               type: 'value',
+          max: function (value) {
+            return Math.ceil(value.max + Math.abs(value.max * 0.2));
+          },
               name: 'Jawa Timur (Juta)',
               position: 'left',
               nameLocation: 'start',
@@ -799,6 +817,9 @@
             },
             {
               type: 'value',
+          max: function (value) {
+            return Math.ceil(value.max + Math.abs(value.max * 0.2));
+          },
               name: 'Surabaya (Ribu)',
               position: 'right',
               nameLocation: 'start',
@@ -893,6 +914,9 @@
           // Hanya 1 y-axis (object, bukan array) - hanya y-axis kiri
           yAxis: {
             type: 'value',
+          max: function (value) {
+            return Math.ceil(value.max + Math.abs(value.max * 0.2));
+          },
             name: config.name + (config.unit ? ' (' + config.unit + ')' : ''),
             position: 'left',
             nameLocation: 'start',

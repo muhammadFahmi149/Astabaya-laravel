@@ -39,9 +39,9 @@
                 <i class="fas fa-calendar-week me-2"></i>PDRB Triwulanan
               </button>
             </div>
-            <div id="globalYearFilterContainer" style="display: none; align-items: center; gap: 10px;">
-              <label for="globalYearFilter" style="margin: 0; font-weight: 500; color: #333;">Filter Tahun:</label>
-              <select id="globalYearFilter" class="form-control" style="width: auto; min-width: 180px; padding: 8px 12px; font-size: 14px; border-radius: 8px;">
+            <div id="globalYearFilterContainer" style="display: none; align-items: center; gap: 8px; margin-left: auto;">
+              <label for="globalYearFilter" style="margin: 0; font-weight: 500; color: #333; font-size: 13px; white-space: nowrap;"><i class="fas fa-filter me-1"></i>Tahun:</label>
+              <select id="globalYearFilter" style="width: auto; min-width: 180px; padding: 8px 12px; font-size: 13px; border-radius: 8px;">
                 <option value="">4 Triwulan Terakhir</option>
                 <!-- Options will be populated by JavaScript -->
               </select>

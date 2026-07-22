@@ -223,6 +223,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             : '';
           
           tpkChangeEl.innerHTML = changeHtml + monthText;
+        } else {
+          tpkChangeEl.innerHTML = '';
         }
       } else {
         tpkValueEl.textContent = '-';
@@ -259,6 +261,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             : '';
           
           mktjChangeEl.innerHTML = changeHtml + monthText;
+        } else {
+          mktjChangeEl.innerHTML = '';
         }
       } else {
         mktjValueEl.textContent = '-';
@@ -288,6 +292,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             : '';
           
           rlmtgabChangeEl.innerHTML = changeHtml + monthText;
+        } else {
+          rlmtgabChangeEl.innerHTML = '';
         }
       } else {
         rlmtgabValueEl.textContent = '-';
@@ -317,6 +323,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             : '';
           
           gprChangeEl.innerHTML = changeHtml + monthText;
+        } else {
+          gprChangeEl.innerHTML = '';
         }
       } else {
         gprValueEl.textContent = '-';

@@ -35,7 +35,7 @@ class PDRBController extends Controller
     /**
      * Cache duration in seconds (5 minutes)
      */
-    private const CACHE_DURATION = 300;
+    private const CACHE_DURATION = 0;
 
     /**
      * Get PDRB Pengeluaran ADHB (Atas Dasar Harga Berlaku) data.
@@ -1336,7 +1336,7 @@ class PDRBController extends Controller
                     PDRBPengeluaranLajuCtoC::distinct()->pluck('year')
                 );
 
-                return $allYears->unique()->sort()->values()->toArray();
+                return $allYears->unique()->sortDesc()->values()->toArray();
             });
 
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);
@@ -2727,7 +2727,7 @@ class PDRBController extends Controller
                     PDRBLapanganUsahaLajuCtoC::distinct()->pluck('year')
                 );
 
-                return $allYears->unique()->sort()->values()->toArray();
+                return $allYears->unique()->sortDesc()->values()->toArray();
             });
 
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);

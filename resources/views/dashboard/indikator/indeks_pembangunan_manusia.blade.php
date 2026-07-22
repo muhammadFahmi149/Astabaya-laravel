@@ -31,113 +31,113 @@ window.APP_CONFIG = {
           <div class="indicator-carousel-wrapper" style="position: relative; overflow: hidden; padding: 0;">
             <div class="indicator-carousel-track" id="ipmIndicatorCarousel" style="display: flex; gap: 15px; will-change: transform;">
               <!-- UHH SP Card -->
-              <div class="indicator-card" style="min-width: 240px; background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <h6 style="font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500;">
+              <div class="indicator-card" style="min-width: 240px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h6 style="font-size: 12px; color: rgba(255, 255, 255, 0.9); margin-bottom: 8px; font-weight: 500;">
                   Usia Harapan Hidup saat Lahir
                 </h6>
-                <h3 style="font-size: 22px; font-weight: 700; color: #333; margin-bottom: 6px;" id="uhh-sp-value">
+                <h3 style="font-size: 22px; font-weight: 700; color: white; margin-bottom: 6px;" id="uhh-sp-value">
                   -
                 </h3>
                 <div id="uhh-sp-comparison" style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
                   <!-- Will be populated by JavaScript -->
                 </div>
-                <small style="color: #999; font-size: 11px;" id="uhh-sp-year">
+                <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px;" id="uhh-sp-year">
                   Data tidak tersedia
                 </small>
               </div>
 
               <!-- HLS Card -->
-              <div class="indicator-card" style="min-width: 240px; background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <h6 style="font-size: 13px; color: #666; margin-bottom: 10px; font-weight: 500;">
+              <div class="indicator-card" style="min-width: 240px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h6 style="font-size: 13px; color: rgba(255, 255, 255, 0.9); margin-bottom: 10px; font-weight: 500;">
                   Harapan Lama Sekolah
                 </h6>
-                <h3 style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 8px;" id="hls-value">
+                <h3 style="font-size: 24px; font-weight: 700; color: white; margin-bottom: 8px;" id="hls-value">
                   -
                 </h3>
                 <div id="hls-comparison" style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
                   <!-- Will be populated by JavaScript -->
                 </div>
-                <small style="color: #999; font-size: 11px;" id="hls-year">
+                <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px;" id="hls-year">
                   Data tidak tersedia
                 </small>
               </div>
 
               <!-- RLS Card -->
-              <div class="indicator-card" style="min-width: 240px; background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <h6 style="font-size: 13px; color: #666; margin-bottom: 10px; font-weight: 500;">
+              <div class="indicator-card" style="min-width: 240px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h6 style="font-size: 13px; color: rgba(255, 255, 255, 0.9); margin-bottom: 10px; font-weight: 500;">
                   Rata-rata Lama Sekolah
                 </h6>
-                <h3 style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 8px;" id="rls-value">
+                <h3 style="font-size: 24px; font-weight: 700; color: white; margin-bottom: 8px;" id="rls-value">
                   -
                 </h3>
                 <div id="rls-comparison" style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
                   <!-- Will be populated by JavaScript -->
                 </div>
-                <small style="color: #999; font-size: 11px;" id="rls-year">
+                <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px;" id="rls-year">
                   Data tidak tersedia
                 </small>
               </div>
 
               <!-- Pengeluaran per Kapita Card -->
-              <div class="indicator-card" style="min-width: 240px; background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <h6 style="font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 500;">
+              <div class="indicator-card" style="min-width: 240px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h6 style="font-size: 12px; color: rgba(255, 255, 255, 0.9); margin-bottom: 8px; font-weight: 500;">
                   Pengeluaran per Kapita
                 </h6>
-                <h3 style="font-size: 22px; font-weight: 700; color: #333; margin-bottom: 6px; word-break: break-word; overflow-wrap: break-word; white-space: normal;" id="pengeluaran-value">
+                <h3 style="font-size: 22px; font-weight: 700; color: white; margin-bottom: 6px; word-break: break-word; overflow-wrap: break-word; white-space: normal;" id="pengeluaran-value">
                   -
                 </h3>
                 <div id="pengeluaran-comparison" style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
                   <!-- Will be populated by JavaScript -->
                 </div>
-                <small style="color: #999; font-size: 11px;" id="pengeluaran-year">
+                <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px;" id="pengeluaran-year">
                   Data tidak tersedia
                 </small>
               </div>
 
               <!-- Indeks Kesehatan Card -->
-              <div class="indicator-card" style="min-width: 240px; background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <h6 style="font-size: 13px; color: #666; margin-bottom: 10px; font-weight: 500;">
+              <div class="indicator-card" style="min-width: 240px; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h6 style="font-size: 13px; color: rgba(255, 255, 255, 0.9); margin-bottom: 10px; font-weight: 500;">
                   Indeks Kesehatan
                 </h6>
-                <h3 style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 8px;" id="indeks-kesehatan-value">
+                <h3 style="font-size: 24px; font-weight: 700; color: white; margin-bottom: 8px;" id="indeks-kesehatan-value">
                   -
                 </h3>
                 <div id="indeks-kesehatan-comparison" style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
                   <!-- Will be populated by JavaScript -->
                 </div>
-                <small style="color: #999; font-size: 11px;" id="indeks-kesehatan-year">
+                <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px;" id="indeks-kesehatan-year">
                   Data tidak tersedia
                 </small>
               </div>
 
               <!-- Indeks Pendidikan Card -->
-              <div class="indicator-card" style="min-width: 240px; background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <h6 style="font-size: 13px; color: #666; margin-bottom: 10px; font-weight: 500;">
+              <div class="indicator-card" style="min-width: 240px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h6 style="font-size: 13px; color: rgba(255, 255, 255, 0.9); margin-bottom: 10px; font-weight: 500;">
                   Indeks Pendidikan
                 </h6>
-                <h3 style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 8px;" id="indeks-pendidikan-value">
+                <h3 style="font-size: 24px; font-weight: 700; color: white; margin-bottom: 8px;" id="indeks-pendidikan-value">
                   -
                 </h3>
                 <div id="indeks-pendidikan-comparison" style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
                   <!-- Will be populated by JavaScript -->
                 </div>
-                <small style="color: #999; font-size: 11px;" id="indeks-pendidikan-year">
+                <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px;" id="indeks-pendidikan-year">
                   Data tidak tersedia
                 </small>
               </div>
 
               <!-- Indeks Hidup Layak Card -->
-              <div class="indicator-card" style="min-width: 240px; background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <h6 style="font-size: 13px; color: #666; margin-bottom: 10px; font-weight: 500;">
+              <div class="indicator-card" style="min-width: 240px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h6 style="font-size: 13px; color: rgba(255, 255, 255, 0.9); margin-bottom: 10px; font-weight: 500;">
                   Indeks Hidup Layak
                 </h6>
-                <h3 style="font-size: 24px; font-weight: 700; color: #333; margin-bottom: 8px;" id="indeks-hidup-layak-value">
+                <h3 style="font-size: 24px; font-weight: 700; color: white; margin-bottom: 8px;" id="indeks-hidup-layak-value">
                   -
                 </h3>
                 <div id="indeks-hidup-layak-comparison" style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
                   <!-- Will be populated by JavaScript -->
                 </div>
-                <small style="color: #999; font-size: 11px;" id="indeks-hidup-layak-year">
+                <small style="color: rgba(255, 255, 255, 0.8); font-size: 11px;" id="indeks-hidup-layak-year">
                   Data tidak tersedia
                 </small>
               </div>

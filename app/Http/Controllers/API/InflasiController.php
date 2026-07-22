@@ -14,7 +14,7 @@ use App\Models\InflasiPerKomoditas;
 class InflasiController extends Controller
 {
     /**
-     * Cache duration in seconds (5 minutes)
+     * Cache duration in seconds (0 for testing, normally 300)
      */
     private const CACHE_DURATION = 300;
 

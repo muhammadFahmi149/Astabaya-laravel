@@ -77,6 +77,7 @@ document.addEventListener('click', function(event) {
       if (menu && !menu.contains(clickedEl)) {
         // Special case for filterYear which doesn't use the body-append logic
         if (d.toggleId === 'filterYearToggle') {
+          menu.style.display = 'none';
           menu.classList.remove('show');
         }
       }
@@ -466,10 +467,15 @@ function setupYearFilter() {
   // Toggle dropdown
   filterYearToggle.addEventListener('click', function(e) {
     e.stopPropagation();
-    const isOpen = filterYearDropdown.classList.contains('show');
-    if(isOpen) filterYearDropdown.classList.remove('show'); else filterYearDropdown.classList.add('show');
+    const isOpen = filterYearDropdown.style.display === 'block';
     
-    // Rotate chevron icon
+    if (isOpen) {
+      filterYearDropdown.style.display = 'none';
+      filterYearDropdown.classList.remove('show');
+    } else {
+      filterYearDropdown.style.display = 'block';
+      filterYearDropdown.classList.add('show');
+    }
     const chevron = filterYearToggle.querySelector('i');
     if (chevron) {
       chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
@@ -519,6 +525,7 @@ function setupYearFilter() {
   // Close dropdown when clicking outside
   document.addEventListener('click', function(e) {
     if (!filterYearToggle.contains(e.target) && !filterYearDropdown.contains(e.target)) {
+      filterYearDropdown.style.display = 'none';
       filterYearDropdown.classList.remove('show');
       const chevron = filterYearToggle.querySelector('i');
       if (chevron) {
@@ -837,9 +844,11 @@ function setupKomoditasFilter() {
       e.stopPropagation();
       e.preventDefault();
       
-      const isVisible = filterTahunDropdown.classList.contains('show');
-      
-      if (!isVisible) {
+      const isOpen = filterTahunDropdown.classList.contains('show');
+      if (isOpen) {
+        filterTahunDropdown.style.display = 'none';
+        filterTahunDropdown.classList.remove('show');
+      } else {
         if (filterTahunDropdown.parentNode !== filterTahunWrapper) {
           filterTahunWrapper.appendChild(filterTahunDropdown);
         }
@@ -849,10 +858,10 @@ function setupKomoditasFilter() {
         filterTahunDropdown.style.left = '0';
         filterTahunDropdown.style.right = '0';
         filterTahunDropdown.style.marginTop = '4px';
+        
+        filterTahunDropdown.style.display = 'block';
         filterTahunDropdown.classList.add('show');
         filterTahunDropdown.style.zIndex = '900';
-      } else {
-        filterTahunDropdown.classList.remove('show');
       }
     });
   }
@@ -888,10 +897,12 @@ function setupKomoditasFilter() {
     filterKomoditasDropdown.style.left = '0';
     filterKomoditasDropdown.style.right = '0';
     filterKomoditasDropdown.style.marginTop = '4px';
-    filterKomoditasDropdown.classList.add('show');
     filterKomoditasDropdown.style.zIndex = '900';
     filterKomoditasDropdown.style.maxHeight = '300px';
     filterKomoditasDropdown.style.overflowY = 'auto';
+    
+    filterKomoditasDropdown.style.display = 'block';
+    filterKomoditasDropdown.classList.add('show');
     
     showSearchInput();
     
@@ -903,6 +914,7 @@ function setupKomoditasFilter() {
 
   // Hide komoditas dropdown
   function hideKomoditasDropdown() {
+    filterKomoditasDropdown.style.display = 'none';
     filterKomoditasDropdown.classList.remove('show');
   }
 
@@ -914,6 +926,7 @@ function setupKomoditasFilter() {
         const clickedInsideDropdown = filterTahunDropdown.contains(e.target);
         
         if (!clickedInsideWrapper && !clickedInsideDropdown) {
+          filterTahunDropdown.style.display = 'none';
           filterTahunDropdown.classList.remove('show');
         }
       }
@@ -1204,8 +1217,10 @@ function setupKomoditasFilter() {
   // Update clear button visibility
   function updateClearButton() {
     if (selectedKomoditasList.length > 0 || filterKomoditasSearch.value.trim() !== '') {
+      filterKomoditasClear.style.display = 'block';
       filterKomoditasClear.classList.add('show');
     } else {
+      filterKomoditasClear.style.display = 'none';
       filterKomoditasClear.classList.remove('show');
     }
   }
@@ -1213,8 +1228,10 @@ function setupKomoditasFilter() {
   // Show search input and hide placeholder
   function showSearchInput() {
     if (selectedKomoditasList.length === 0) {
+      filterKomoditasPlaceholder.style.display = 'none';
       filterKomoditasPlaceholder.classList.remove('show');
     }
+    filterKomoditasSearch.style.display = 'block';
     filterKomoditasSearch.classList.add('show');
     setTimeout(() => {
       filterKomoditasSearch.focus();
@@ -1225,9 +1242,10 @@ function setupKomoditasFilter() {
   function hideSearchInput() {
     if (selectedKomoditasList.length === 0 && filterKomoditasSearch.value.trim() === '') {
       filterKomoditasPlaceholder.style.display = 'inline';
-      filterKomoditasSearch.classList.remove('show');
-      filterKomoditasSearch.value = '';
     }
+    filterKomoditasSearch.style.display = 'none';
+    filterKomoditasSearch.classList.remove('show');
+    filterKomoditasSearch.value = '';
   }
 
   // Check if filter is valid and enable/disable button
@@ -1262,11 +1280,12 @@ function setupKomoditasFilter() {
     option.classList.add('selected');
 
     // Update display
-    filterTahunPlaceholder.classList.remove('show');
+    filterTahunPlaceholder.style.display = 'none';
     filterTahunSelected.style.display = 'inline';
-    filterTahunSelected.textContent = text;
+    filterTahunSelected.textContent = option.textContent;
 
     // Close dropdown
+    filterTahunDropdown.style.display = 'none';
     filterTahunDropdown.classList.remove('show');
 
     // Update state and reload komoditas
@@ -1330,7 +1349,8 @@ function setupKomoditasFilter() {
     
     // Reset UI
     filterTahunPlaceholder.style.display = 'inline';
-    filterTahunSelected.classList.remove('show');
+    filterTahunSelected.style.display = 'none';
+    filterTahunSelected.textContent = '';
     filterTahunDropdown.querySelectorAll('.filter-option-tahun').forEach(opt => opt.classList.remove('selected'));
     
     filterKomoditasTags.innerHTML = '';
@@ -1474,7 +1494,15 @@ function renderMultipleKomoditasChart(results, year) {
   });
 
   if (commodityNames.length === 0) {
-    console.warn('No valid data for chart');
+    perKomoditasChart.clear();
+    perKomoditasChart.setOption({
+      title: {
+        text: 'Data tidak tersedia',
+        left: 'center',
+        top: 'center',
+        textStyle: { color: '#6c757d', fontSize: 14, fontWeight: 'normal' }
+      }
+    });
     return;
   }
 
@@ -1600,7 +1628,6 @@ function renderMultipleKomoditasChart(results, year) {
       },
       axisLabel: {
         rotate: needsRotation ? 45 : 0,
-        interval: labels.length <= 12 ? 0 : Math.max(0, Math.floor(labels.length / 12)),
         fontSize: 11,
         color: '#666',
         margin: needsRotation ? 15 : 8
@@ -1654,7 +1681,15 @@ function renderKomoditasChart(data, komoditasName) {
   }
   
   if (!data || data.length === 0) {
-    console.warn('No data available for komoditas chart');
+    perKomoditasChart.clear();
+    perKomoditasChart.setOption({
+      title: {
+        text: 'Data tidak tersedia',
+        left: 'center',
+        top: 'center',
+        textStyle: { color: '#6c757d', fontSize: 14, fontWeight: 'normal' }
+      }
+    });
     return;
   }
   
@@ -1718,7 +1753,6 @@ function renderKomoditasChart(data, komoditasName) {
       },
       axisLabel: {
         rotate: needsRotation ? 45 : 0,
-        interval: labels.length <= 12 ? 0 : Math.max(0, Math.floor(labels.length / 12)),
         fontSize: 11,
         color: '#666',
         formatter: function(value) {
@@ -1783,23 +1817,6 @@ function renderKomoditasChart(data, komoditasName) {
           borderWidth: 3,
           shadowBlur: 10,
           shadowColor: 'rgba(139, 92, 246, 0.5)'
-        },
-        lineStyle: {
-          width: 3
-        }
-      },
-      areaStyle: {
-        color: {
-          type: 'linear',
-          x: 0,
-          y: 0,
-          x2: 0,
-          y2: 1,
-          colorStops: [{
-            offset: 0, color: 'rgba(139, 92, 246, 0.3)'
-          }, {
-            offset: 1, color: 'rgba(139, 92, 246, 0.05)'
-          }]
         }
       }
     }]

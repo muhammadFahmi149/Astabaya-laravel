@@ -280,6 +280,13 @@ document.addEventListener("DOMContentLoaded", () => {
           nameTextStyle: {
             fontSize: isMobile ? 10 : 12
           },
+          scale: true,
+          min: function (value) {
+            return Math.floor(value.min - Math.abs(value.min * 0.05));
+          },
+          max: function (value) {
+            return Math.ceil(value.max + Math.abs(value.max * 0.05));
+          },
           axisLabel: {
             formatter: function(value) {
               return window.formatRupiah(value);
