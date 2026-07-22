@@ -4,17 +4,17 @@
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>@yield('title', 'Aastabaya')</title>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>" />
+    <title><?php echo $__env->yieldContent('title', 'Aastabaya'); ?></title>
     <!-- plugins:css -->
-    <link rel="stylesheet" href="{{ asset('assets/vendors/feather/feather.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendors/ti-icons/css/themify-icons.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendors/css/vendor.bundle.base.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendors/font-awesome/css/font-awesome.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendors/mdi/css/materialdesignicons.min.css') }}" />
+    <link rel="stylesheet" href="<?php echo e(asset('assets/vendors/feather/feather.css')); ?>" />
+    <link rel="stylesheet" href="<?php echo e(asset('assets/vendors/ti-icons/css/themify-icons.css')); ?>" />
+    <link rel="stylesheet" href="<?php echo e(asset('assets/vendors/css/vendor.bundle.base.css')); ?>" />
+    <link rel="stylesheet" href="<?php echo e(asset('assets/vendors/font-awesome/css/font-awesome.min.css')); ?>" />
+    <link rel="stylesheet" href="<?php echo e(asset('assets/vendors/mdi/css/materialdesignicons.min.css')); ?>" />
     <!-- endinject -->
     <!-- Plugin css for this page -->
-    <link rel="stylesheet" href="{{ asset('assets/vendors/ti-icons/css/themify-icons.css') }}" />
+    <link rel="stylesheet" href="<?php echo e(asset('assets/vendors/ti-icons/css/themify-icons.css')); ?>" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" />
@@ -22,11 +22,11 @@
 
     <!-- End plugin css for this page -->
     <!-- inject:css -->
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
-    <link rel="stylesheet" href="{{ asset('css/share-styles.css') }}" />
+    <link rel="stylesheet" href="<?php echo e(asset('assets/css/style.css')); ?>" />
+    <link rel="stylesheet" href="<?php echo e(asset('css/share-styles.css')); ?>" />
     <!-- endinject -->
-    <link rel="shortcut icon" href="{{ asset('images/Aastabaya-favicon(2).png') }}" />
-    @stack('styles')
+    <link rel="shortcut icon" href="<?php echo e(asset('images/Aastabaya-favicon(2).png')); ?>" />
+    <?php echo $__env->yieldPushContent('styles'); ?>
     <style>
       /* Default Modal Backdrop - Hitam Semi-transparan (untuk modal infografis, publikasi, dll) */
       .modal-backdrop {
@@ -43,7 +43,7 @@
       
       /* Modal Background Overlay - Hanya untuk Login/Register Modal */
       body.login-register-modal-open .modal-backdrop {
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("{{ asset('img/background-login-register.jpg') }}") no-repeat center center !important;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("<?php echo e(asset('img/background-login-register.jpg')); ?>") no-repeat center center !important;
         background-size: cover !important;
         background-position: center !important;
         backdrop-filter: blur(5px);
@@ -51,7 +51,7 @@
       
       /* Body background when login/register modal is open */
       body.login-register-modal-open {
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("{{ asset('img/background-login-register.jpg') }}") no-repeat center center;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("<?php echo e(asset('img/background-login-register.jpg')); ?>") no-repeat center center;
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
@@ -462,7 +462,7 @@
     <div class="container-scroller">
       <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-between">
-          <a class="navbar-brand brand-logo" href="{{ route('dashboard') }}"><img src="{{ asset('images/logoastabayav3.png') }}" width="150" height="45" alt="logo" /></a>
+          <a class="navbar-brand brand-logo" href="<?php echo e(route('dashboard')); ?>"><img src="<?php echo e(asset('images/logoastabayav3.png')); ?>" width="150" height="45" alt="logo" /></a>
           <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Toggle sidebar">
             <span class="icon-menu"></span>
           </button>
@@ -470,66 +470,68 @@
         <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
           <!-- Logo akan dipindahkan ke sini ketika sidebar collapsed -->
           <div class="navbar-brand-moved d-none">
-            <a class="navbar-brand brand-logo-moved" href="{{ route('dashboard') }}"><img src="{{ asset('images/logoastabayav3.png') }}" width="150" height="45" alt="logo" /></a>
+            <a class="navbar-brand brand-logo-moved" href="<?php echo e(route('dashboard')); ?>"><img src="<?php echo e(asset('images/logoastabayav3.png')); ?>" width="150" height="45" alt="logo" /></a>
           </div>
           <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item dropdown">
               <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
                 <i class="bi bi-bookmark-star mx-0"></i>
-                @php
+                <?php
                   $bookmarkedCount = isset($bookmarked_items) && is_array($bookmarked_items) ? count($bookmarked_items) : 0;
-                @endphp
-                @if($bookmarkedCount == 0)
+                ?>
+                <?php if($bookmarkedCount == 0): ?>
                 <span class="count" id="bookmarkCount" style="display: none;"></span>
-                @else
+                <?php else: ?>
                 <span class="count" id="bookmarkCount"></span>
-                @endif
+                <?php endif; ?>
               </a>
               <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" id="bookmarkDropdown" aria-labelledby="notificationDropdown">
                 <p class="mb-0 font-weight-normal float-left dropdown-header">Bookmark</p>
                 <div id="bookmarkList">
-                @forelse($bookmarked_items ?? [] as $item)
-                <a class="dropdown-item preview-item" href="{{ $item->url }}">
+                <?php $__empty_1 = true; $__currentLoopData = $bookmarked_items ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <a class="dropdown-item preview-item" href="<?php echo e($item->url); ?>">
                   <div class="preview-thumbnail">
                     <div class="preview-icon bg-primary">
-                        <i class="{{ $item->icon_class ?? 'bi bi-bookmark-fill' }} mx-0"></i>
+                        <i class="<?php echo e($item->icon_class ?? 'bi bi-bookmark-fill'); ?> mx-0"></i>
                     </div>
                   </div>
                   <div class="preview-item-content">
-                    <h6 class="preview-subject font-weight-normal">{{ $item->title }}</h6>
+                    <h6 class="preview-subject font-weight-normal"><?php echo e($item->title); ?></h6>
                   </div>
                 </a>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                   <p class="text-center p-3 text-muted" id="emptyBookmarkMessage">Tidak ada bookmark.</p>
-                @endforelse
+                <?php endif; ?>
                 </div>
               </div>
             </li>
-            @auth
+            <?php if(auth()->guard()->check()): ?>
             <li class="nav-item nav-profile dropdown">
               <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
-                @if(strlen(auth()->user()->username) >= 2)
+                <?php if(strlen(auth()->user()->username) >= 2): ?>
                 <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px; text-transform: uppercase;">
-                  {{ strtoupper(substr(auth()->user()->username, 0, 2)) }}
+                  <?php echo e(strtoupper(substr(auth()->user()->username, 0, 2))); ?>
+
                 </div>
-                @else
+                <?php else: ?>
                 <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px; text-transform: uppercase;">
-                  {{ strtoupper(substr(auth()->user()->username, 0, 1)) }}
+                  <?php echo e(strtoupper(substr(auth()->user()->username, 0, 1))); ?>
+
                 </div>
-                @endif
+                <?php endif; ?>
               </a>
               <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                 <button type="button" class="dropdown-item-button" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal" style="background: none; border: none; width: 100%; text-align: left; padding: 8px 16px; cursor: pointer;"><i class="ti-power-off text-primary"></i>Keluar</button>
               </div>
             </li>
-            @else
+            <?php else: ?>
             <li class="nav-item">
               <div class="d-flex gap-2 align-items-center">
-                <a href="{{ route('login') }}" class="btn btn-sm btn-outline-primary" style="white-space: nowrap;">Masuk</a>
-                <a href="{{ route('signup') }}" class="btn btn-sm btn-primary" style="white-space: nowrap;">Daftar</a>
+                <a href="<?php echo e(route('login')); ?>" class="btn btn-sm btn-outline-primary" style="white-space: nowrap;">Masuk</a>
+                <a href="<?php echo e(route('signup')); ?>" class="btn btn-sm btn-primary" style="white-space: nowrap;">Daftar</a>
               </div>
             </li>
-            @endauth
+            <?php endif; ?>
           </ul>
         </div>
       </nav>
@@ -537,13 +539,13 @@
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
           <ul class="nav">
             <li class="nav-item">
-              <a class="nav-link" href="{{ route('dashboard') }}">
+              <a class="nav-link" href="<?php echo e(route('dashboard')); ?>">
                 <i class="icon-grid menu-icon"></i>
                 <span class="menu-title">Dashboard</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ route('inflasi') }}">
+              <a class="nav-link" href="<?php echo e(route('inflasi')); ?>">
                 <i class="bi bi-graph-up-arrow menu-icon"></i>
                 <span class="menu-title">Inflasi</span>
               </a>
@@ -556,32 +558,32 @@
               </a>
               <div class="collapse" id="PDRB">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="{{ route('pdrb-pengeluaran') }}">PDRB Pengeluaran</a></li>
-                  <li class="nav-item"><a class="nav-link" href="{{ route('pdrb-lapangan-usaha') }}">PDRB Lapangan Usaha</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('pdrb-pengeluaran')); ?>">PDRB Pengeluaran</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('pdrb-lapangan-usaha')); ?>">PDRB Lapangan Usaha</a></li>
                 </ul>
               </div>
 
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ route('kemiskinan') }}">
+              <a class="nav-link" href="<?php echo e(route('kemiskinan')); ?>">
                 <i class="bi bi-heart-pulse menu-icon"></i>
                 <span class="menu-title">Kemiskinan</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ route('kependudukan') }}">
+              <a class="nav-link" href="<?php echo e(route('kependudukan')); ?>">
                 <i class="bi bi-people menu-icon"></i>
                 <span class="menu-title">Kependudukan</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ route('ketenagakerjaan') }}">
+              <a class="nav-link" href="<?php echo e(route('ketenagakerjaan')); ?>">
                 <i class="bi bi-briefcase menu-icon"></i>
                 <span class="menu-title">Ketenagakerjaan</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ route('hotel-occupancy') }}" >
+              <a class="nav-link" href="<?php echo e(route('hotel-occupancy')); ?>" >
                 <i class="bi bi-luggage menu-icon"></i>
                 <span class="menu-title">Tingkat Hunian Hotel</span>
               </a>
@@ -594,37 +596,37 @@
               </a>
               <div class="collapse" id="pembangunan-manusia">
                 <ul class="nav flex-column sub-menu">
-                  <li class="nav-item"><a class="nav-link" href="{{ route('indeks-pembangunan-manusia') }}">IPM</a></li>
-                  <li class="nav-item"><a class="nav-link" href="{{ route('ipm-uhh-sp') }}">UHH SP</a></li>
-                  <li class="nav-item"><a class="nav-link" href="{{ route('ipm-hls') }}">HLS</a></li>
-                  <li class="nav-item"><a class="nav-link" href="{{ route('ipm-rls') }}">RLS</a></li>
-                  <li class="nav-item"><a class="nav-link" href="{{ route('ipm-pengeluaran-per-kapita') }}">Pengeluaran per Kapita</a></li>
-                  <li class="nav-item"><a class="nav-link" href="{{ route('ipm-indeks-kesehatan') }}">Indeks Kesehatan</a></li>
-                  <li class="nav-item"><a class="nav-link" href="{{ route('ipm-indeks-hidup-layak') }}">Indeks Hidup Layak</a></li>
-                  <li class="nav-item"><a class="nav-link" href="{{ route('ipm-indeks-pendidikan') }}">Indeks Pendidikan</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('indeks-pembangunan-manusia')); ?>">IPM</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-uhh-sp')); ?>">UHH SP</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-hls')); ?>">HLS</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-rls')); ?>">RLS</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-pengeluaran-per-kapita')); ?>">Pengeluaran per Kapita</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-indeks-kesehatan')); ?>">Indeks Kesehatan</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-indeks-hidup-layak')); ?>">Indeks Hidup Layak</a></li>
+                  <li class="nav-item"><a class="nav-link" href="<?php echo e(route('ipm-indeks-pendidikan')); ?>">Indeks Pendidikan</a></li>
                 </ul>
               </div>
             </li>
               <li class="nav-item">
-                <a class="nav-link" href="{{ route('gini-ratio') }}">
+                <a class="nav-link" href="<?php echo e(route('gini-ratio')); ?>">
                   <i class="bi bi-percent menu-icon"></i>
                   <span class="menu-title">Gini ratio</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{{ route('publications') }}">
+                <a class="nav-link" href="<?php echo e(route('publications')); ?>">
                   <i class="icon-book menu-icon"></i>
                   <span class="menu-title">Publikasi</span>
                 </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ route('infographics') }}">
+              <a class="nav-link" href="<?php echo e(route('infographics')); ?>">
                 <i class="bi bi-bar-chart-line menu-icon"></i>
                 <span class="menu-title">Infografis</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ route('news') }}">
+              <a class="nav-link" href="<?php echo e(route('news')); ?>">
                 <i class="bi bi-file-earmark-text menu-icon"></i>
                 <span class="menu-title">Berita</span>
               </a>
@@ -633,7 +635,7 @@
         </nav>
         <div class="main-panel">
           <div class="content-wrapper">
-            @yield('content')
+            <?php echo $__env->yieldContent('content'); ?>
           </div>
           <input type="checkbox" id="check" /> <label class="chat-btn" for="check"> <i class="fa fa-commenting-o comment"></i> <i class="fa fa-close close"></i> </label>
           <div class="wrapper">
@@ -664,16 +666,16 @@
     </div>
     <!-- container-scroller -->
     <!-- Core JS from template -->
-    <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script>
+    <script src="<?php echo e(asset('assets/vendors/js/vendor.bundle.base.js')); ?>"></script>
     <!-- Plugin JS -->
-    <script src="{{ asset('assets/vendors/chart.js/chart.umd.js') }}"></script>
+    <script src="<?php echo e(asset('assets/vendors/chart.js/chart.umd.js')); ?>"></script>
     <!-- Custom JS for template -->
-    <script src="{{ asset('assets/js/off-canvas.js') }}"></script>
-    <script src="{{ asset('assets/js/template.js') }}"></script>
-    <script src="{{ asset('assets/js/settings.js') }}"></script>
-    <script src="{{ asset('assets/js/todolist.js') }}"></script>
-    <script src="{{ asset('assets/js/jquery.cookie.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('assets/js/dashboard.js') }}"></script>
+    <script src="<?php echo e(asset('assets/js/off-canvas.js')); ?>"></script>
+    <script src="<?php echo e(asset('assets/js/template.js')); ?>"></script>
+    <script src="<?php echo e(asset('assets/js/settings.js')); ?>"></script>
+    <script src="<?php echo e(asset('assets/js/todolist.js')); ?>"></script>
+    <script src="<?php echo e(asset('assets/js/jquery.cookie.js')); ?>" type="text/javascript"></script>
+    <script src="<?php echo e(asset('assets/js/dashboard.js')); ?>"></script>
     <!-- External JS from CDN -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -2974,7 +2976,7 @@
         <div class="modal-content" style="background: rgba(225, 224, 224, 0.08); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);">
           <div class="modal-header border-0 pb-0" style="background: transparent;">
             <div class="w-100 text-center">
-              <img src="{{ asset('images/logoastabayav2.png') }}" alt="Logo Astabaya" width="150" class="mb-2" />
+              <img src="<?php echo e(asset('images/logoastabayav2.png')); ?>" alt="Logo Astabaya" width="150" class="mb-2" />
               <h2 style="font-size: 25px; font-weight: 600; color: #fff; margin-bottom: 8px; letter-spacing: -0.5px;">Selamat Datang</h2>
               <h3 style="font-size: 15px; font-weight: 400; color: #fff; margin-bottom: 20px; margin-top: 7px; letter-spacing: -0.5px;">Masuk ke akun anda</h3>
             </div>
@@ -2983,7 +2985,7 @@
           <div class="modal-body pt-0">
             <p id="login-error" class="text-danger" style="display: none; text-align: center; padding: 8px; background: rgba(255, 107, 107, 0.1); border-radius: 8px; margin-bottom: 15px;"></p>
             <form id="login-form-modal" style="display: flex; flex-direction: column; gap: 15px;">
-              @csrf
+              <?php echo csrf_field(); ?>
               <input type="text" name="username" placeholder="Username" required style="width: 100%; padding: 8px 16px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 15px; transition: all 0.3s ease; outline: none; box-sizing: border-box;" />
               <input type="password" name="password" placeholder="Password" required style="width: 100%; padding: 8px 16px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 15px; transition: all 0.3s ease; outline: none; box-sizing: border-box;" />
               <button type="submit" style="width: 100%; padding: 11px; background: linear-gradient(135deg, #258ffa 0%, #1c7dd8 100%); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">Login</button>
@@ -3016,7 +3018,7 @@
         <div class="modal-content" style="background: rgba(225, 224, 224, 0.08); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);">
           <div class="modal-header border-0 pb-0" style="background: transparent;">
             <div class="w-100 text-center">
-              <img src="{{ asset('images/logoastabayav2.png') }}" alt="Logo Astabaya" width="150" class="mb-2" />
+              <img src="<?php echo e(asset('images/logoastabayav2.png')); ?>" alt="Logo Astabaya" width="150" class="mb-2" />
               <h2 style="font-size: 25px; font-weight: 600; color: #fff; margin-bottom: 0px; letter-spacing: -0.5px;">Selamat Datang</h2>
               <h3 style="font-size: 15px; font-weight: 400; color: #fff; margin-bottom: 20px; margin-top: 7px; letter-spacing: -0.5px;">Buat akun anda</h3>
             </div>
@@ -3025,7 +3027,7 @@
           <div class="modal-body pt-0">
             <p id="register-error" class="text-danger" style="display: none; text-align: center; padding: 8px; background: rgba(255, 107, 107, 0.1); border-radius: 8px; margin-bottom: 15px;"></p>
             <form id="register-form-modal" style="display: flex; flex-direction: column; gap: 16px;">
-              @csrf
+              <?php echo csrf_field(); ?>
               <input type="text" name="username" placeholder="Username" required style="width: 100%; padding: 8px 16px; font-family: 'Poppins', system-ui, -apple-system, sans-serif; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 16px; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; font-size: 15px; transition: all 0.3s ease; outline: none; box-sizing: border-box;" />
               <input type="email" name="email" placeholder="Email" required style="width: 100%; padding: 8px 16px; font-family: 'Poppins', system-ui, -apple-system, sans-serif; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 16px; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; font-size: 15px; transition: all 0.3s ease; outline: none; box-sizing: border-box;" />
               <input type="password" name="password" placeholder="Password" required style="width: 100%; padding: 8px 16px; font-family: 'Poppins', system-ui, -apple-system, sans-serif; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 16px; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; font-size: 15px; transition: all 0.3s ease; outline: none; box-sizing: border-box;" />
@@ -3069,8 +3071,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 15px; right: 15px;"></button>
           </div>
           <div class="modal-body pt-0">
-            <form method="post" action="{{ route('logout') }}" id="logout-form">
-              @csrf
+            <form method="post" action="<?php echo e(route('logout')); ?>" id="logout-form">
+              <?php echo csrf_field(); ?>
               <input type="hidden" name="current_url" id="logout-current-url" value="">
               <div class="d-flex gap-2 justify-content-center">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="padding: 10px 24px; border-radius: 12px; font-weight: 500;">Batal</button>
@@ -3094,7 +3096,7 @@
             <p id="login-required-message">
               <span id="login-item-name"></span>
             </p>
-            <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+            <a href="<?php echo e(route('login')); ?>" class="btn btn-primary">Login</a>
           </div>
         </div>
       </div>
@@ -3110,7 +3112,7 @@
         errorElement.style.display = 'none';
 
         try {
-          const response = await fetch('{{ route('api.login') }}', {
+          const response = await fetch('<?php echo e(route('api.login')); ?>', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -3176,7 +3178,7 @@
         if (!modal) {
           console.error('Login required modal not found');
           // Fallback: redirect to login page
-          window.location.href = '{{ route("login") }}';
+          window.location.href = '<?php echo e(route("login")); ?>';
           return;
         }
 
@@ -3200,14 +3202,14 @@
 
       // Global function to check authentication before download
       function checkAuthBeforeDownload(callback, itemName = 'data') {
-        @auth
+        <?php if(auth()->guard()->check()): ?>
         if (typeof callback === 'function') {
           callback();
         }
-        @else
+        <?php else: ?>
         // Redirect to login page instead of showing modal
-        window.location.href = "{{ route('login') }}";
-        @endauth
+        window.location.href = "<?php echo e(route('login')); ?>";
+        <?php endif; ?>
       }
 
       // Handle Google Sign-In with redirect (same tab, no popup)
@@ -3443,9 +3445,9 @@
       // Function to update bookmark list in header
       async function updateBookmarkList() {
         // Check if user is authenticated before syncing bookmarks
-        @guest
+        <?php if(auth()->guard()->guest()): ?>
         return;
-        @endguest
+        <?php endif; ?>
         
         // Get CSRF token from meta tag (Laravel standard)
         const metaTag = document.querySelector('meta[name="csrf-token"]');
@@ -3636,9 +3638,9 @@
       // Listen for custom events (same-tab immediate sync)
       window.addEventListener('bookmarkChanged', function(e) {
         // Check if user is authenticated before syncing bookmarks
-        @guest
+        <?php if(auth()->guard()->guest()): ?>
         return;
-        @endguest
+        <?php endif; ?>
         
         const { contentType, objectId, isBookmarked, bookmarkId } = e.detail;
         console.log('Bookmark change detected from custom event:', e.detail);
@@ -3655,9 +3657,9 @@
       // Enhanced storage event listener - also refresh from server when receiving changes from other tabs
       window.addEventListener('storage', function(e) {
         // Check if user is authenticated before syncing bookmarks
-        @guest
+        <?php if(auth()->guard()->guest()): ?>
         return;
-        @endguest
+        <?php endif; ?>
         
         if (e.key === 'bookmark_change' && e.newValue) {
           try {
@@ -3726,9 +3728,9 @@
       // Function to refresh bookmark status from server for all items on the page
       async function refreshBookmarkStatus() {
         // Check if user is authenticated before syncing bookmarks
-        @guest
+        <?php if(auth()->guard()->guest()): ?>
         return;
-        @endguest
+        <?php endif; ?>
         
         function getCookie(name) {
           let cookieValue = null;
@@ -3843,7 +3845,7 @@
         }
         
         // Refresh bookmark status when page becomes visible (user switches back to this tab)
-        @auth
+        <?php if(auth()->guard()->check()): ?>
         document.addEventListener('visibilitychange', function() {
           if (!document.hidden) {
             console.log('Page became visible, refreshing bookmark status...');
@@ -3865,7 +3867,7 @@
           refreshBookmarkStatus();
           updateBookmarkList(); // Also update bookmark dropdown on page load
         }, 500);
-        @endauth
+        <?php endif; ?>
         
         // Ensure event listeners are set up
         console.log('Bookmark sync functions available:', {
@@ -3937,7 +3939,7 @@
       });
     </script>
     
-    {{-- Global Share Functionality --}}
+    
     <script>
       // Function to show share modal (defined outside IIFE for early access)
       // Make it available immediately on window object
@@ -4385,8 +4387,9 @@
       </div>
     </div>
     
-    <script src="{{ asset('js/share-utils.js') }}"></script>
-    @vite('resources/js/utilities.js')
-    @stack('scripts')
+    <script src="<?php echo e(asset('js/share-utils.js')); ?>"></script>
+    <?php echo app('Illuminate\Foundation\Vite')('resources/js/utilities.js'); ?>
+    <?php echo $__env->yieldPushContent('scripts'); ?>
   </body>
 </html>
+<?php /**PATH D:\laragon\www\astabaya\resources\views/layouts/main.blade.php ENDPATH**/ ?>

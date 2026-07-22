@@ -73,12 +73,19 @@ File ini digunakan untuk merekam jejak semua perbaikan bug dan refaktor kode pad
   - Mengubah label Y-Axis dari 'Juta Rupiah' menjadi 'Juta' pada Pengeluaran Per Kapita.
 - **Ketenagakerjaan & PDRB Lapangan Usaha**: Memindahkan secara paksa file `.js` dan `.css` bawaan yang sempat 'nyasar' di dalam folder `public/` menuju direktori sumber `resources/` lalu menghubungkannya kembali dengan `@vite`.
 
-### 3. Pemulihan Versioning (Git Fixes)
+### 3. Perbaikan Bug Lanjutan (PDRB & PDRB Lapangan Usaha)
+- **Format Rupiah PDRB**: Memperbaiki format tampilan *summary card* pada PDRB Pengeluaran dan PDRB Lapangan Usaha untuk mempertahankan dua angka desimal (presisi `.toFixed(2)`) tanpa pembulatan ekstrem, lalu membungkusnya secara rapi di dalam `window.formatRupiah()`. 
+- **Perbaikan Enkoding (Icon Arrow)**: Memperbaiki insiden *icon* anak panah (arrow) yang sempat *corrupt* akibat galat enkoding saat modifikasi file, dan mengembalikannya menggunakan *class* font-awesome murni (`<i class="fas fa-arrow-up"></i>`).
+- **Syntax Error EOF**: Memperbaiki bug di mana dua modul javascript PDRB mengalami kegagalan eksekusi (hilangnya kurung tutup `});` di baris terbawah) karena terpotong, yang sebelumnya membuat keseluruhan grafik gagal *render*.
+
+### 4. Pemulihan Versioning (Git Fixes)
 - Memulihkan insiden hilangnya konfigurasi *Vite* dari tab-tab sebelumnya (Inflasi, Kemiskinan, PDRB Pengeluaran) yang disebabkan oleh *checkout* paksa versi lawas dari Git. Pemulihan dilakukan dengan skrip *python injection* untuk menyematkan ulang `@vite(...)` tanpa merusak logika tampilan saat ini.
 - Membersihkan puluhan skrip sementara *(temporary AI scripts)* `.cjs`, `.py`, dan berkas pendukung *(screenshot)* dari repositori guna menjaga kerapian kode proyek.
 - Menambahkan aturan di `.gitignore` untuk mencegah berkas sampah AI ikut ke-*commit* di masa depan.
 
 **Daftar File yang Terpengaruh pada Sesi 3:**
+- `resources/js/dashboard/pdrb-pengeluaran.js` (Pemulihan & Format)
+- `resources/js/utilities.js` (Globalisasi window.formatRupiah)
 - `resources/views/dashboard/indikator/ipm_*.blade.php` (7 sub-file IPM)
 - `resources/views/dashboard/indikator/pdrb_pengeluaran.blade.php`
 - `resources/views/dashboard/indikator/gini_ratio.blade.php`

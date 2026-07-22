@@ -1,4 +1,4 @@
-﻿  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", () => {
     // ========== Toggle Button Functionality ==========
     const btnTahunan = document.getElementById('btnTahunan');
     const btnTriwulanan = document.getElementById('btnTriwulanan');
@@ -8,6 +8,8 @@
     let currentView = 'tahunan';
 
     function switchView(view) {
+      const globalYearFilterContainer = document.getElementById('globalYearFilterContainer');
+      
       if (view === 'tahunan') {
         btnTahunan.classList.remove('btn-outline-primary');
         btnTahunan.classList.add('btn-primary');
@@ -16,6 +18,8 @@
         
         cardsTahunan.style.display = 'block';
         cardsTriwulanan.style.display = 'none';
+        
+        if (globalYearFilterContainer) globalYearFilterContainer.style.display = 'none';
         
         currentView = 'tahunan';
         
@@ -30,6 +34,8 @@
         
         cardsTahunan.style.display = 'none';
         cardsTriwulanan.style.display = 'block';
+        
+        if (globalYearFilterContainer) globalYearFilterContainer.style.display = 'flex';
         
         currentView = 'triwulanan';
         
@@ -402,7 +408,7 @@
           tag.className = 'filter-tag';
           tag.innerHTML = `
             <span>${value}</span>
-            <button type="button" class="tag-remove" data-value="${value}">Ã—</button>
+            <button type="button" class="tag-remove" data-value="${value}">&times;</button>
           `;
           
           // Handle tag removal
@@ -861,7 +867,7 @@
           tag.className = 'filter-tag';
           tag.innerHTML = `
             <span>${value}</span>
-            <button type="button" class="tag-remove" data-value="${value}">Ã—</button>
+            <button type="button" class="tag-remove" data-value="${value}">&times;</button>
           `;
           
           const removeBtn = tag.querySelector('.tag-remove');
@@ -928,6 +934,10 @@
             unit = 'Persen';
           } else if (selectedJenisPDRBTriwulanan === 'Laju C-to-C') {
             dataByCategory = lajuCtoCByCategory;
+            isPercentage = true;
+            unit = 'Persen';
+          } else if (selectedJenisPDRBTriwulanan === 'Distribusi') {
+            dataByCategory = distribusiTriwulananByCategory;
             isPercentage = true;
             unit = 'Persen';
           }
@@ -1146,16 +1156,15 @@
     function populateYearFilters() {
       const yearFilterDistribusi = document.getElementById('yearFilterDistribusi');
       const yearFilterDistribusiTriwulanan = document.getElementById('yearFilterDistribusiTriwulanan');
-      const yearFilterADHBTriwulanan = document.getElementById('yearFilterADHBTriwulanan');
-      const yearFilterADHKTriwulanan = document.getElementById('yearFilterADHKTriwulanan');
-      const yearFilterLajuQtoQ = document.getElementById('yearFilterLajuQtoQ');
-      const yearFilterLajuYtoY = document.getElementById('yearFilterLajuYtoY');
-      const yearFilterLajuCtoC = document.getElementById('yearFilterLajuCtoC');
+      const globalYearFilter = document.getElementById('globalYearFilter');
 
-      const yearOptions = allYears.map(year => `<option value="${year}" ${year === latestYear ? 'selected' : ''}>${year}</option>`).join('');
+      // Sort allYears descending (terbesar ke terkecil)
+      const sortedYearsDesc = [...allYears].sort((a, b) => b - a);
+
+      const yearOptions = sortedYearsDesc.map(year => `<option value="${year}">${year}</option>`).join('');
 
       if (yearFilterDistribusi) {
-        yearFilterDistribusi.innerHTML = '<option value="">Semua Tahun</option>' + yearOptions;
+        yearFilterDistribusi.innerHTML = '<option value="">Semua Tahun</option>' + sortedYearsDesc.map(year => `<option value="${year}" ${year === latestYear ? 'selected' : ''}>${year}</option>`).join('');
         if (selectedYearDistribusi) {
           yearFilterDistribusi.value = selectedYearDistribusi;
         }
@@ -1168,11 +1177,9 @@
         }
       }
 
-      [yearFilterADHBTriwulanan, yearFilterADHKTriwulanan, yearFilterLajuQtoQ, yearFilterLajuYtoY, yearFilterLajuCtoC].forEach(select => {
-        if (select) {
-          select.innerHTML = '<option value="">4 Triwulan Terakhir</option>' + yearOptions;
-        }
-      });
+      if (globalYearFilter) {
+        globalYearFilter.innerHTML = '<option value="">4 Triwulan Terakhir</option>' + yearOptions;
+      }
     }
 
     // ========== Populate Carousel Cards ==========
@@ -1196,7 +1203,7 @@
         const value = sheetData.data.value || 0;
         const valueDisplay = isPercentage 
           ? `${parseFloat(value).toFixed(2)}%`
-          : `<span class="rupiah-value" data-value="${parseFloat(value).toFixed(0)}">Rp ${parseFloat(value).toFixed(0)}</span>`;
+          : `<span class="rupiah-value" data-value="${parseFloat(value).toFixed(2)}">Rp ${window.formatRupiah(parseFloat(value).toFixed(2))}</span>`;
 
         card.innerHTML = `
           <div style="position: relative; z-index: 2;">
@@ -1476,10 +1483,12 @@
         }
       }
       
-      // If no categories after filtering, show all categories (fallback)
-      if (categories.length === 0) {
+      // If no categories after filtering, show all categories (fallback) ONLY IF no explicit selectedCategories were provided
+      if (categories.length === 0 && (!selectedCategories || selectedCategories.length === 0)) {
         categories = Object.keys(dataByCategory);
       }
+      
+      const hasData = categories.length > 0;
       
       // Prepare x-axis data and series
       let xAxisData = [];
@@ -1580,6 +1589,16 @@
 
 
       const option = {
+        title: hasData ? undefined : {
+          text: 'Data tidak tersedia',
+          left: 'center',
+          top: 'center',
+          textStyle: {
+            color: '#999',
+            fontSize: 16,
+            fontWeight: 'normal'
+          }
+        },
         tooltip: {
           trigger: 'axis',
           confine: true,
@@ -1888,14 +1907,25 @@
         };
       }).filter(s => s !== null); // Remove any null entries
       
-      if (series.length === 0) {
-        console.error(`[${canvasId}] No series data available after filtering`);
-        return null;
+      const hasData = series.length > 0;
+      
+      if (!hasData) {
+        console.warn(`[${canvasId}] No series data available after filtering`);
       }
       
       console.log(`[${canvasId}] Final series count:`, series.length);
 
       const option = {
+        title: hasData ? undefined : {
+          text: 'Data tidak tersedia',
+          left: 'center',
+          top: 'center',
+          textStyle: {
+            color: '#999',
+            fontSize: 16,
+            fontWeight: 'normal'
+          }
+        },
         tooltip: {
           trigger: 'axis',
           confine: true,
@@ -2076,13 +2106,23 @@
         });
       }
 
-      // If no categories or chartData, return null
-      if (categories.length === 0 || chartData.length === 0) {
+      // If no categories or chartData, show fallback
+      const hasData = categories.length > 0 && chartData.length > 0;
+      if (!hasData) {
         console.warn(`No data to display for chart: ${canvasId}`);
-        return null;
       }
 
       const option = {
+        title: hasData ? undefined : {
+          text: 'Data tidak tersedia',
+          left: 'center',
+          top: 'center',
+          textStyle: {
+            color: '#999',
+            fontSize: 16,
+            fontWeight: 'normal'
+          }
+        },
         tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -2300,9 +2340,9 @@
         };
       });
       
-      if (pieData.length === 0) {
+      const hasData = pieData.length > 0;
+      if (!hasData) {
         console.warn(`No data to display for pie chart: ${canvasId}`);
-        return null;
       }
       
       // Color palette - matching card colors
@@ -2312,6 +2352,16 @@
       const legendData = pieData.map(item => item.name);
       
       const option = {
+        title: hasData ? undefined : {
+          text: 'Data tidak tersedia',
+          left: 'center',
+          top: 'center',
+          textStyle: {
+            color: '#999',
+            fontSize: 16,
+            fontWeight: 'normal'
+          }
+        },
         tooltip: {
           trigger: 'item',
           confine: true,
@@ -2532,76 +2582,52 @@
       });
     }
 
-    // Year filter change handler for ADHB Triwulanan
-    const yearFilterADHBTriwulanan = document.getElementById('yearFilterADHBTriwulanan');
-    if (yearFilterADHBTriwulanan) {
-      yearFilterADHBTriwulanan.addEventListener('change', function() {
-        selectedYearADHBTriwulanan = this.value ? parseInt(this.value) : null;
+    // Global year filter change handler
+    const globalYearFilter = document.getElementById('globalYearFilter');
+    if (globalYearFilter) {
+      globalYearFilter.addEventListener('change', function() {
+        const selectedYear = this.value ? parseInt(this.value) : null;
+        
+        // Update ADHB Triwulanan
+        selectedYearADHBTriwulanan = selectedYear;
         if (chartInstances.adhbTriwulanan) {
           chartInstances.adhbTriwulanan.dispose();
+          chartInstances.adhbTriwulanan = createTriwulananLineChart('adhbTriwulananChart', adhbTriwulananByCategory, false, selectedYear);
         }
-        chartInstances.adhbTriwulanan = createTriwulananLineChart('adhbTriwulananChart', adhbTriwulananByCategory, false, selectedYearADHBTriwulanan);
-        setTimeout(() => {
-          if (chartInstances.adhbTriwulanan) chartInstances.adhbTriwulanan.resize();
-        }, 100);
-      });
-    }
-
-    // Year filter change handler for ADHK Triwulanan
-    const yearFilterADHKTriwulanan = document.getElementById('yearFilterADHKTriwulanan');
-    if (yearFilterADHKTriwulanan) {
-      yearFilterADHKTriwulanan.addEventListener('change', function() {
-        selectedYearADHKTriwulanan = this.value ? parseInt(this.value) : null;
+        
+        // Update ADHK Triwulanan
+        selectedYearADHKTriwulanan = selectedYear;
         if (chartInstances.adhkTriwulanan) {
           chartInstances.adhkTriwulanan.dispose();
+          chartInstances.adhkTriwulanan = createTriwulananLineChart('adhkTriwulananChart', adhkTriwulananByCategory, false, selectedYear);
         }
-        chartInstances.adhkTriwulanan = createTriwulananLineChart('adhkTriwulananChart', adhkTriwulananByCategory, false, selectedYearADHKTriwulanan);
-        setTimeout(() => {
-          if (chartInstances.adhkTriwulanan) chartInstances.adhkTriwulanan.resize();
-        }, 100);
-      });
-    }
-
-    // Year filter change handler for Laju Q-to-Q
-    const yearFilterLajuQtoQ = document.getElementById('yearFilterLajuQtoQ');
-    if (yearFilterLajuQtoQ) {
-      yearFilterLajuQtoQ.addEventListener('change', function() {
-        selectedYearLajuQtoQ = this.value ? parseInt(this.value) : null;
+        
+        // Update Laju Q-to-Q
+        selectedYearLajuQtoQ = selectedYear;
         if (chartInstances.lajuQtoQ) {
           chartInstances.lajuQtoQ.dispose();
+          chartInstances.lajuQtoQ = createTriwulananLineChart('lajuQtoQChart', lajuQtoQByCategory, true, selectedYear);
         }
-        chartInstances.lajuQtoQ = createTriwulananLineChart('lajuQtoQChart', lajuQtoQByCategory, true, selectedYearLajuQtoQ);
-        setTimeout(() => {
-          if (chartInstances.lajuQtoQ) chartInstances.lajuQtoQ.resize();
-        }, 100);
-      });
-    }
-
-    // Year filter change handler for Laju Y-to-Y
-    const yearFilterLajuYtoY = document.getElementById('yearFilterLajuYtoY');
-    if (yearFilterLajuYtoY) {
-      yearFilterLajuYtoY.addEventListener('change', function() {
-        selectedYearLajuYtoY = this.value ? parseInt(this.value) : null;
+        
+        // Update Laju Y-to-Y
+        selectedYearLajuYtoY = selectedYear;
         if (chartInstances.lajuYtoY) {
           chartInstances.lajuYtoY.dispose();
+          chartInstances.lajuYtoY = createTriwulananLineChart('lajuYtoYChart', lajuYtoYByCategory, true, selectedYear);
         }
-        chartInstances.lajuYtoY = createTriwulananLineChart('lajuYtoYChart', lajuYtoYByCategory, true, selectedYearLajuYtoY);
-        setTimeout(() => {
-          if (chartInstances.lajuYtoY) chartInstances.lajuYtoY.resize();
-        }, 100);
-      });
-    }
-
-    // Year filter change handler for Laju C-to-C
-    const yearFilterLajuCtoC = document.getElementById('yearFilterLajuCtoC');
-    if (yearFilterLajuCtoC) {
-      yearFilterLajuCtoC.addEventListener('change', function() {
-        selectedYearLajuCtoC = this.value ? parseInt(this.value) : null;
+        
+        // Update Laju C-to-C
+        selectedYearLajuCtoC = selectedYear;
         if (chartInstances.lajuCtoC) {
           chartInstances.lajuCtoC.dispose();
+          chartInstances.lajuCtoC = createTriwulananLineChart('lajuCtoCChart', lajuCtoCByCategory, true, selectedYear);
         }
-        chartInstances.lajuCtoC = createTriwulananLineChart('lajuCtoCChart', lajuCtoCByCategory, true, selectedYearLajuCtoC);
+        
         setTimeout(() => {
+          if (chartInstances.adhbTriwulanan) chartInstances.adhbTriwulanan.resize();
+          if (chartInstances.adhkTriwulanan) chartInstances.adhkTriwulanan.resize();
+          if (chartInstances.lajuQtoQ) chartInstances.lajuQtoQ.resize();
+          if (chartInstances.lajuYtoY) chartInstances.lajuYtoY.resize();
           if (chartInstances.lajuCtoC) chartInstances.lajuCtoC.resize();
         }, 100);
       });
@@ -2631,42 +2657,9 @@
     });
 
     // ========== Format Rupiah with Thousand Separator ==========
-    window.formatRupiah = function(value) {
-      if (!value && value !== 0) return '';
-      const numStr = value.toString().replace(/\D/g, '');
-      return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    };
+
     
-    function applyRupiahFormatting() {
-      const rupiahElements = document.querySelectorAll('.rupiah-value');
-      rupiahElements.forEach(element => {
-        const value = element.getAttribute('data-value');
-        if (value) {
-          const formatted = window.formatRupiah(value);
-          element.textContent = 'Rp ' + formatted;
-        }
-      });
-      
-      // Also format comparison values
-      const comparisonContainers = document.querySelectorAll('[id^="sheet-"][id$="-comparison"]');
-      comparisonContainers.forEach(container => {
-        const spans = container.querySelectorAll('span');
-        spans.forEach(span => {
-          const text = span.textContent;
-          // Check if it contains "Rp" and a number
-          const rupiahMatch = text.match(/Rp\s*([\d,\.]+)/);
-          if (rupiahMatch) {
-            const numValue = rupiahMatch[1].replace(/\./g, '');
-            const formatted = window.formatRupiah(numValue);
-            span.textContent = text.replace(/Rp\s*[\d,\.]+/, 'Rp ' + formatted);
-          }
-        });
-      });
-    }
-    
-    // Apply formatting after DOM is ready
-    setTimeout(applyRupiahFormatting, 100);
-    setTimeout(applyRupiahFormatting, 600);
+
 
     // ========== Calculate Year-over-Year Comparisons for Carousel Cards ==========
     function calculateCarouselComparisons() {
@@ -2685,22 +2678,22 @@
         const container = document.getElementById(`sheet-${index}-comparison`);
         if (!container) return;
         
-        let arrow = 'â”€';
+        let arrow = '<i class="fas fa-minus"></i>';
         let arrowColor = '#666';
         let valueColor = '#666';
         if (diff > 0) {
-          arrow = 'â–²';
+          arrow = '<i class="fas fa-arrow-up"></i>';
           arrowColor = '#28a745';
           valueColor = '#28a745';
         } else if (diff < 0) {
-          arrow = 'â–¼';
+          arrow = '<i class="fas fa-arrow-down"></i>';
           arrowColor = '#dc3545';
           valueColor = '#dc3545';
         }
         
         const isPercentage = sheetName.includes('Distribusi') || sheetName.includes('Laju');
         const diffFormatted = Math.abs(diff).toFixed(2);
-        const diffFormattedRupiah = isPercentage ? diffFormatted : (window.formatRupiah ? window.formatRupiah(Math.abs(diff).toFixed(0)) : Math.abs(diff).toFixed(0));
+        const diffFormattedRupiah = isPercentage ? diffFormatted : (window.formatRupiah ? window.formatRupiah(Math.abs(diff).toFixed(2)) : Math.abs(diff).toFixed(2));
         const comparisonHTML = isPercentage ? 
           `<span style="color: ${arrowColor}; font-size: 14px;">${arrow}</span>
            <span style="color: ${valueColor}; font-size: 14px; font-weight: 600;">${diff >= 0 ? '+' : ''}${diffFormatted}%</span>
@@ -2718,7 +2711,7 @@
         });
         
         // Re-apply Rupiah formatting after comparison is set
-        setTimeout(applyRupiahFormatting, 50);
+        
       });
     }
 

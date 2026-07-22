@@ -1,4 +1,4 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
     // API Base URL
     const API_BASE_URL = '/api';
     
@@ -114,13 +114,16 @@
 
     // Populate year filter dropdowns
     function populateYearFilters() {
-      // Calculate triwulananYears dynamically from lajuQtoQByCategory
+      // Calculate triwulananYears dynamically from ALL triwulanan data sources
       let triwulanYearSet = new Set();
-      if (lajuQtoQByCategory) {
-          Object.values(lajuQtoQByCategory).forEach(list => list.forEach(item => {
-              if (item.year) triwulanYearSet.add(item.year);
+      const triwulanSources = [adhbTriwulananByCategory, adhkTriwulananByCategory, lajuQtoQByCategory, lajuYtoYByCategory, lajuCtoCByCategory];
+      triwulanSources.forEach(source => {
+        if (source) {
+          Object.values(source).forEach(list => list.forEach(item => {
+            if (item.year) triwulanYearSet.add(item.year);
           }));
-      }
+        }
+      });
       const triwulananYears = Array.from(triwulanYearSet).sort((a,b) => b - a);
       const sortedAllYears = [...allYears].sort((a, b) => b - a);
 
@@ -170,7 +173,7 @@
         const value = sheetData.data?.value || 0;
         const valueDisplay = isPercentage 
           ? `${parseFloat(value).toFixed(2)}%`
-          : `<span class="rupiah-value" data-value="${parseFloat(value).toFixed(0)}">Rp ${formatRupiah(parseFloat(value).toFixed(0))}</span>`;
+          : `<span class="rupiah-value" data-value="${parseFloat(value).toFixed(2)}">Rp ${formatRupiah(parseFloat(value).toFixed(2))}</span>`;
         
         card.innerHTML = `
           <div style="position: relative; z-index: 2;">
@@ -202,13 +205,7 @@
       return words.slice(0, num).join(' ') + (words.length > num ? '...' : '');
     }
 
-    function formatRupiah(value) {
-      if (!value && value !== 0) return '';
-      const numStr = value.toString().replace(/\D/g, '');
-      return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
 
-    window.formatRupiah = formatRupiah;
 
     // ========== Toggle Button Functionality ==========
     const btnTahunan = document.getElementById('btnTahunan');
@@ -614,7 +611,7 @@
           tag.className = 'filter-tag';
           tag.innerHTML = `
             <span>${value}</span>
-            <button type="button" class="tag-remove" data-value="${value}">Ãƒâ€”</button>
+            <button type="button" class="tag-remove" data-value="${value}">&times;</button>
           `;
           
           // Handle tag removal
@@ -1062,7 +1059,7 @@
           tag.className = 'filter-tag';
           tag.innerHTML = `
             <span>${value}</span>
-            <button type="button" class="tag-remove" data-value="${value}">Ãƒâ€”</button>
+            <button type="button" class="tag-remove" data-value="${value}">&times;</button>
           `;
           
           const removeBtn = tag.querySelector('.tag-remove');
@@ -1992,8 +1989,8 @@
       return chart;
     }
 
-    // ========== Helper function to create bar chart for Distribusi (without PDRB/GRDP) ==========
-        function createDistribusiPieChartTahunan(canvasId, dataByCategory, selectedYear) {
+    // ========== Helper function to create horizontal bar chart for Distribusi Tahunan (without PDRB/GRDP) ==========
+    function createDistribusiPieChartTahunan(canvasId, dataByCategory, selectedYear) {
       const chartDom = document.getElementById(canvasId);
       if (!chartDom) return null;
       
@@ -2017,7 +2014,7 @@
         if (allYears.length > 0) {
           targetYear = allYears[0];
         } else {
-          console.warn('No data available for pie chart');
+          console.warn('No data available for bar chart');
           return null;
         }
       }
@@ -2034,84 +2031,134 @@
       });
       
       const categories = Object.keys(filteredData);
-      let pieData = [];
+      let barData = [];
+      let barLabels = [];
       
       categories.forEach(category => {
         const item = filteredData[category][0];
         if (item && item.value !== null && item.value !== undefined) {
-          pieData.push({
-            name: category.length > 30 ? category.substring(0, 30) + '...' : category,
-            value: parseFloat(item.value),
-            originalName: category
-          });
+          barData.push(parseFloat(item.value));
+          barLabels.push(category);
         }
       });
       
-      if (pieData.length === 0) {
+      if (barData.length === 0) {
         return null;
       }
+
+      // Sort by value descending for better visualization
+      const combined = barLabels.map((label, i) => ({ label, value: barData[i] }));
+      combined.sort((a, b) => b.value - a.value);
+      barLabels = combined.map(c => c.label);
+      barData = combined.map(c => c.value);
+
+      // Use full labels and let echarts wrap them
+      const truncatedLabels = barLabels;
       
       const isMobile = window.innerWidth < 768;
+      const barColors = ['#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600'];
+      
       const option = {
         tooltip: {
-          trigger: 'item',
-          formatter: function(params) {
-            return params.name + '<br/>' + 
-                   params.marker + params.seriesName + ': ' + 
-                   parseFloat(params.value).toFixed(2) + '%';
-          }
-        },
-        legend: {
-          show: true,
-          orient: 'horizontal',
-          top: isMobile ? 5 : 10,
-          left: 'center',
-          itemGap: isMobile ? 12 : 15,
-          itemWidth: isMobile ? 10 : 12,
-          itemHeight: isMobile ? 10 : 12,
-          textStyle: {
-            fontSize: isMobile ? 10 : 11,
-            fontWeight: 'normal'
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
           },
-          formatter: function(name) {
-            if (name.length > 40) {
-              return name.substring(0, 40) + '...';
+          confine: true,
+          formatter: function(params) {
+            const idx = params[0].dataIndex;
+            const fullName = barLabels[idx];
+            return fullName + '<br/>' + 
+                   params[0].marker + 'Distribusi ' + targetYear + ': ' + 
+                   parseFloat(params[0].value).toFixed(2) + '%';
+          },
+          backgroundColor: 'rgba(50, 50, 50, 0.9)',
+          borderColor: '#333',
+          borderWidth: 1,
+          textStyle: {
+            color: '#fff',
+            fontSize: 12
+          },
+          padding: [8, 12],
+          extraCssText: 'box-shadow: 0 2px 8px rgba(0,0,0,0.3); border-radius: 4px;'
+        },
+        grid: {
+          left: '3%',
+          right: '5%',
+          bottom: '5%',
+          top: '15%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          data: truncatedLabels,
+          axisLabel: {
+            fontSize: isMobile ? 9 : 10,
+            color: '#333',
+            rotate: 45,
+            interval: 0,
+            width: isMobile ? 90 : 140,
+            overflow: 'break'
+          },
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#ccc'
             }
-            return name;
           }
         },
-        series: [
-          {
-            name: 'Distribusi ' + targetYear,
-            type: 'pie',
-            radius: ['30%', '65%'],
-            center: ['50%', '55%'],
-            avoidLabelOverlap: false,
-            itemStyle: {
-              borderRadius: 8,
-              borderColor: '#fff',
-              borderWidth: 2
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            formatter: function(value) {
+              return value.toFixed(0) + '%';
             },
-            label: {
-              show: false
-            },
-            labelLine: {
-              show: false
-            },
-            data: pieData,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              },
-              label: {
-                show: false
-              }
+            fontSize: isMobile ? 9 : 11
+          },
+          splitLine: {
+            lineStyle: {
+              type: 'dashed',
+              color: '#e8e8e8'
             }
           }
-        ],
-        color: ['#003f5c', '#2f4b7c', '#665191', '#a05195', '#d45087', '#f95d6a', '#ff7c43', '#ffa600']
+        },
+        series: [{
+          name: 'Distribusi ' + targetYear,
+          type: 'bar',
+          data: barData.map((value, index) => {
+            return {
+              value: value,
+              itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: barColors[index % barColors.length] },
+                  { offset: 1, color: barColors[index % barColors.length] + 'cc' }
+                ]),
+                borderRadius: [4, 4, 0, 0]
+              }
+            };
+          }),
+          barWidth: isMobile ? '40%' : '50%',
+          label: {
+            show: true,
+            position: 'top',
+            formatter: function(params) {
+              return parseFloat(params.value).toFixed(2) + '%';
+            },
+            fontSize: isMobile ? 8 : 10,
+            color: '#333',
+            fontWeight: 500
+          },
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.3)'
+            }
+          }
+        }]
       };
       
       chart.setOption(option);
@@ -2665,42 +2712,9 @@
     });
 
     // ========== Format Rupiah with Thousand Separator ==========
-    window.formatRupiah = function(value) {
-      if (!value && value !== 0) return '';
-      const numStr = value.toString().replace(/\D/g, '');
-      return numStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    };
+
     
-    function applyRupiahFormatting() {
-      const rupiahElements = document.querySelectorAll('.rupiah-value');
-      rupiahElements.forEach(element => {
-        const value = element.getAttribute('data-value');
-        if (value) {
-          const formatted = window.formatRupiah(value);
-          element.textContent = 'Rp ' + formatted;
-        }
-      });
-      
-      // Also format comparison values
-      const comparisonContainers = document.querySelectorAll('[id^="sheet-"][id$="-comparison"]');
-      comparisonContainers.forEach(container => {
-        const spans = container.querySelectorAll('span');
-        spans.forEach(span => {
-          const text = span.textContent;
-          // Check if it contains "Rp" and a number
-          const rupiahMatch = text.match(/Rp\s*([\d,\.]+)/);
-          if (rupiahMatch) {
-            const numValue = rupiahMatch[1].replace(/\./g, '');
-            const formatted = window.formatRupiah(numValue);
-            span.textContent = text.replace(/Rp\s*[\d,\.]+/, 'Rp ' + formatted);
-          }
-        });
-      });
-    }
-    
-    // Apply formatting after DOM is ready
-    setTimeout(applyRupiahFormatting, 100);
-    setTimeout(applyRupiahFormatting, 600);
+
 
     // ========== Calculate Year-over-Year Comparisons for Carousel Cards ==========
     function calculateCarouselComparisons() {
@@ -2736,7 +2750,7 @@
         
         const isPercentage = sheetName.includes('Distribusi') || sheetName.includes('Laju');
         const diffFormatted = Math.abs(diff).toFixed(2);
-        const diffFormattedRupiah = isPercentage ? diffFormatted : (window.formatRupiah ? window.formatRupiah(Math.abs(diff).toFixed(0)) : Math.abs(diff).toFixed(0));
+        const diffFormattedRupiah = isPercentage ? diffFormatted : (window.formatRupiah ? window.formatRupiah(Math.abs(diff).toFixed(2)) : Math.abs(diff).toFixed(2));
         const comparisonHTML = isPercentage ? 
           `<span style="color: ${arrowColor}; font-size: 14px;">${arrow}</span>
            <span style="color: ${valueColor}; font-size: 14px; font-weight: 600;">${diff >= 0 ? '+' : ''}${diffFormatted}%</span>
@@ -2756,7 +2770,7 @@
         });
         
         // Re-apply Rupiah formatting after comparison is set
-        setTimeout(applyRupiahFormatting, 50);
+        
       });
     }
 

@@ -7,6 +7,14 @@
 @endpush
 
 @push('scripts')
+<script>
+window.APP_CONFIG = {
+  apiUrl: '{{ url("/api") }}',
+  isAuthenticated: @auth true @else false @endauth,
+  loginUrl: '{{ route("login") }}'
+};
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 @endpush
@@ -414,10 +422,26 @@
 @endpush
 
 @push('scripts')
+<script>
+window.APP_CONFIG = {
+  apiUrl: '{{ url("/api") }}',
+  isAuthenticated: @auth true @else false @endauth,
+  loginUrl: '{{ route("login") }}'
+};
+</script>
+
 
 @endpush
 
 @push('scripts')
+<script>
+window.APP_CONFIG = {
+  apiUrl: '{{ url("/api") }}',
+  isAuthenticated: @auth true @else false @endauth,
+  loginUrl: '{{ route("login") }}'
+};
+</script>
+
 @vite(['resources/css/dashboard/indeks-pembangunan-manusia.css', 'resources/js/dashboard/indeks-pembangunan-manusia.js'])
 @endpush
 

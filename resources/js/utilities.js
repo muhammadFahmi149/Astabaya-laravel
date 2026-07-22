@@ -33,8 +33,14 @@ window.sanitizeYear = function(value) {
 window.formatRupiah = function(number) {
   const num = window.sanitizeNumber(number);
   if (num === null) return '';
-  const numStr = Math.abs(num).toString().split('.')[0];
-  const formatted = numStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  let str = Math.abs(num).toString();
+  // If it's a float, it will have a dot. We should also check if the caller passed a string with .toFixed(2)
+  if (typeof number === 'string' && number.includes('.')) {
+      str = number.replace('-', '');
+  }
+  let parts = str.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  let formatted = parts.join(',');
   return num < 0 ? '-' + formatted : formatted;
 };
 
