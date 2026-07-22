@@ -638,34 +638,13 @@
     }
 
     // Helper function to check authentication before download
-    function checkAuthBeforeDownload(callback, itemName = 'data') {
-      if (isAuthenticated) {
-        // User authenticated, proceed with download
-        callback();
-        return true;
-      } else {
-        // User not authenticated, show login modal
-        if (typeof showLoginRequiredModal === 'function') {
-          showLoginRequiredModal(itemName);
-        } else {
-          alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
-          const loginModal = document.getElementById('loginModal');
-          if (loginModal) {
-            const modal = new bootstrap.Modal(loginModal);
-            modal.show();
-          } else {
-            window.location.href = '{{ route("login") }}';
-          }
-        }
-        return false;
-      }
-    }
+
 
     document.getElementById('downloadLineChartExcel').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportLineChartToExcel, 'data line chart gini ratio');
+      window.checkAuthBeforeDownload(exportLineChartToExcel, 'data line chart gini ratio');
     });
     document.getElementById('downloadLineChartPNG').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportLineChartToPNG, 'grafik line chart gini ratio');
+      window.checkAuthBeforeDownload(exportLineChartToPNG, 'grafik line chart gini ratio');
     });
 
     // Export functions for Bar Chart
@@ -704,9 +683,9 @@
     }
 
     document.getElementById('downloadBarChartExcel').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportBarChartToExcel, 'data bar chart gini ratio');
+      window.checkAuthBeforeDownload(exportBarChartToExcel, 'data bar chart gini ratio');
     });
     document.getElementById('downloadBarChartPNG').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportBarChartToPNG, 'grafik bar chart gini ratio');
+      window.checkAuthBeforeDownload(exportBarChartToPNG, 'grafik bar chart gini ratio');
     });
   });

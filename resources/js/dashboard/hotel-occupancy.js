@@ -1184,34 +1184,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Helper function to check authentication before download
-    function checkAuthBeforeDownload(callback, itemName = 'data') {
-      if (isAuthenticated) {
-        // User authenticated, proceed with download
-        callback();
-        return true;
-      } else {
-        // User not authenticated, show login modal
-        if (typeof showLoginRequiredModal === 'function') {
-          showLoginRequiredModal(itemName);
-        } else {
-          alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
-          const loginModal = document.getElementById('loginModal');
-          if (loginModal) {
-            const modal = new bootstrap.Modal(loginModal);
-            modal.show();
-          } else {
-            window.location.href = '{{ route("login") }}';
-          }
-        }
-        return false;
-      }
-    }
+
 
     document.getElementById('downloadTpkLineExcel').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTpkLineToExcel, 'data TPK line hotel');
+      window.checkAuthBeforeDownload(exportTpkLineToExcel, 'data TPK line hotel');
     });
     document.getElementById('downloadTpkLinePNG').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTpkLineToPNG, 'grafik TPK line hotel');
+      window.checkAuthBeforeDownload(exportTpkLineToPNG, 'grafik TPK line hotel');
     });
 
     // Export functions for TPK Comparison Chart
@@ -1272,10 +1251,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTpkComparisonExcel').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTpkComparisonToExcel, 'data perbandingan TPK hotel');
+      window.checkAuthBeforeDownload(exportTpkComparisonToExcel, 'data perbandingan TPK hotel');
     });
     document.getElementById('downloadTpkComparisonPNG').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTpkComparisonToPNG, 'grafik perbandingan TPK hotel');
+      window.checkAuthBeforeDownload(exportTpkComparisonToPNG, 'grafik perbandingan TPK hotel');
     });
 
     // Export functions for TPK Yearly Chart
@@ -1308,9 +1287,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTpkYearlyExcel').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTpkYearlyToExcel, 'data TPK tahunan hotel');
+      window.checkAuthBeforeDownload(exportTpkYearlyToExcel, 'data TPK tahunan hotel');
     });
     document.getElementById('downloadTpkYearlyPNG').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTpkYearlyToPNG, 'grafik TPK tahunan hotel');
+      window.checkAuthBeforeDownload(exportTpkYearlyToPNG, 'grafik TPK tahunan hotel');
     });
   });

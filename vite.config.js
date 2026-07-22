@@ -28,7 +28,8 @@ export default defineConfig({
                 'resources/css/dashboard/ketenagakerjaan.css',
                 'resources/js/dashboard/ketenagakerjaan.js',
                 'resources/css/dashboard/pdrb-lapangan-usaha.css',
-                'resources/js/dashboard/pdrb-lapangan-usaha.js'
+                'resources/js/dashboard/pdrb-lapangan-usaha.js',
+                'resources/js/dashboard/chart-modal.js'
             ],
             refresh: true,
         }),

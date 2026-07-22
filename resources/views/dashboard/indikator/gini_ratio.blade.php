@@ -169,8 +169,10 @@ window.APP_CONFIG = {
   isAuthenticated: @auth true @else false @endauth
 };
 </script>
-@vite(['resources/css/dashboard/gini-ratio.css', 'resources/js/dashboard/gini-ratio.js'])
+@vite(['resources/css/dashboard/gini-ratio.css', 'resources/js/dashboard/gini-ratio.js', 'resources/js/dashboard/chart-modal.js'])
 @endpush
 
+  <!-- Global Chart Modal Component -->
+  <x-chart-modal />
 @endsection
 

@@ -781,23 +781,6 @@ document.addEventListener("DOMContentLoaded", () => {
       link.click();
     }
 
-    function checkAuthBeforeDownload(callback, itemName = 'data') {
-      if (window.AUTH_CHECK) {
-      callback();
-      return true;
-      } else {
-      alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
-      const loginModal = document.getElementById('loginModal');
-      if (loginModal) {
-        const modal = new bootstrap.Modal(loginModal);
-        modal.show();
-      } else {
-        window.location.href = '{{ route("login") }}';
-      }
-      return false;
-      }
-    }
-
     // ========== Update initCharts to include carousel comparisons ==========
     const originalInitCharts = initCharts;
     initCharts = function(uhhSpData, hlsData, rlsData, surabayaData, jatimData, pengeluaranData, indeksKesehatanData, indeksPendidikanData, indeksHidupLayakData) {
@@ -822,14 +805,14 @@ document.addEventListener("DOMContentLoaded", () => {
     function setupDownloadListeners() {
       document.getElementById('downloadTrendExcel')?.addEventListener('click', function(e) {
         e.preventDefault();
-        checkAuthBeforeDownload(() => {
+        window.checkAuthBeforeDownload(() => {
           exportTrendToExcel();
         }, 'data trend IPM');
       });
 
       document.getElementById('downloadTrendPNG')?.addEventListener('click', function(e) {
         e.preventDefault();
-        checkAuthBeforeDownload(() => {
+        window.checkAuthBeforeDownload(() => {
           if (window.chartInstances && window.chartInstances.trend) {
             exportChartToPNG(window.chartInstances.trend, `Trend_IPM_Chart_${new Date().toISOString().split('T')[0]}.png`);
           }
@@ -851,7 +834,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById(mapping.excel)?.addEventListener('click', function(e) {
           e.preventDefault();
           if (window.chartData && window.chartData[mapping.data]) {
-            checkAuthBeforeDownload(() => {
+            window.checkAuthBeforeDownload(() => {
               exportSingleSeriesToExcel(window.chartData[mapping.data], mapping.name, mapping.unit);
             }, `data ${mapping.name}`);
           }
@@ -859,7 +842,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById(mapping.png)?.addEventListener('click', function(e) {
           e.preventDefault();
-          checkAuthBeforeDownload(() => {
+          window.checkAuthBeforeDownload(() => {
             if (window.chartInstances && window.chartInstances[mapping.chart]) {
               exportChartToPNG(window.chartInstances[mapping.chart], `${mapping.name.replace(/\s+/g, '_')}_Chart_${new Date().toISOString().split('T')[0]}.png`);
             }
@@ -870,7 +853,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Composition chart download
       document.getElementById('downloadCompositionExcel')?.addEventListener('click', function(e) {
         e.preventDefault();
-        checkAuthBeforeDownload(() => {
+        window.checkAuthBeforeDownload(() => {
           if (window.chartData && window.chartData.composition && window.chartData.composition.length > 0) {
             const exportData = [['Indikator', 'Nilai']];
             window.chartData.composition.forEach(item => {
@@ -890,7 +873,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       document.getElementById('downloadCompositionPNG')?.addEventListener('click', function(e) {
         e.preventDefault();
-        checkAuthBeforeDownload(() => {
+        window.checkAuthBeforeDownload(() => {
           if (window.chartInstances && window.chartInstances.composition) {
             exportChartToPNG(window.chartInstances.composition, `Komposisi_IPM_Chart_${new Date().toISOString().split('T')[0]}.png`);
           }

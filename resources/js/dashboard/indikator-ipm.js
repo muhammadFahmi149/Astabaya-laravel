@@ -320,35 +320,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     // Helper function to check authentication before download
-    function checkAuthBeforeDownload(callback, itemName = 'data') {
-        if (window.AUTH_CHECK) {
-            callback();
-            return true;
-        } else {
-            if (typeof showLoginRequiredModal === 'function') {
-                showLoginRequiredModal(itemName);
-            } else {
-                alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
-                const loginModal = document.getElementById('loginModal');
-                if (loginModal) {
-                    // Try bootstrap modal
-                    if (typeof bootstrap !== 'undefined') {
-                        const modal = new bootstrap.Modal(loginModal);
-                        modal.show();
-                    }
-                } else if (window.LOGIN_ROUTE) {
-                    window.location.href = window.LOGIN_ROUTE;
-                }
-            }
-            return false;
-        }
-    }
+
 
     const downloadChartBtn = document.getElementById('downloadChartData');
     if (downloadChartBtn) {
         downloadChartBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            checkAuthBeforeDownload(exportToExcel, `data ${exportPrefix}`);
+            window.checkAuthBeforeDownload(exportToExcel, `data ${exportPrefix}`);
         });
     }
     
@@ -374,7 +352,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (downloadImageBtn) {
         downloadImageBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            checkAuthBeforeDownload(exportToPNG, `grafik ${exportPrefix}`);
+            window.checkAuthBeforeDownload(exportToPNG, `grafik ${exportPrefix}`);
         });
     }
 

@@ -100,3 +100,28 @@ File ini digunakan untuk merekam jejak semua perbaikan bug dan refaktor kode pad
 - `resources/js/dashboard/pdrb-lapangan-usaha.js` (Pindahan dari public)
 - `vite.config.js`
 - `.gitignore`
+
+### Sesi 4: Implementasi Fitur Chart Modal Global (Kemiskinan, Hotel Occupancy, Gini Ratio)
+*Tanggal: 23 Juli 2026*
+
+### 1. Pengembangan Komponen Global Modal
+- **Chart Modal Component**: Menciptakan komponen reusable `<x-chart-modal />` untuk membuka grafik ke dalam tampilan *full-screen* guna memberikan pengalaman analitik data yang lebih baik.
+- **Deep Cloning ECharts**: Mencegah *bug* grafis yang berantakan saat modal diperbesar dengan menerapkan teknik duplikasi (cloning) opsi dan data *dataset* ECharts dari kanvas asli menuju kanvas baru di dalam modal.
+- **Deteksi Fleksibel**: Menyempurnakan pemindai elemen grafik (`chart-modal.js`) agar secara dinamis mampu mendeteksi elemen grafik ber-ID khusus maupun ber-class `.chart-container`, serta mengambil judul dari berbagai tag header (`<h4>`, `<h5>`, `<h6>`).
+
+### 2. Deep Linking & Share Feature
+- **Share Button**: Membuat komponen tombol bagikan (`<x-chart-share-button />`) yang mampu menyalin tautan khusus menuju halaman dan langsung membuka spesifik grafik yang dibagikan.
+- **URL Slug & History API**: Menyematkan parameter dinamis (contoh: `?chart=tren-garis-kemiskinan`) ketika modal dibuka atau tautan dibagikan. Memanfaatkan *History API* `pushState` agar tautan otomatis bersih/terhapus tanpa perlu me-reload halaman ketika modal ditutup.
+- **Auto-Open**: Apabila pengunjung mengakses halaman melalui tautan berparameter `?chart=...`, maka sistem akan otomatis menyorot dan membuka *modal fullscreen* untuk grafik yang bersangkutan segera sesudah peramban selesai merender halaman.
+
+### 3. Perlindungan Fitur Unduh
+- Mengamankan tombol unduhan (*Download Excel/PNG*) di dalam modal untuk tetap mematuhi otentikasi. Jika *user* bukan anggota terdaftar (anonim), fitur unduh akan memicu sistem login standar.
+
+**Daftar File yang Dibuat & Dimodifikasi pada Sesi 4:**
+- `resources/views/components/chart-modal.blade.php` (Baru)
+- `resources/views/components/chart-share-button.blade.php` (Baru)
+- `resources/js/dashboard/chart-modal.js` (Baru)
+- `resources/views/dashboard/indikator/kemiskinan.blade.php` (Modifikasi)
+- `resources/views/dashboard/indikator/hotel_occupancy.blade.php` (Modifikasi)
+- `resources/views/dashboard/indikator/gini_ratio.blade.php` (Modifikasi)
+- `vite.config.js` (Mendaftarkan aset baru)

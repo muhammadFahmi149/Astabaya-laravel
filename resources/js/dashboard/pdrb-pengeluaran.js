@@ -2938,7 +2938,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (btnExcel) {
         btnExcel.addEventListener('click', function(e) {
           e.preventDefault();
-          exportToExcel(config.data(), config.name, config.name);
+          window.checkAuthBeforeDownload(() => {
+            exportToExcel(config.data(), config.name, config.name);
+          }, 'data ' + config.name);
         });
       }
       
@@ -2946,7 +2948,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (btnPNG) {
         btnPNG.addEventListener('click', function(e) {
           e.preventDefault();
-          exportToPNG(chartInstances[config.chart], config.name);
+          window.checkAuthBeforeDownload(() => {
+            exportToPNG(chartInstances[config.chart], config.name);
+          }, 'grafik ' + config.name);
         });
       }
     });
@@ -2956,19 +2960,24 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnFilteredExcel) {
       btnFilteredExcel.addEventListener('click', function(e) {
         e.preventDefault();
-        // Get currently displayed data
-        let dataSource = {};
-        if (selectedJenisPDRB === 'adhb') dataSource = adhbByCategory;
-        else if (selectedJenisPDRB === 'adhk') dataSource = adhkByCategory;
-        else if (selectedJenisPDRB === 'distribusi') dataSource = distribusiByCategory;
-        else if (selectedJenisPDRB === 'laju') dataSource = lajuByCategory;
-        
-        const filteredData = {};
-        selectedPengeluaran.forEach(cat => {
-          if (dataSource[cat]) filteredData[cat] = dataSource[cat];
-        });
-        
-        exportToExcel(filteredData, 'PDRB_Pengeluaran_Filtered', 'Data Filter');
+        window.checkAuthBeforeDownload(() => {
+          // Get currently displayed data
+          let dataSource = {};
+          if (document.getElementById('adhbChart').style.display !== 'none') {
+            dataSource = adhbByCategory;
+          } else {
+            dataSource = adhkByCategory;
+          }
+          
+          const filteredData = {};
+          selectedPengeluaran.forEach(category => {
+            if (dataSource[category]) {
+              filteredData[category] = dataSource[category];
+            }
+          });
+          
+          exportToExcel(filteredData, 'PDRB_Pengeluaran_Filtered', 'Data Filter');
+        }, 'data filter tahunan');
       });
     }
     
@@ -2976,7 +2985,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnFilteredPNG) {
       btnFilteredPNG.addEventListener('click', function(e) {
         e.preventDefault();
-        exportToPNG(filteredChartInstance, 'PDRB_Pengeluaran_Filtered');
+        window.checkAuthBeforeDownload(() => {
+          exportToPNG(filteredChartInstance, 'PDRB_Pengeluaran_Filtered');
+        }, 'grafik filter tahunan');
       });
     }
 
@@ -2985,21 +2996,24 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnFilteredTriwulananExcel) {
       btnFilteredTriwulananExcel.addEventListener('click', function(e) {
         e.preventDefault();
-        // Get currently displayed data
-        let dataSource = {};
-        if (selectedJenisPDRBTriwulanan === 'adhb_triwulanan') dataSource = adhbTriwulananByCategory;
-        else if (selectedJenisPDRBTriwulanan === 'adhk_triwulanan') dataSource = adhkTriwulananByCategory;
-        else if (selectedJenisPDRBTriwulanan === 'distribusi_triwulanan') dataSource = distribusiTriwulananByCategory;
-        else if (selectedJenisPDRBTriwulanan === 'laju_qtoq') dataSource = lajuQtoQByCategory;
-        else if (selectedJenisPDRBTriwulanan === 'laju_ytoy') dataSource = lajuYtoYByCategory;
-        else if (selectedJenisPDRBTriwulanan === 'laju_ctoc') dataSource = lajuCtoCByCategory;
-        
-        const filteredData = {};
-        selectedPengeluaranTriwulanan.forEach(cat => {
-          if (dataSource[cat]) filteredData[cat] = dataSource[cat];
-        });
-        
-        exportToExcel(filteredData, 'PDRB_Pengeluaran_Triwulanan_Filtered', 'Data Filter');
+        window.checkAuthBeforeDownload(() => {
+          // Get currently displayed data
+          let dataSource = {};
+          if (document.getElementById('adhbTriwulananChart').style.display !== 'none') {
+            dataSource = adhbTriwulananByCategory;
+          } else {
+            dataSource = adhkTriwulananByCategory;
+          }
+          
+          const filteredData = {};
+          selectedPengeluaranTriwulanan.forEach(category => {
+            if (dataSource[category]) {
+              filteredData[category] = dataSource[category];
+            }
+          });
+          
+          exportToExcel(filteredData, 'PDRB_Pengeluaran_Triwulanan_Filtered', 'Data Filter');
+        }, 'data filter triwulanan');
       });
     }
     
@@ -3007,7 +3021,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnFilteredTriwulananPNG) {
       btnFilteredTriwulananPNG.addEventListener('click', function(e) {
         e.preventDefault();
-        exportToPNG(filteredChartInstanceTriwulanan, 'PDRB_Pengeluaran_Triwulanan_Filtered');
+        window.checkAuthBeforeDownload(() => {
+          exportToPNG(filteredChartInstanceTriwulanan, 'PDRB_Pengeluaran_Triwulanan_Filtered');
+        }, 'grafik filter triwulanan');
       });
     }
   });

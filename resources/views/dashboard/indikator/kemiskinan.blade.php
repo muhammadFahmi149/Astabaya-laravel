@@ -273,7 +273,8 @@ window.APP_CONFIG = {
   apiBase: '{{ url("/api") }}'
 };
 </script>
-@vite(['resources/css/dashboard/kemiskinan.css', 'resources/js/dashboard/kemiskinan.js'])
+@vite(['resources/css/dashboard/kemiskinan.css', 'resources/js/dashboard/kemiskinan.js', 'resources/js/dashboard/chart-modal.js'])
 @endpush
-
+  <!-- Global Chart Modal Component -->
+  <x-chart-modal />
 @endsection

@@ -2072,60 +2072,35 @@ function exportChartToPNG(chartInstance, filename) {
 }
 
 // Helper function to check authentication before download
-function checkAuthBeforeDownload(callback, itemName = 'data') {
-  // Check if user is authenticated via meta tag or global variable
-  const isAuthenticated = window.APP_CONFIG.isAuthenticated;
-  
-  if (!isAuthenticated) {
-    // User not authenticated, show login modal
-    if (typeof showLoginRequiredModal === 'function') {
-      showLoginRequiredModal(itemName);
-    } else {
-      alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
-      const loginModal = document.getElementById('loginModal');
-      if (loginModal) {
-        const modal = new bootstrap.Modal(loginModal);
-        modal.show();
-      } else {
-        window.location.href = window.APP_CONFIG.routes.login;
-      }
-    }
-    return false;
-  } else {
-    // User authenticated, proceed with download
-    callback();
-    return true;
-  }
-}
 
 // Add event listeners for download buttons
 document.addEventListener('DOMContentLoaded', function() {
   // MtoM Chart
   document.getElementById('downloadMtoMExcel')?.addEventListener('click', function() {
-    checkAuthBeforeDownload(exportMtoMToExcel, 'data inflasi bulan ke bulan');
+    window.checkAuthBeforeDownload(exportMtoMToExcel, 'data inflasi bulan ke bulan');
   });
   document.getElementById('downloadMtoMPNG')?.addEventListener('click', function() {
-    checkAuthBeforeDownload(() => {
+    window.checkAuthBeforeDownload(() => {
       exportChartToPNG(window.chartInstances.mtoM, `Inflasi_Bulan_ke_Bulan_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.png`);
     }, 'grafik inflasi bulan ke bulan');
   });
   
   // YoY Chart
   document.getElementById('downloadYonYExcel')?.addEventListener('click', function() {
-    checkAuthBeforeDownload(exportYonYToExcel, 'data inflasi tahun ke tahun');
+    window.checkAuthBeforeDownload(exportYonYToExcel, 'data inflasi tahun ke tahun');
   });
   document.getElementById('downloadYonYPNG')?.addEventListener('click', function() {
-    checkAuthBeforeDownload(() => {
+    window.checkAuthBeforeDownload(() => {
       exportChartToPNG(window.chartInstances.yonY, `Inflasi_Tahun_ke_Tahun_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.png`);
     }, 'grafik inflasi tahun ke tahun');
   });
   
   // Komoditas Chart
   document.getElementById('downloadKomoditasExcel')?.addEventListener('click', function() {
-    checkAuthBeforeDownload(exportKomoditasToExcel, 'data inflasi komoditas');
+    window.checkAuthBeforeDownload(exportKomoditasToExcel, 'data inflasi komoditas');
   });
   document.getElementById('downloadKomoditasPNG')?.addEventListener('click', function() {
-    checkAuthBeforeDownload(() => {
+    window.checkAuthBeforeDownload(() => {
       const safeName = window.chartData.komoditas.name ? window.chartData.komoditas.name.replace(/[^a-zA-Z0-9]/g, '_') : 'Komoditas';
       exportChartToPNG(window.chartInstances.komoditas, `Inflasi_${safeName}_${window.chartData.komoditas.year || ''}_${new Date().toISOString().split('T')[0]}.png`);
     }, 'grafik inflasi komoditas');

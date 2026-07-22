@@ -212,7 +212,9 @@ window.APP_CONFIG = {
   isAuthenticated: @auth true @else false @endauth
 };
 </script>
-@vite(['resources/css/dashboard/hotel-occupancy.css', 'resources/js/dashboard/hotel-occupancy.js'])
+@vite(['resources/css/dashboard/hotel-occupancy.css', 'resources/js/dashboard/hotel-occupancy.js', 'resources/js/dashboard/chart-modal.js'])
 @endpush
 
+  <!-- Global Chart Modal Component -->
+  <x-chart-modal />
 @endsection

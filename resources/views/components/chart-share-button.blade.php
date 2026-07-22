@@ -11,8 +11,12 @@
     data-share-title="{{ $title }}"
     title="Salin link {{ $title }}"
     aria-label="Salin link {{ $title }}"
-    onclick="(function(btn) {
-        const url = window.location.href;
+    onclick="(function(btn, event) {
+        if (event) event.stopPropagation();
+        const baseUrl = window.location.origin + window.location.pathname;
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.set('chart', '{{ \Illuminate\Support\Str::slug($title) }}');
+        const url = baseUrl + '?' + searchParams.toString();
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(url).then(() => {
                 const originalHTML = btn.innerHTML;
@@ -51,7 +55,7 @@
             }
             document.body.removeChild(input);
         }
-    })(this)"
+    })(this, event)"
 >
     <i class="fas fa-share-alt"></i>
     <span>Bagikan</span>

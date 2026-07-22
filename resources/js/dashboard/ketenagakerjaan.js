@@ -1320,29 +1320,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
-    // Helper function to check authentication before download
-    function checkAuthBeforeDownload(callback, itemName = 'data') {
-      if (!window.APP_CONFIG.isAuthenticated) {
-        // User not authenticated, show login modal
-        if (typeof showLoginRequiredModal === 'function') {
-          showLoginRequiredModal(itemName);
-        } else {
-          alert('Ingin mengunduh ' + itemName + ' ini? Silakan login terlebih dahulu.');
-          const loginModal = document.getElementById('loginModal');
-          if (loginModal) {
-            const modal = new bootstrap.Modal(loginModal);
-            modal.show();
-          } else {
-            window.location.href = window.APP_CONFIG.loginUrl;
-          }
-        }
-        return false;
-      } else {
-        // User authenticated, proceed with download
-        callback();
-        return true;
-      }
-    }
+
 
     }
 
@@ -1379,10 +1357,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadComparisonExcel').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportComparisonToExcel, 'data perbandingan ketenagakerjaan');
+      window.checkAuthBeforeDownload(exportComparisonToExcel, 'data perbandingan ketenagakerjaan');
     });
     document.getElementById('downloadComparisonPNG').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportComparisonToPNG, 'grafik perbandingan ketenagakerjaan');
+      window.checkAuthBeforeDownload(exportComparisonToPNG, 'grafik perbandingan ketenagakerjaan');
     });
 
     // Export functions for TPT Pie Chart
@@ -1417,10 +1395,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTptPieExcel').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTptPieToExcel, 'data TPT pie chart');
+      window.checkAuthBeforeDownload(exportTptPieToExcel, 'data TPT pie chart');
     });
     document.getElementById('downloadTptPiePNG').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTptPieToPNG, 'grafik TPT pie chart');
+      window.checkAuthBeforeDownload(exportTptPieToPNG, 'grafik TPT pie chart');
     });
 
     // Export functions for TPT Line Chart
@@ -1450,10 +1428,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTptLineExcel').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTptLineToExcel, 'data TPT line chart');
+      window.checkAuthBeforeDownload(exportTptLineToExcel, 'data TPT line chart');
     });
     document.getElementById('downloadTptLinePNG').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTptLineToPNG, 'grafik TPT line chart');
+      window.checkAuthBeforeDownload(exportTptLineToPNG, 'grafik TPT line chart');
     });
 
     // Export functions for TPAK Pie Chart
@@ -1489,10 +1467,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTpakPieExcel').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTpakPieToExcel, 'data TPAK pie chart');
+      window.checkAuthBeforeDownload(exportTpakPieToExcel, 'data TPAK pie chart');
     });
     document.getElementById('downloadTpakPiePNG').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTpakPieToPNG, 'grafik TPAK pie chart');
+      window.checkAuthBeforeDownload(exportTpakPieToPNG, 'grafik TPAK pie chart');
     });
 
     // Export functions for TPAK Line Chart
@@ -1522,10 +1500,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTpakLineExcel').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTpakLineToExcel, 'data TPAK line chart');
+      window.checkAuthBeforeDownload(exportTpakLineToExcel, 'data TPAK line chart');
     });
     document.getElementById('downloadTpakLinePNG').addEventListener('click', function() {
-      checkAuthBeforeDownload(exportTpakLineToPNG, 'grafik TPAK line chart');
+      window.checkAuthBeforeDownload(exportTpakLineToPNG, 'grafik TPAK line chart');
     });
 
     // Listen for transition end on main panel

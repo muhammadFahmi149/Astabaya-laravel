@@ -2842,14 +2842,18 @@
         if (excelBtn) {
           excelBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            exportToExcel(config.chart, config.title);
+            window.checkAuthBeforeDownload(() => {
+              exportToExcel(config.chart, config.title);
+            }, 'data ' + config.title);
           });
         }
         
         if (pngBtn) {
           pngBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            exportToPNG(config.chart, config.title);
+            window.checkAuthBeforeDownload(() => {
+              exportToPNG(config.chart, config.title);
+            }, 'grafik ' + config.title);
           });
         }
       });
