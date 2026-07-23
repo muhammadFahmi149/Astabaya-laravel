@@ -264,5 +264,44 @@ class BPSNewsService
         $newsList = $this->fetchNewsData();
         return $this->saveNewsToDb($newsList);
     }
+
+    /**
+     * Get detail of a specific news from BPS API
+     * 
+     * @param string|int $newsId
+     * @return array|null
+     */
+    public function getDetailFromBps($newsId): ?array
+    {
+        try {
+            // https://webapi.bps.go.id/v1/api/view/domain/3578/model/news/lang/ind/id/{id}/key/{key}/
+            $url = 'https://webapi.bps.go.id/v1/api/view/domain/3578/model/news/lang/ind/id/' . urlencode($newsId) . '/key/' . $this->apiKey . '/';
+            
+            $response = Http::timeout(5)->get($url);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                
+                if (isset($data['status']) && $data['status'] === 'OK' && isset($data['data'])) {
+                    $newsData = $data['data'];
+                    
+                    // Clean news content if it exists
+                    if (isset($newsData['news'])) {
+                        $newsData['news_cleaned'] = $this->cleanHtmlContent($newsData['news']);
+                    }
+                    
+                    return $newsData;
+                }
+            }
+            
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch news detail from BPS API', [
+                'news_id' => $newsId,
+                'error' => $e->getMessage()
+            ]);
+            return null;
+        }
+    }
 }
 

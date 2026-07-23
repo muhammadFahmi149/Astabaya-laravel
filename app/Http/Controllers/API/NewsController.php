@@ -204,6 +204,19 @@ class NewsController extends Controller
                 ], 404);
             }
 
+            // Dynamically fetch and clean the full news content from BPS API
+            $bpsService = app(\App\Services\BPSNewsService::class);
+            $detailCacheKey = "news_api_detail:{$id}";
+            
+            $bpsData = Cache::remember($detailCacheKey, self::CACHE_DURATION, function () use ($bpsService, $id) {
+                return $bpsService->getDetailFromBps($id);
+            });
+            
+            if (!empty($bpsData['news_cleaned'])) {
+                $news = clone $news;
+                $news->content = $bpsData['news_cleaned'];
+            }
+
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);
             
             Log::info('News API single request successful', [

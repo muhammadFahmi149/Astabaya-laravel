@@ -22,6 +22,7 @@ class PublicationResource extends JsonResource
             'dl' => $this->dl,
             'date' => $this->date?->format('Y-m-d'),
             'abstract' => $this->abstract,
+            'subject_csa' => $this->subject_csa ?? '-',
             'size' => $this->size,
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),

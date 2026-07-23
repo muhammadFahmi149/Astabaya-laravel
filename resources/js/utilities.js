@@ -120,3 +120,41 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 });
+
+// Global fix for ARIA-hidden focus warning on all modals
+document.addEventListener('hide.bs.modal', function(event) {
+  // When any modal starts to hide, remove focus from whatever is focused inside it (like the close button)
+  // This prevents browsers from throwing "Blocked aria-hidden on an element because its descendant retained focus"
+  if (document.activeElement && document.activeElement !== document.body) {
+    document.activeElement.blur();
+  }
+});
+document.addEventListener('click', function(e) {
+  const dismissBtn = e.target.closest('[data-bs-dismiss="modal"]');
+  if (dismissBtn) {
+    dismissBtn.blur();
+    
+    // Also try to move focus to a safe element like document.body
+    if (document.activeElement) {
+        document.activeElement.blur();
+    }
+  }
+}, true); // Use capture phase to blur before Bootstrap sets aria-hidden
+// Helper to fetch API with SessionStorage Caching
+window.fetchAPIWithCache = async function(url, options = {}) {
+  const cacheKey = 'astabaya_cache_' + url.replace(/[^a-zA-Z0-9]/g, '_');
+  const cachedData = sessionStorage.getItem(cacheKey);
+  
+  if (cachedData) {
+    return JSON.parse(cachedData);
+  }
+  
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  
+  const data = await response.json();
+  sessionStorage.setItem(cacheKey, JSON.stringify(data));
+  return data;
+};

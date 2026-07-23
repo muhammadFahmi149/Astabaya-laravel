@@ -1,0 +1,132 @@
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-radius: 25rem !important;
+    overflow: hidden;
+}
+
+.search-input-wrapper .form-control {
+    padding-left: 45px;
+    padding-right: 90px;
+    border-radius: 25rem !important;
+    border: 1px solid #ced4da;
+    height: 38px;
+}
+
+.search-button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    border: none;
+    background: #1F4068;
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.search-button:hover {
+    background: #1a3554;
+}
+
+.search-button:active {
+    background: #152a47;
+}
+
+.search-input-wrapper .form-control:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.search-input-wrapper .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 4;
+}
+
+/* Card hover effect */
+.news-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.news-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* Bookmark button animation */
+.bookmark-btn i {
+    transition: transform 0.2s ease;
+}
+.bookmark-btn:active i {
+    transform: scale(1.2);
+}
+.bookmarked i {
+    color: #0d6efd;
+}
+
+/* News Detail Modal Styles */
+#newsCardModal .modal-dialog {
+    max-width: 900px;
+}
+
+/* Added extra padding for the modal body to keep content away from edges */
+#newsCardModal .modal-body {
+    padding: 24px 10px 24px 10px; /* Top/Bottom 2.5rem, Left/Right 3rem */
+}
+
+/* Ensure image doesn't overflow */
+#modalNewsImage {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Justify abstract content and ensure proper line height */
+#newsCardModal #newsModalContent {
+    font-size: 1rem;
+    line-height: 1.8;
+    text-align: justify;
+    margin-bottom: 1rem;
+}
+
+#newsCardModal .badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+}
+
+/* Mobile Responsive Styles for News Modal */
+@media (max-width: 767.98px) {
+    #newsCardModal .modal-dialog {
+        max-width: 95%;
+        margin: 0.5rem auto;
+    }
+
+    #newsCardModal .modal-content {
+        margin: 0 0.5rem;
+    }
+
+    /* Reduce padding on mobile */
+    #newsCardModal .modal-body {
+        padding: 1.5rem 1rem;
+    }
+
+    #newsCardModal .modal-body .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    #newsCardModal #newsModalContent {
+        font-size: 0.85rem !important;
+        line-height: 1.6 !important;
+    }
+}

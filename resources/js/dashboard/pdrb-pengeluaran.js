@@ -8,6 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Helper function to fetch API data
     async function fetchAPI(url) {
       try {
+        const cacheKey = 'astabaya_pdrb_' + url.replace(/[^a-zA-Z0-9]/g, '_');
+        const cachedData = sessionStorage.getItem(cacheKey);
+        if (cachedData) {
+          return JSON.parse(cachedData);
+        }
+        
         const response = await fetch(url, {
           headers: {
             'Accept': 'application/json',
@@ -21,7 +27,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         const data = await response.json();
-        return data.success ? data.data : null;
+        const result = data.success ? data.data : null;
+        
+        if (result) {
+          sessionStorage.setItem(cacheKey, JSON.stringify(result));
+        }
+        
+        return result;
       } catch (error) {
         console.error('API fetch error:', error);
         return null;

@@ -201,13 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Load inflasi summary data
 function loadInflasiSummary() {
-  fetch(window.APP_CONFIG.routes.inflasiSummary)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
+  window.fetchAPIWithCache(window.APP_CONFIG.routes.inflasiSummary)
     .then(data => {
       if (data.status === 'success' && data.data) {
         const summary = data.data;
@@ -314,8 +308,7 @@ function updateSummaryCards(summary) {
 
 // Load years for filter
 function loadYears() {
-  fetch(window.APP_CONFIG.routes.inflasiYears)
-    .then(response => response.json())
+  window.fetchAPIWithCache(window.APP_CONFIG.routes.inflasiYears)
     .then(data => {
       if (data.status === 'success' && data.data && data.data.length > 0) {
         const years = data.data;
@@ -387,13 +380,7 @@ function loadYears() {
 function loadInflasiData() {
   const url = selectedYear ? `${window.APP_CONFIG.routes.inflasi}?year=${selectedYear}` : window.APP_CONFIG.routes.inflasi;
   
-  fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
+  window.fetchAPIWithCache(url)
     .then(data => {
       if (data.status === 'success' && data.data && data.data.length > 0) {
         allInflasiData = data.data;
@@ -818,8 +805,7 @@ function setupKomoditasFilter() {
   let allCommoditiesList = []; // Store all commodities for search
 
   // Load komoditas years
-  fetch(window.APP_CONFIG.routes.komoditasYears)
-    .then(response => response.json())
+  window.fetchAPIWithCache(window.APP_CONFIG.routes.komoditasYears)
     .then(data => {
       if (data.status === 'success' && data.data && data.data.length > 0) {
         const years = data.data;
@@ -1044,17 +1030,17 @@ function setupKomoditasFilter() {
     // Load Flag 1 (Umum)
     let url1 = `${window.APP_CONFIG.routes.komoditasByFlag}?flag=1`;
     if (year) url1 += `&year=${year}`;
-    promises.push(fetch(url1).then(r => r.json()).then(d => ({ flag: '1', data: d })).catch(e => ({ flag: '1', data: { status: 'error', data: [] } })));
+    promises.push(window.fetchAPIWithCache(url1).then(d => ({ flag: '1', data: d })).catch(e => ({ flag: '1', data: { status: 'error', data: [] } })));
     
     // Load Flag 2 (Sub) - load all sub komoditas
     let url2 = `${window.APP_CONFIG.routes.komoditasByFlag}?flag=2`;
     if (year) url2 += `&year=${year}`;
-    promises.push(fetch(url2).then(r => r.json()).then(d => ({ flag: '2', data: d })).catch(e => ({ flag: '2', data: { status: 'error', data: [] } })));
+    promises.push(window.fetchAPIWithCache(url2).then(d => ({ flag: '2', data: d })).catch(e => ({ flag: '2', data: { status: 'error', data: [] } })));
     
     // Load Flag 3 (Spesifik)
     let url3 = `${window.APP_CONFIG.routes.komoditasByFlag}?flag=3`;
     if (year) url3 += `&year=${year}`;
-    promises.push(fetch(url3).then(r => r.json()).then(d => ({ flag: '3', data: d })).catch(e => ({ flag: '3', data: { status: 'error', data: [] } })));
+    promises.push(window.fetchAPIWithCache(url3).then(d => ({ flag: '3', data: d })).catch(e => ({ flag: '3', data: { status: 'error', data: [] } })));
     
     Promise.all(promises)
       .then(results => {
@@ -1401,8 +1387,7 @@ function loadMultipleKomoditasChart(commodities, year) {
     if (year) {
       url += `&year=${year}`;
     }
-    return fetch(url)
-      .then(response => response.json())
+    return window.fetchAPIWithCache(url)
       .then(data => ({
         commodity: commodity,
         data: data.status === 'success' ? data.data : []
@@ -1439,8 +1424,7 @@ function loadKomoditasChart(commodityCode, commodityName, year) {
     url += `&year=${year}`;
   }
 
-  fetch(url)
-    .then(response => response.json())
+  window.fetchAPIWithCache(url)
     .then(data => {
       if (data.status === 'success' && data.data.length > 0) {
         renderKomoditasChart(data.data, commodityName);
@@ -1833,8 +1817,7 @@ function renderKomoditasChart(data, komoditasName) {
 
 // Load komoditas explanation
 function loadKomoditasExplanation() {
-  fetch(window.APP_CONFIG.routes.inflasiKomoditasTree)
-    .then(response => response.json())
+  window.fetchAPIWithCache(window.APP_CONFIG.routes.inflasiKomoditasTree)
     .then(data => {
       if (data.status === 'success' && data.data && data.data.length > 0) {
         let html = '<div class="row">';

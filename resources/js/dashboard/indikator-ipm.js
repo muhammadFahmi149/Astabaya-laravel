@@ -29,9 +29,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function loadSummaryData() {
+        // Cache Key
+        const CACHE_KEY = 'astabaya_ipm_' + apiEndpoint.replace(/[^a-zA-Z0-9]/g, '_');
+        let result = null;
+
         try {
-            const response = await fetch(`${API_BASE}${apiEndpoint}`);
-            const result = await response.json();
+            const cachedData = sessionStorage.getItem(CACHE_KEY);
+            if (cachedData) {
+                result = JSON.parse(cachedData);
+                console.log('Loaded IPM data from sessionStorage cache');
+            } else {
+                const response = await fetch(`${API_BASE}${apiEndpoint}`);
+                result = await response.json();
+                
+                if (result && result.success) {
+                    sessionStorage.setItem(CACHE_KEY, JSON.stringify(result));
+                }
+            }
             
             if (result.success && result.data) {
                 const data = result.data;

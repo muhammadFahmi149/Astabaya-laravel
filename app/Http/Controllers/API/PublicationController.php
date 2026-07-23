@@ -174,8 +174,8 @@ class PublicationController extends Controller
             
             $cacheKey = "publication_api:single:" . md5($pubId);
 
-            // Try to get from cache
-            $publication = Cache::remember($cacheKey, self::CACHE_DURATION, function () use ($pubId) {
+            // Try to get from cache for local basic info
+            $publication = Cache::remember($cacheKey . '_local', self::CACHE_DURATION, function () use ($pubId) {
                 return Publication::select([
                     'id',
                     'pub_id',
@@ -187,8 +187,35 @@ class PublicationController extends Controller
                     'size',
                     'created_at',
                     'updated_at'
-                ])->where('pub_id', $pubId)->first();
+                ])->where(function($q) use ($pubId) {
+                    $q->where('pub_id', $pubId)->orWhere('id', $pubId);
+                })->first();
             });
+            
+            if ($publication) {
+                // Fetch dynamic detail from BPS API (Proxy API)
+                $bpsPubId = $publication->pub_id ?? $pubId;
+                $proxyCacheKey = "publication_api:proxy:" . md5($bpsPubId);
+                
+                $bpsData = Cache::remember($proxyCacheKey, self::CACHE_DURATION, function () use ($bpsPubId) {
+                    $bpsService = app(\App\Services\BPSPublicationService::class);
+                    return $bpsService->getDetailFromBps($bpsPubId);
+                });
+                
+                // Override the local truncated abstract with the full one from BPS API
+                if (!empty($bpsData['abstract_cleaned']) || !empty($bpsData['subject_csa'])) {
+                    // Clone model to prevent modifying in-memory array cache references
+                    $publication = clone $publication;
+                    
+                    if (!empty($bpsData['abstract_cleaned'])) {
+                        $publication->abstract = $bpsData['abstract_cleaned'];
+                    }
+                    
+                    if (!empty($bpsData['subject_csa'])) {
+                        $publication->subject_csa = is_array($bpsData['subject_csa']) ? implode(', ', $bpsData['subject_csa']) : $bpsData['subject_csa'];
+                    }
+                }
+            }
             
             if (!$publication) {
                 Log::info('Publication not found', [
@@ -267,7 +294,9 @@ class PublicationController extends Controller
                     'id',
                     'pub_id',
                     'dl'
-                ])->where('pub_id', $pubId)->first();
+                ])->where(function($q) use ($pubId) {
+                    $q->where('pub_id', $pubId)->orWhere('id', $pubId);
+                })->first();
             });
             
             if (!$publication) {
@@ -311,7 +340,11 @@ class PublicationController extends Controller
             }
             
             // Otherwise redirect to download URL
-            return redirect($publication->dl);
+            $url = $publication->dl;
+            if (!\Illuminate\Support\Str::startsWith($url, ['http://', 'https://'])) {
+                $url = url($url);
+            }
+            return redirect($url);
 
         } catch (\Exception $e) {
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);

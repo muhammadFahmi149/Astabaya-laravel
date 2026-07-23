@@ -44,16 +44,31 @@
     let surabayaChange = null;
     let jatimChange = null;
 
-    // Load summary data from API
+    // Cache Key
+    const CACHE_KEY = 'astabaya_gini_ratio_summary';
+    let result = null;
+
+    // Load summary data from API or Cache
     try {
-      const response = await fetch(`${API_BASE}/gini-ratio-summary`);
-      
-      // Validate response
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const cachedData = sessionStorage.getItem(CACHE_KEY);
+      if (cachedData) {
+        result = JSON.parse(cachedData);
+        console.log('Loaded gini ratio data from sessionStorage cache');
+      } else {
+        const response = await fetch(`${API_BASE}/gini-ratio-summary`);
+        
+        // Validate response
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        result = await response.json();
+        
+        // Save to cache if successful
+        if (result && result.success) {
+          sessionStorage.setItem(CACHE_KEY, JSON.stringify(result));
+        }
       }
-      
-      const result = await response.json();
       console.log('Gini Ratio API Response:', result);
       
       // Validate response structure

@@ -25,16 +25,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     let comparisonChart = null;
 
 
-    // Load summary data from API
+    // Cache Key
+    const CACHE_KEY = 'astabaya_ketenagakerjaan_summary';
+    let result = null;
+
+    // Load summary data from API or Cache
     try {
-      console.log('Fetching ketenagakerjaan data from:', `${API_BASE}/ketenagakerjaan-summary`);
-      const response = await fetch(`${API_BASE}/ketenagakerjaan-summary`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const cachedData = sessionStorage.getItem(CACHE_KEY);
+      if (cachedData) {
+        result = JSON.parse(cachedData);
+        console.log('Loaded ketenagakerjaan data from sessionStorage cache');
+      } else {
+        const response = await fetch(`${API_BASE}/ketenagakerjaan-summary`);
+        
+        // Validate response
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        result = await response.json();
+        
+        // Save to cache if successful
+        if (result && result.success) {
+          sessionStorage.setItem(CACHE_KEY, JSON.stringify(result));
+        }
       }
-      
-      const result = await response.json();
       console.log('Ketenagakerjaan API Response:', result);
       
       if (result.success && result.data) {

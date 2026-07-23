@@ -48,7 +48,7 @@ class BPSPublicationService
 
         // Remove control characters
         $abstract = preg_replace('/[\r\n]+/', ' ', $abstract);
-        $abstract = preg_replace('/[\x00-\x1F\x7F-\x9F]/u', ' ', $abstract);
+        $abstract = preg_replace('/\p{Cc}+/u', ' ', $abstract);
         $abstract = preg_replace('/[\s\t]+/', ' ', $abstract);
 
         return trim($abstract);
@@ -260,6 +260,46 @@ class BPSPublicationService
     {
         $publicationList = $this->fetchPublicationData();
         return $this->savePublicationToDb($publicationList);
+    }
+
+    /**
+     * Fetch publication detail data directly from BPS API (Proxy API)
+     * This is used for on-the-fly fetching of complete details like abstract.
+     * 
+     * @param string $pubId
+     * @return array|null
+     */
+    public function getDetailFromBps(string $pubId): ?array
+    {
+        try {
+            // https://webapi.bps.go.id/v1/api/view/domain/3578/model/publication/lang/ind/id/{id}/key/{key}/
+            $url = 'https://webapi.bps.go.id/v1/api/view/domain/3578/model/publication/lang/ind/id/' . urlencode($pubId) . '/key/' . $this->apiKey . '/';
+            
+            $response = Http::timeout(5)->get($url);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                
+                if (isset($data['status']) && $data['status'] === 'OK' && isset($data['data'])) {
+                    $pubData = $data['data'];
+                    
+                    // Clean abstract if it exists
+                    if (isset($pubData['abstract'])) {
+                        $pubData['abstract_cleaned'] = $this->cleanAbstract($pubData['abstract']);
+                    }
+                    
+                    return $pubData;
+                }
+            }
+            
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch publication detail from BPS API', [
+                'pub_id' => $pubId,
+                'error' => $e->getMessage()
+            ]);
+            return null;
+        }
     }
 }
 

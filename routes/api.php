@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ApiDataController;
+use App\Http\Controllers\API\DashboardApiController;
 use App\Http\Controllers\API\ApiSyncController;
 use App\Http\Controllers\API\PublicationController;
 use App\Http\Controllers\API\NewsController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\AuthController;
 */
 
 // Public API endpoints
+Route::get('/dashboard-summary', [DashboardApiController::class, 'getSummary'])->name('api.dashboard-summary');
 Route::get('/hotel-occupancy', [ApiDataController::class, 'getHotelOccupancy'])->name('api.hotel-occupancy');
 Route::get('/hotel-occupancy-summary', [HotelOccupancyController::class, 'getSummary'])->name('api.hotel-occupancy-summary');
 Route::get('/gini-ratio', [ApiDataController::class, 'getGiniRatio'])->name('api.gini-ratio');

@@ -1084,18 +1084,18 @@
           lajuQtoQRes, lajuYtoYRes, lajuCtoCRes,
           summaryRes, yearsRes
         ] = await Promise.all([
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhb`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhk`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=distribusi`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_implisit`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhb_triwulanan`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhk_triwulanan`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=distribusi_triwulanan`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_qtoq`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_ytoy`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_ctoc`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-summary`).then(r => r.json()),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhb`),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhk`),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=distribusi`),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju`),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_implisit`),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhb_triwulanan`),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=adhk_triwulanan`),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=distribusi_triwulanan`),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_qtoq`),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_ytoy`),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-by-category?type=laju_ctoc`),
+          window.fetchAPIWithCache(`${API_BASE_URL}/pdrb-lapangan-usaha-summary`),
           fetch(`${API_BASE_URL}/pdrb-lapangan-usaha-years?t=${new Date().getTime()}`).then(r => r.json())
         ]);
 

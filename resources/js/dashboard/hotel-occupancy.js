@@ -101,17 +101,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       return `${monthAbbr} ${year}`;
     }
 
-    // Load summary data from API
+    // Cache Key
+    const CACHE_KEY = 'astabaya_hotel_occupancy_summary';
+    let result = null;
+
+    // Load summary data from API or Cache
     try {
-      console.log('Fetching data from:', `${API_BASE}/hotel-occupancy-summary`);
-      const response = await fetch(`${API_BASE}/hotel-occupancy-summary`);
-      
-      // Validate response
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const cachedData = sessionStorage.getItem(CACHE_KEY);
+      if (cachedData) {
+        result = JSON.parse(cachedData);
+        console.log('Loaded hotel occupancy data from sessionStorage cache');
+      } else {
+        const response = await fetch(`${API_BASE}/hotel-occupancy-summary`);
+        
+        // Validate response
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        result = await response.json();
+        
+        // Save to cache if successful
+        if (result && result.success) {
+          sessionStorage.setItem(CACHE_KEY, JSON.stringify(result));
+        }
       }
-      
-      const result = await response.json();
       console.log('API Response:', result);
       
       // Validate response structure

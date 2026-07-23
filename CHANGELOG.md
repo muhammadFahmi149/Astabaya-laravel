@@ -140,3 +140,71 @@ Melakukan injeksi skrip `chart-modal.js` pada konfigurasi `@vite` dan menempatka
 - *Browser Automated Testing*: Melakukan skenario uji klik kartu (*card click event*), *URL binding* (*pushState* & *replaceState*), serta integrasi *Share button*, dimana seluruh grafik sukses dikloning (*cloned*) ke dimensi penuh tanpa gangguan galat kode ganda (*double-code collision*).
 
 Dengan ini, **100% halaman visualisasi indikator** di *Dashboard* Astabaya telah terstandarisasi dengan fitur *Global Chart Modal*.
+
+### Sesi 6: Audit, Debugging & Optimisasi Modul Publikasi (Clean Code)
+*Tanggal: 23 Juli 2026*
+
+### 1. Code Review & Bug Fixing
+Melakukan investigasi komprehensif pada Modul Publikasi dan menyelesaikan sejumlah *bug* kritikal:
+- **Ghost Backdrop Fixed**: Memperbaiki masalah layar hitam (*backdrop*) yang macet setelah menutup modal publikasi akibat instalasi ganda *Bootstrap Modal Instance*.
+- **Unsafe Redirect Prevented**: Menambahkan lapisan keamanan dengan fungsi *sanitize URL* pada endpoint unduhan untuk memastikan *relative path* dikembalikan secara benar dan aman (*URL parsing*).
+- **Empty Src Fetch Optimization**: Mencegah pemanggilan *Network 404* pada skrip *Lazy Loading (IntersectionObserver)* saat atribut sumber gambar kosong.
+- **Data Mismatch Share Link Resolved**: Sinkronisasi *query id* dan *pub_id* pada PublicationController di metode show dan getDownloadUrl sehingga *link share* dapat langsung terbuka tanpa respons HTTP 404.
+- **API Fetch Path Modernization**: Menghilangkan *absolute root path* (*hardcoded path*) di setiap *fetch API* Javascript dan menyisipkan fungsi interpolasi PHP (Base URL) agar kompatibel berjalan dalam sub-direktori (*reverse proxy safe*).
+- **Deprecated Global Event Addressed**: Menambahkan pewarisan eksplisit pada objek event di dalam fungsi refreshData() guna mencegah *Crash* di peramban *strict-mode* seperti Firefox/Safari.
+
+### 2. Ekstraksi Aset (Asset Decoupling)
+Merapikan publications.blade.php dengan cara mencabut ribuan baris <style> dan <script> yang menumpuk di file tampilan (*inline*).
+- **CSS Extraction**: Mengekspor *styling* kustom publikasi ke dalam berkas `resources/css/dashboard/publications.css`.
+- **JS Extraction**: Mengekspor logika *Event Listener, Pagination*, dan *Modal Control* ke dalam berkas `resources/js/dashboard/publications.js`. Mentranslasikan direktif *Blade* @auth dan variabel *route* menggunakan penyisipan konfigurasi *window scope* (window.ASTABAYA).
+- **Vite Integration**: Mengonfigurasi `vite.config.js` untuk secara otomatis mengemas dan mengoptimasi berkas *CSS* & *JS* publikasi tersebut, memberikan peningkatan kinerja (*page load speed*) pada modul ini.
+
+**Daftar File yang Terpengaruh pada Sesi 6:**
+- `app/Http/Controllers/API/PublicationController.php` (Bug Fixing & Optimisasi Query)
+- `resources/views/dashboard/publications.blade.php` (Pemisahan Script/Style & Rute Unduh)
+- `resources/css/dashboard/publications.css` (Baru)
+- `resources/js/dashboard/publications.js` (Baru)
+- `vite.config.js` (Modifikasi *input array*)
+
+### Hotfix (Sesi 6 Lanjutan)
+- **Global Function Export (Vite Isolation Fix)**: Mengekspor fungsi JavaScript (*showModal*, *handlePublicationBookmark*, *performSearch*, dll) ke objek window agar bisa dipanggil oleh atribut event HTML *inline* (onclick, onkeypress), mengatasi masalah *Uncaught ReferenceError* yang muncul akibat enkapsulasi modul ES oleh sistem kompilasi Vite.
+- **Accessibility (ARIA) Fix**: Menghilangkan atribut `aria-hidden="true"` pada elemen <textarea> pembantu di fitur salin tautan *(clipboard fallback)* dan mencabut implementasi interseptor penutup Modal *(Universal Modal Close Handler)* yang menghalangi Bootstrap untuk mengembalikan nilai fokus elemen (*focus trap warning*). Mengatasi deretan *warning* W3C/ARIA di konsol browser.
+
+### Sesi 7: Implementasi Proxy API untuk Rincian Publikasi BPS
+*Tanggal: 23 Juli 2026*
+
+**Fitur Baru (Lazy Loading Abstract):**
+- Mengimplementasikan pola *Proxy API* pada BPSPublicationService untuk mengambil data *abstract* secara dinamis tanpa menyimpannya ke tabel *database* lokal.
+- Mengubah PublicationController@show untuk mengambil detail publikasi dari *Cache* dan *Endpoint* API BPS.
+- Menambahkan *Fallback System*: Jika server BPS lambat atau tumbang, sistem akan memprioritaskan data dari *Database* lokal sehingga UI tetap responsif.
+- Menambahkan animasi *Loading Spinner* di modal publikasi (*Frontend*) selama menunggu respon API BPS.
+
+**Perbaikan Bug (Bug Fix):**
+- **Data Abstract Terpotong/Kosong:** Memperbaiki galat *regex* Compilation failed: UTF-8 error pada fungsi cleanAbstract di BPSPublicationService.php dengan mengganti pola lawas /[\x00-\x1F\x7F-\x9F]/u menjadi pola yang sesuai standar PCRE UTF-8 modern /\p{Cc}+/u.
+- **Fix Unduh Publikasi:** Memperbaiki galat pada logika tombol "Unduh PDF" di dalam Modal yang sebelumnya salah membaca tag sintaks *Blade* dari berkas *Javascript*.
+- **Optimasi Kecepatan Dasbor Indikator:** Menerapkan sistem *Frontend SessionStorage Caching* pada seluruh *tab* indikator (Kemiskinan, Ketenagakerjaan, Gini Ratio, Hotel Occupancy, IPM, Inflasi, Kependudukan, PDRB) untuk menghilangkan waktu tunggu pemuatan jaringan (*network delay*) pada kunjungan ulang, menghasilkan *rendering* grafik ECharts secara instan.
+
+### Sesi 8: Audit Modul Dashboard & Refactoring API Redundancy
+*Tanggal: 24 Juli 2026*
+
+**Perbaikan Keamanan & Bug (Dashboard):**
+- **XSS Mitigation**: Menerapkan fungsi utilitas escapeHTML() pada *Javascript* untuk mencegah celah *DOM-based Cross-Site Scripting (XSS)* saat merender judul dari respons API ke dalam *carousel*.
+- **Infinite Loop Fix**: Memperbaiki *memory leak* dan *infinite loop* pada *fallback image loading* dengan mengubah penulisan *event handler* gambar rusak menjadi onerror="this.onerror=null; this.src='...'".
+
+**Pemisahan Aset (Asset Decoupling):**
+- **CSS Extraction**: Mengekstrak ratusan baris *inline styling* dari dashboard.blade.php ke dalam berkas `resources/css/dashboard/dashboard.css`.
+- **JS Extraction**: Mengekstrak logika *Javascript* kompleks dari dashboard.blade.php ke dalam berkas `resources/js/dashboard/dashboard.js`. Mengubah skema {{ route() }} menjadi window.DASHBOARD_CONFIG.
+- **Vite Integration**: Mengonfigurasi `vite.config.js` untuk secara otomatis mengemas dan mengoptimasi dashboard.css & dashboard.js. Memuat aset pada dashboard.blade.php menggunakan direktif @vite.
+
+**Optimasi Kinerja Backend For Frontend (BFF):**
+- **API Aggregation**: Mengatasi masalah *API Redundancy Bottleneck* yang memaksa browser menembakkan 16 koneksi HTTP secara bersamaan saat memuat Dashboard.
+- Membuat DashboardApiController.php yang secara internal di level server mengeksekusi metode dari 16 layanan indikator yang berbeda, merakit datanya, dan mengembalikannya ke browser hanya melalui **1 respons JSON tunggal**.
+- Mengurangi beban server (Server Load Spike), mempercepat waktu rendering *(Time-to-Interactive)*, dan merampingkan skrip dashboard.js.
+
+**Daftar File yang Terpengaruh pada Sesi 8:**
+- `app/Http/Controllers/API/DashboardApiController.php` (Baru - Aggregator BFF)
+- `routes/api.php` (Menambahkan Endpoint /dashboard-summary)
+- `resources/views/dashboard/dashboard.blade.php` (Pemisahan Script/Style)
+- `resources/css/dashboard/dashboard.css` (Baru)
+- `resources/js/dashboard/dashboard.js` (Baru & Implementasi Single Fetch BFF)
+- `vite.config.js` (Modifikasi *input array*)
