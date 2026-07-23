@@ -326,7 +326,9 @@ window.APP_CONFIG = {
   isAuthenticated: @auth true @else false @endauth
 };
 </script>
-@vite(['resources/css/dashboard/inflasi.css', 'resources/js/dashboard/inflasi.js'])
+@vite(['resources/css/dashboard/inflasi.css', 'resources/js/dashboard/inflasi.js', 'resources/js/dashboard/chart-modal.js'])
 @endpush
 
+  <!-- Global Chart Modal Component -->
+  <x-chart-modal />
 @endsection

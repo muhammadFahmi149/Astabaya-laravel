@@ -616,7 +616,9 @@ window.APP_CONFIG = {
 };
 </script>
 
-@vite(['resources/css/dashboard/pdrb-lapangan-usaha.css', 'resources/js/dashboard/pdrb-lapangan-usaha.js'])
+@vite(['resources/css/dashboard/pdrb-lapangan-usaha.css', 'resources/js/dashboard/pdrb-lapangan-usaha.js', 'resources/js/dashboard/chart-modal.js'])
 @endpush
 
+  <!-- Global Chart Modal Component -->
+  <x-chart-modal />
 @endsection

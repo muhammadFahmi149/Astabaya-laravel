@@ -126,7 +126,9 @@ window.APP_CONFIG = {
             isCurrency: false
         };
     </script>
-    @vite('resources/js/dashboard/indikator-ipm.js')
+    @vite(['resources/js/dashboard/indikator-ipm.js', 'resources/js/dashboard/chart-modal.js'])
 @endpush
 
+  <!-- Global Chart Modal Component -->
+  <x-chart-modal />
 @endsection

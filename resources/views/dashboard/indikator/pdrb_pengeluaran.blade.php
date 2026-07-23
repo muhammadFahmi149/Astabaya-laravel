@@ -610,7 +610,9 @@ window.APP_CONFIG = {
 };
 </script>
 
-@vite(['resources/css/dashboard/pdrb-pengeluaran.css', 'resources/js/dashboard/pdrb-pengeluaran.js'])
+@vite(['resources/css/dashboard/pdrb-pengeluaran.css', 'resources/js/dashboard/pdrb-pengeluaran.js', 'resources/js/dashboard/chart-modal.js'])
 @endpush
 
+  <!-- Global Chart Modal Component -->
+  <x-chart-modal />
 @endsection

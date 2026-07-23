@@ -442,7 +442,9 @@ window.APP_CONFIG = {
 };
 </script>
 
-@vite(['resources/css/dashboard/indeks-pembangunan-manusia.css', 'resources/js/dashboard/indeks-pembangunan-manusia.js'])
+@vite(['resources/css/dashboard/indeks-pembangunan-manusia.css', 'resources/js/dashboard/indeks-pembangunan-manusia.js', 'resources/js/dashboard/chart-modal.js'])
 @endpush
 
+  <!-- Global Chart Modal Component -->
+  <x-chart-modal />
 @endsection

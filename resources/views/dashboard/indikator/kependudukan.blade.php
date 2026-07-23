@@ -276,7 +276,9 @@ window.APP_CONFIG = {
 };
 </script>
 
-@vite(['resources/css/dashboard/kependudukan.css', 'resources/js/dashboard/kependudukan.js'])
+@vite(['resources/css/dashboard/kependudukan.css', 'resources/js/dashboard/kependudukan.js', 'resources/js/dashboard/chart-modal.js'])
 @endpush
 
+  <!-- Global Chart Modal Component -->
+  <x-chart-modal />
 @endsection

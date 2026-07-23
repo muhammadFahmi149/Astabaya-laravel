@@ -379,8 +379,10 @@ window.APP_CONFIG = {
   loginUrl: '{{ route("login") }}'
 };
 </script>
-@vite(['resources/css/dashboard/ketenagakerjaan.css', 'resources/js/dashboard/ketenagakerjaan.js'])
+@vite(['resources/css/dashboard/ketenagakerjaan.css', 'resources/js/dashboard/ketenagakerjaan.js', 'resources/js/dashboard/chart-modal.js'])
 @endpush
 
+  <!-- Global Chart Modal Component -->
+  <x-chart-modal />
 @endsection
 
