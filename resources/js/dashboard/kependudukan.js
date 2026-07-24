@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("turbo:load", () => {
     const API_BASE_URL = '/api';
             let currentYear = null;
     let trendData = [];

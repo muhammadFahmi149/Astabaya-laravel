@@ -218,11 +218,35 @@ Merapikan publications.blade.php dengan cara mencabut ribuan baris <style> dan <
 - **Penyelarasan UX:** Mengamankan konsistensi antarmuka antara modal yang terbuka di halaman utama vs di Dashboard. Seluruh fitur modal seperti tangkapan gambar, tanggal, pembagian tautan (*share*), unduhan dokumen, dan markah (*bookmark*) berfungsi penuh.
 
 **Daftar File yang Dibuat & Dimodifikasi:**
-- esources/views/components/news-modal.blade.php (Baru)
-- esources/views/components/publication-modal.blade.php (Baru)
-- esources/views/components/infographic-modal.blade.php (Baru)
-- esources/views/dashboard/dashboard.blade.php (Menyematkan Modal & Menghapus *redirect*)
-- esources/views/dashboard/news.blade.php (Menggunakan Komponen)
-- esources/views/dashboard/publications.blade.php (Menggunakan Komponen)
-- esources/views/dashboard/infographics.blade.php (Menggunakan Komponen)
-- esources/js/dashboard/dashboard.js (Menambah fungsi *fetch* API untuk Modal)
+- `resources/views/components/news-modal.blade.php` (Baru)
+- `resources/views/components/publication-modal.blade.php` (Baru)
+- `resources/views/components/infographic-modal.blade.php` (Baru)
+- `resources/views/dashboard/dashboard.blade.php` (Menyematkan Modal & Menghapus *redirect*)
+- `resources/views/dashboard/news.blade.php` (Menggunakan Komponen)
+- `resources/views/dashboard/publications.blade.php` (Menggunakan Komponen)
+- `resources/views/dashboard/infographics.blade.php` (Menggunakan Komponen)
+- `resources/js/dashboard/dashboard.js` (Menambah fungsi *fetch* API untuk Modal)
+
+### Sesi 10: Standarisasi Fitur Unduh & QA Ekstrem
+*Tanggal: 25 Juli 2026*
+
+**Perubahan dan Perbaikan:**
+- **Standarisasi Penamaan Unduhan:** Merefaktor seluruh fitur *Download* di 16 halaman indikator agar format nama *file* (Excel/PNG) mencerminkan judul aslinya secara dinamis.
+- **Konsistensi Autentikasi Lintas Arsitektur:** Memperbarui fungsi pengunduhan global (`checkAuthBeforeDownload`) agar tangguh mendeteksi sesi *login* secara dinamis (mampu membaca variabel baru `ASTABAYA` dan variabel lama `APP_CONFIG`), sehingga menghindarkan sistem dari benturan arsitektur.
+- **Uji Kualitas Menyeluruh (QA):** Memastikan ketahanan aplikasi dari kelemahan tingkat produksi seperti pencegahan *Cross-Site Scripting (XSS)*, *API Null Data Handling* yang elegan, hingga mekanisme penangkis serangan cepat (*Race Condition Debounce*) di fitur *Bookmark*.
+
+### Sesi 11: Transformasi Arsitektur SPA & Pencegahan Kebocoran Memori
+*Tanggal: 25 Juli 2026*
+
+**Perubahan dan Perbaikan:**
+- **Injeksi Mesin Turbo (SPA):** Merombak *website* tradisional menjadi *Single Page Application* tanpa jeda *flicker/blink*. Transisi perpindahan halaman navigasi *Dashboard* kini sekilat dan seringan aplikasi perangkat seluler.
+- **Refaktor *Event Listener* Serentak:** Melakukan penyuntingan massal secara *bulk* untuk menggantikan fungsi lawas `DOMContentLoaded` menjadi `turbo:load` di seluruh file *JavaScript* indikator agar grafik tetap tergambar mulus walau halaman didatangkan secara asinkron.
+- **Sistem *Garbage Collector* Terpusat:** Menanamkan pendeteksi *event* pelindung di `app.js` yang akan memicu `turbo:before-cache`. Sistem ini bertugas menghancurkan paksa *(dispose)* sisa-sisa elemen *ECharts* dan *Chart.js* di layar sebelum berpindah tab. Mengeliminasi ancaman *Memory Leak* (Bocor RAM) hingga ke akarnya.
+
+### Sesi 12: Penjadwalan Cron Job Tahan Banting (API Rate Limit Safe)
+*Tanggal: 25 Juli 2026*
+
+**Perubahan dan Perbaikan:**
+- **Restrukturisasi *Laravel Scheduler*:** Menata ulang urutan eksekusi tugas sinkronisasi *backend* (Tugas BPS dan Google Sheets) pada `app/Console/Kernel.php`. 
+- **Penerapan Jeda Strategis (*Staggering*):** Menguraikan tumpukan 10+ layanan sinkronisasi menjadi 3 kloter blok jam (02:00, 03:00, 03:20). Memberikan rentang waktu *(jitter)* jeda yang logis dan spesifik (sekitar 2 hingga 5 menit) antarservis untuk mencegah beban lonjakan CPU di server Hostinger.
+- **Menghindari Pemblokiran API:** Mekanisme antrean cerdas ini (*ditambah fungsi `withoutOverlapping()`*) secara ampuh melindungi server Hostinger Anda dari risiko terblokir *Error 429 Too Many Requests* oleh pertahanan BPS maupun Google Sheets API.

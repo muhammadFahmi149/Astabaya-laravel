@@ -27,7 +27,7 @@
     return year;
   }
 
-  document.addEventListener("DOMContentLoaded", async () => {
+  document.addEventListener("turbo:load", async () => {
     // API Base URL
     const API_BASE = window.APP_CONFIG.apiUrl;
     

@@ -829,7 +829,7 @@ window.ASTABAYA = window.ASTABAYA || {};
     }
 
     // Initialize share buttons
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('turbo:load', function() {
         console.log('Initializing share buttons for infographics'); // Debug
         // Share buttons in modal and actions - using event delegation
         document.addEventListener('click', async function(e) {
@@ -961,7 +961,7 @@ window.ASTABAYA = window.ASTABAYA || {};
     }
 
     // Global cleanup for modal backdrop
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('turbo:load', function() {
         const modalElement = document.getElementById('infographicModal');
         if (modalElement) {
             // Clean up backdrop when modal is hidden
@@ -976,7 +976,7 @@ window.ASTABAYA = window.ASTABAYA || {};
     });
 
     // Initialize search query from URL
-    document.addEventListener('DOMContentLoaded', async function() {
+    document.addEventListener('turbo:load', async function() {
         const urlParams = new URLSearchParams(window.location.search);
         const urlSearch = urlParams.get('search');
         if (urlSearch) {

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("turbo:load", async () => {
     // Wait for ECharts to be loaded
     if (typeof echarts === 'undefined') {
       console.error('ECharts library not loaded! Please check if the script is included.');

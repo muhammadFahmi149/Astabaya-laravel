@@ -48,7 +48,7 @@
   }
 
   // Lazy loading for images
-  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("turbo:load", function () {
     // Initialize year filter dropdown
     initYearFilter();
     
@@ -586,7 +586,7 @@ const btn = event.target.closest("button");
   }
 
   // Fix all modal close buttons - Universal handler
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('turbo:load', function() {
     // Clean up URL when modal is closed
     const publicationModal = document.getElementById('publicationModal');
     if (publicationModal) {
@@ -712,7 +712,7 @@ const btn = event.target.closest("button");
   });
 
   // Handle download clicks with login check
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('turbo:load', function() {
     const downloadButtons = document.querySelectorAll('.download-publication-btn');
     downloadButtons.forEach(btn => {
       btn.addEventListener('click', async function(e) {
@@ -933,7 +933,7 @@ const btn = event.target.closest("button");
   window.syncBookmarkButtons = syncBookmarkButtons;
 
   // Initialize share buttons - using event delegation for dynamic content
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('turbo:load', function() {
     console.log('Initializing share buttons for publications'); // Debug
     // Use event delegation to handle all share buttons (including dynamically added ones)
     document.addEventListener('click', async function(e) {

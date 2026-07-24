@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("turbo:load", async () => {
     const mainPanel = document.querySelector('.main-panel');
     // API Base URL
     const API_BASE = window.APP_CONFIG.apiUrl;

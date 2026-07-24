@@ -87,7 +87,7 @@ document.addEventListener('click', function(event) {
 // --- End Dropdown Management JS ---
 
 // Load data on page load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('turbo:load', function() {
   // Initialize charts only after DOM is ready
   const mtoMChartElement = document.getElementById('inflasiMtoMChart');
   const yonYChartElement = document.getElementById('inflasiYonYChart');
@@ -2057,7 +2057,7 @@ function exportChartToPNG(chartInstance, filename) {
 // Helper function to check authentication before download
 
 // Add event listeners for download buttons
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('turbo:load', function() {
   // MtoM Chart
   document.getElementById('downloadMtoMExcel')?.addEventListener('click', function() {
     window.checkAuthBeforeDownload(exportMtoMToExcel, 'Tren Inflasi Bulan ke Bulan (MoM)');

@@ -12,18 +12,58 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Sync all BPS data every day at 02:00 AM (WIB - Asia/Jakarta timezone)
-        // Equivalent to Django APScheduler cron job: day_of_week='*', hour=2, minute=0
-        $schedule->command('sync:bps-all')
-            ->dailyAt('02:00')
-            ->timezone('Asia/Jakarta')
-            ->withoutOverlapping()
-            ->runInBackground();
+        // ---------------------------------------------------------
+        // BLOK 1: BPS API (Publikasi, Berita, Infografis)
+        // ---------------------------------------------------------
+        $schedule->command('sync:bps-publications')
+            ->dailyAt('02:00')->timezone('Asia/Jakarta')
+            ->withoutOverlapping()->runInBackground();
 
-        // You can also schedule individual syncs if needed
-        // $schedule->command('sync:bps-news')->dailyAt('02:00');
-        // $schedule->command('sync:bps-publications')->dailyAt('02:30');
-        // $schedule->command('sync:bps-infographics')->dailyAt('03:00');
+        $schedule->command('sync:bps-news')
+            ->dailyAt('02:05')->timezone('Asia/Jakarta')
+            ->withoutOverlapping()->runInBackground();
+
+        $schedule->command('sync:bps-infographics')
+            ->dailyAt('02:10')->timezone('Asia/Jakarta')
+            ->withoutOverlapping()->runInBackground();
+
+        // ---------------------------------------------------------
+        // BLOK 2: Indikator Google Sheets (Ringan-Menengah)
+        // ---------------------------------------------------------
+        $schedule->command('sync:google-sheets --service=gini')
+            ->dailyAt('03:00')->timezone('Asia/Jakarta')
+            ->withoutOverlapping()->runInBackground();
+
+        $schedule->command('sync:google-sheets --service=hotel')
+            ->dailyAt('03:02')->timezone('Asia/Jakarta')
+            ->withoutOverlapping()->runInBackground();
+
+        $schedule->command('sync:google-sheets --service=ipm')
+            ->dailyAt('03:04')->timezone('Asia/Jakarta')
+            ->withoutOverlapping()->runInBackground();
+
+        $schedule->command('sync:google-sheets --service=kemiskinan')
+            ->dailyAt('03:06')->timezone('Asia/Jakarta')
+            ->withoutOverlapping()->runInBackground();
+
+        $schedule->command('sync:google-sheets --service=kependudukan')
+            ->dailyAt('03:08')->timezone('Asia/Jakarta')
+            ->withoutOverlapping()->runInBackground();
+
+        $schedule->command('sync:google-sheets --service=ketenagakerjaan')
+            ->dailyAt('03:10')->timezone('Asia/Jakarta')
+            ->withoutOverlapping()->runInBackground();
+
+        // ---------------------------------------------------------
+        // BLOK 3: Indikator Google Sheets (Berat - Jeda 10 Menit)
+        // ---------------------------------------------------------
+        $schedule->command('sync:google-sheets --service=inflasi')
+            ->dailyAt('03:20')->timezone('Asia/Jakarta')
+            ->withoutOverlapping()->runInBackground();
+
+        $schedule->command('sync:google-sheets --service=pdrb')
+            ->dailyAt('03:25')->timezone('Asia/Jakarta')
+            ->withoutOverlapping()->runInBackground();
     }
 
     /**

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("turbo:load", () => {
     // API Base URL
     const API_BASE_URL = '/api';
     

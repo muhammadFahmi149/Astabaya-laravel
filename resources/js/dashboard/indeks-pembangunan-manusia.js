@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("turbo:load", () => {
     const API_BASE = window.APP_CONFIG ? window.APP_CONFIG.apiUrl : '/api';
     
     // ========== Load all IPM data from APIs ==========

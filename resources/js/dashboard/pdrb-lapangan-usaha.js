@@ -1,4 +1,4 @@
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("turbo:load", () => {
     // ========== Toggle Button Functionality ==========
     const btnTahunan = document.getElementById('btnTahunan');
     const btnTriwulanan = document.getElementById('btnTriwulanan');
@@ -2675,7 +2675,7 @@
     // ========== Initialize on Page Load ==========
     // Load all data when page is ready
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('turbo:load', function() {
         loadAllData();
       });
     } else {

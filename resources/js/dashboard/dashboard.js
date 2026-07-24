@@ -421,7 +421,7 @@ let currentContentType = 'news'; // Default to news
   window.handleInfographicDownload = handleInfographicDownload;
 
   // Initialize on page load
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('turbo:load', function() {
     updateScrollButtons();
     
     // Update scroll buttons on scroll

@@ -1,6 +1,6 @@
 // resources/js/dashboard/news.js
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('turbo:load', function() {
     // Generate slug from title
     function generateSlug(title) {
         if (!title) return '';
