@@ -208,3 +208,21 @@ Merapikan publications.blade.php dengan cara mencabut ribuan baris <style> dan <
 - `resources/css/dashboard/dashboard.css` (Baru)
 - `resources/js/dashboard/dashboard.js` (Baru & Implementasi Single Fetch BFF)
 - `vite.config.js` (Modifikasi *input array*)
+
+### Sesi 9: Ekstraksi Komponen Modal pada Dashboard
+*Tanggal: 24 Juli 2026*
+
+**Perubahan dan Perbaikan:**
+- **Pemisahan Modal (Component Extraction):** Mengekstrak kerangka HTML Modal Berita, Publikasi, dan Infografis dari masing-masing halaman utamanya menjadi komponen Blade terpisah agar dapat dipanggil (@include) secara modular di halaman mana pun, termasuk Dashboard.
+- **Implementasi Fetch API Dinamis di Dashboard:** Memperbarui dashboard.js agar interaksi klik pada *card* atau *carousel* tidak lagi mengalihkan pengguna ke halaman lain, melainkan menembakkan API *request* (menggunakan *fetch* ke /api/news/{id}, /api/publications/{id}, /api/infographics/{id}) lalu memunculkan modal langsung di atas Dashboard.
+- **Penyelarasan UX:** Mengamankan konsistensi antarmuka antara modal yang terbuka di halaman utama vs di Dashboard. Seluruh fitur modal seperti tangkapan gambar, tanggal, pembagian tautan (*share*), unduhan dokumen, dan markah (*bookmark*) berfungsi penuh.
+
+**Daftar File yang Dibuat & Dimodifikasi:**
+- esources/views/components/news-modal.blade.php (Baru)
+- esources/views/components/publication-modal.blade.php (Baru)
+- esources/views/components/infographic-modal.blade.php (Baru)
+- esources/views/dashboard/dashboard.blade.php (Menyematkan Modal & Menghapus *redirect*)
+- esources/views/dashboard/news.blade.php (Menggunakan Komponen)
+- esources/views/dashboard/publications.blade.php (Menggunakan Komponen)
+- esources/views/dashboard/infographics.blade.php (Menggunakan Komponen)
+- esources/js/dashboard/dashboard.js (Menambah fungsi *fetch* API untuk Modal)

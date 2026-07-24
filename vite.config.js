@@ -34,6 +34,8 @@ export default defineConfig({
                 'resources/js/dashboard/pdrb-lapangan-usaha.js',
                 'resources/css/dashboard/publications.css',
                 'resources/js/dashboard/publications.js',
+                'resources/css/dashboard/infographics.css',
+                'resources/js/dashboard/infographics.js',
                 'resources/css/dashboard/news.css',
                 'resources/js/dashboard/news.js',
                 'resources/js/dashboard/chart-modal.js'

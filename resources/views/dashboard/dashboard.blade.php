@@ -1,9 +1,14 @@
-@extends('layouts.main')
+﻿@extends('layouts.main')
 
 @section('title', 'Dashboard')
 
 @push('styles')
-@vite('resources/css/dashboard/dashboard.css')
+@vite([
+    'resources/css/dashboard/dashboard.css',
+    'resources/css/dashboard/news.css',
+    'resources/css/dashboard/publications.css',
+    'resources/css/dashboard/infographics.css'
+])
 @endpush
 
 @section('content')
@@ -46,7 +51,7 @@
               <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
                 <img src="{{ $item['image'] ?? asset('images/default-placeholder.jpg') }}" 
                      alt="{{ $item['title'] ?? 'Item' }}"
-                     onerror="this.src='{{ asset('images/default-placeholder.jpg') }}'">
+                     onerror="this.onerror=null; this.src='{{ asset('images/default-placeholder.jpg') }}';">
                 <div class="carousel-overlay">
                   <h5>{{ $item['title'] ?? 'Item' }}</h5>
                   <p>
@@ -193,10 +198,10 @@
       <!-- News Cards (Default) -->
       <div id="newsCards">
         @forelse($latestNews as $news)
-        <div class="content-card" onclick="window.location.href='{{ route('news') }}'">
+        <div class="content-card" onclick="showNewsModal({{ $news->news_id ?? $news->id }})">
           @if($news->picture_url)
           <img src="{{ $news->picture_url }}" alt="{{ $news->title }}" 
-               onerror="this.src='{{ asset('images/default-placeholder.jpg') }}'">
+               onerror="this.onerror=null; this.src='{{ asset('images/default-placeholder.jpg') }}';">
           @else
           <div style="width: 100%; height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
             <i class="bi bi-file-earmark-text" style="font-size: 3rem; color: #ccc;"></i>
@@ -219,9 +224,9 @@
             </p>
           </div>
           <div class="content-card-footer">
-            <a href="{{ route('news') }}" class="btn btn-sm btn-primary">
+            <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); showNewsModal({{ $news->news_id ?? $news->id }})">
               <i class="bi bi-book"></i> Baca Selengkapnya
-            </a>
+            </button>
           </div>
         </div>
         @empty
@@ -241,7 +246,7 @@
           <div class="publication-image-wrapper">
             <img src="{{ $publication->image }}" alt="{{ $publication->title }}"
                  class="publication-image"
-                 onerror="this.src='{{ asset('images/default-placeholder.jpg') }}'">
+                 onerror="this.onerror=null; this.src='{{ asset('images/default-placeholder.jpg') }}';">
           </div>
           @else
           <div style="width: 100%; height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
@@ -295,7 +300,7 @@
           <div class="infographic-image-wrapper">
             <img src="{{ $infographic->image }}" alt="{{ $infographic->title }}"
                  class="infographic-image"
-                 onerror="this.src='{{ asset('images/default-placeholder.jpg') }}'">
+                 onerror="this.onerror=null; this.src='{{ asset('images/default-placeholder.jpg') }}';">
           </div>
           @else
           <div style="width: 100%; height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
@@ -331,6 +336,10 @@
     </div>
   </div>
 </div>
+
+@include('components.news-modal')
+@include('components.publication-modal')
+@include('components.infographic-modal')
 
 @push('scripts')
 <script>

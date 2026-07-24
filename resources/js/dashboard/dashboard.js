@@ -46,6 +46,9 @@ let currentContentType = 'news'; // Default to news
     document.getElementById('contentSectionTitle').textContent = titles[type];
     document.getElementById('viewMoreLink').href = links[type];
   }
+  
+  // Make switchContentType available globally for inline onclick handlers
+  window.switchContentType = switchContentType;
 
   // Update carousel based on content type
   function updateCarousel(type) {
@@ -85,9 +88,11 @@ let currentContentType = 'news'; // Default to news
               <img src="${item.image || '' + window.DASHBOARD_CONFIG.defaultPlaceholderImg + ''}" 
                    alt="${escapeHTML(item.title || 'Item')}"
                    class="${imageClass}"
-                   onerror="this.src='' + window.DASHBOARD_CONFIG.defaultPlaceholderImg + ''">
+                   onclick="${isPublication ? `showPublicationModal('${item.id}')` : `showInfographicDetail('${item.id}')`}"
+                   style="cursor: pointer;"
+                   onerror="this.onerror=null; this.src='${window.DASHBOARD_CONFIG.defaultPlaceholderImg}'">
             </div>
-            <div class="carousel-overlay">
+            <div class="carousel-overlay" onclick="${isPublication ? `showPublicationModal('${item.id}')` : `showInfographicDetail('${item.id}')`}" style="cursor: pointer;">
               <h5>${escapeHTML(item.title || 'Item')}</h5>
               <p>
                 <span class="badge bg-primary">${escapeHTML((item.type || 'item').charAt(0).toUpperCase() + (item.type || 'item').slice(1))}</span>
@@ -102,8 +107,10 @@ let currentContentType = 'news'; // Default to news
           <div class="carousel-item ${index === 0 ? 'active' : ''}">
             <img src="${item.image || '' + window.DASHBOARD_CONFIG.defaultPlaceholderImg + ''}" 
                  alt="${escapeHTML(item.title || 'Item')}"
-                 onerror="this.src='' + window.DASHBOARD_CONFIG.defaultPlaceholderImg + ''">
-            <div class="carousel-overlay">
+                 onclick="showNewsModal('${item.id}')"
+                 style="cursor: pointer;"
+                 onerror="this.onerror=null; this.src='${window.DASHBOARD_CONFIG.defaultPlaceholderImg}'">
+            <div class="carousel-overlay" onclick="showNewsModal('${item.id}')" style="cursor: pointer;">
               <h5>${escapeHTML(item.title || 'Item')}</h5>
               <p>
                 <span class="badge bg-primary">${escapeHTML((item.type || 'item').charAt(0).toUpperCase() + (item.type || 'item').slice(1))}</span>
@@ -166,17 +173,208 @@ let currentContentType = 'news'; // Default to news
     nextBtn.disabled = container.scrollLeft >= container.scrollWidth - container.clientWidth;
   }
 
-  // Show publication modal (placeholder - implement based on your modal structure)
-  function showPublicationModal(id) {
-    // Redirect to publications page or show modal
-    window.location.href = '{{ route("publications") }}?publication=' + id;
-  }
+  window.showNewsModal = async function(id) {
+    const modalEl = document.getElementById('newsCardModal');
+    if (!modalEl) return;
+    const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+    
+    // Show loading state immediately
+    const modalTitle = document.getElementById('newsModalTitle');
+    const modalCategory = document.getElementById('newsModalCategory');
+    const modalDate = document.getElementById('newsModalDate');
+    const modalContent = document.getElementById('newsModalContent');
+    const modalImageContainer = document.getElementById('newsModalImageContainer');
+    
+    if (modalTitle) modalTitle.textContent = 'Memuat Berita...';
+    if (modalCategory) modalCategory.innerHTML = '';
+    if (modalDate) modalDate.innerHTML = '';
+    if (modalImageContainer) modalImageContainer.innerHTML = '';
+    if (modalContent) modalContent.innerHTML = '<div class="text-center py-4"><span class="spinner-border spinner-border-sm text-primary me-2" role="status"></span><em>Mengambil data...</em></div>';
+    
+    modal.show();
 
-  // Show infographic detail (placeholder - implement based on your modal structure)
-  function showInfographicDetail(id) {
-    // Redirect to infographics page or show modal
-    window.location.href = '{{ route("infographics") }}?infographic=' + id;
-  }
+    try {
+      const response = await fetch(window.DASHBOARD_CONFIG.apiBase + `/news/${encodeURIComponent(id)}`);
+      if (response.ok) {
+        const data = await response.json();
+        const news = data.data || data;
+        
+        if (modalTitle) modalTitle.textContent = news.title || '';
+        if (modalCategory) modalCategory.innerHTML = `<i class="bi bi-tag-fill me-1"></i> ${news.category_name || news.category || 'Berita'}`;
+        
+        let formattedDate = 'N/A';
+        if (news.release_date || news.date || news.created_at) {
+          const dateVal = news.release_date || news.date || news.created_at;
+          try { formattedDate = new Date(dateVal).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); }
+          catch(e) { formattedDate = dateVal; }
+        }
+        if (modalDate) modalDate.innerHTML = `<i class="bi bi-calendar-event me-1"></i> ${formattedDate}`;
+        
+        if (modalImageContainer) {
+          const imageUrl = news.picture_url || news.image || window.DASHBOARD_CONFIG.defaultPlaceholderImg;
+          modalImageContainer.innerHTML = `<img src="${imageUrl}" alt="${escapeHTML(news.title || '')}" class="img-fluid rounded shadow-sm w-100" style="max-height: 300px; object-fit: cover;">`;
+        }
+        
+        if (modalContent) modalContent.innerHTML = news.content || news.fullContent || 'Tidak ada konten';
+        
+        const shareBtn = document.querySelector('.share-news-modal-btn');
+        if (shareBtn) {
+          shareBtn.dataset.pubTitle = news.title || '';
+          shareBtn.dataset.pubUrl = window.location.origin + '/news?news=' + id;
+        }
+        
+        const bookmarkBtn = document.getElementById('modalNewsBookmarkBtn');
+        if (bookmarkBtn) {
+          bookmarkBtn.dataset.objectId = id;
+          if (typeof updateBookmarkButtonState === 'function') updateBookmarkButtonState('news', id, bookmarkBtn);
+        }
+      } else {
+        window.location.href = window.DASHBOARD_CONFIG.routes.news + '?news=' + id;
+      }
+    } catch (e) {
+      console.error(e);
+      window.location.href = window.DASHBOARD_CONFIG.routes.news + '?news=' + id;
+    }
+  };
+
+  window.showPublicationModal = async function(id) {
+    const modalEl = document.getElementById('publicationModal');
+    if (!modalEl) return;
+    const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+    
+    // Show loading state immediately
+    const modalTitle = document.getElementById('modalTitle');
+    const modalImage = document.getElementById('modalImage');
+    const modalDate = document.getElementById('modalDate');
+    const modalSize = document.getElementById('modalSize');
+    const modalPubId = document.getElementById('modalPubId');
+    const modalAbstract = document.getElementById('modalAbstract');
+    
+    if (modalTitle) modalTitle.textContent = 'Memuat Publikasi...';
+    if (modalImage) {
+        modalImage.src = window.DASHBOARD_CONFIG.defaultPlaceholderImg;
+        modalImage.alt = 'Loading...';
+    }
+    if (modalDate) modalDate.textContent = '...';
+    if (modalSize) modalSize.textContent = '...';
+    if (modalPubId) modalPubId.textContent = '...';
+    if (modalAbstract) modalAbstract.innerHTML = '<div class="text-center py-4"><span class="spinner-border spinner-border-sm text-primary me-2" role="status"></span><em>Mengambil data...</em></div>';
+    
+    modal.show();
+
+    try {
+      const response = await fetch(window.DASHBOARD_CONFIG.apiBase + `/publications/${encodeURIComponent(id)}`);
+      if (response.ok) {
+        const data = await response.json();
+        const pub = data.data || data;
+        
+        if (modalTitle) modalTitle.textContent = pub.title || '';
+        if (modalImage) {
+            modalImage.src = pub.image || window.DASHBOARD_CONFIG.defaultPlaceholderImg;
+            modalImage.alt = pub.title || '';
+        }
+        
+        let formattedDate = 'N/A';
+        if (pub.date) {
+            try { formattedDate = new Date(pub.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }); }
+            catch(e) { formattedDate = pub.date; }
+        }
+        if (modalDate) modalDate.textContent = formattedDate;
+        if (modalSize) modalSize.textContent = pub.size || 'N/A';
+        if (modalPubId) modalPubId.textContent = pub.pub_id || pub.id || id;
+        
+        const subjCsa = document.getElementById('modalSubjectCsa');
+        const subjCsaContainer = document.getElementById('modalSubjectCsaContainer');
+        if (pub.subject_csa) {
+            if (subjCsa) subjCsa.textContent = pub.subject_csa;
+            if (subjCsaContainer) subjCsaContainer.style.display = 'block';
+        } else {
+            if (subjCsaContainer) subjCsaContainer.style.display = 'none';
+        }
+        
+        if (modalAbstract) modalAbstract.innerHTML = pub.abstract || 'Tidak ada abstrak tersedia.';
+        
+        const modalDownloadBtn = document.getElementById('modalDownload');
+        if (modalDownloadBtn) {
+            modalDownloadBtn.setAttribute('data-pub-id', pub.id || id);
+            modalDownloadBtn.setAttribute('data-pub-title', pub.title || '');
+        }
+        
+        const shareBtn = document.querySelector('.share-publication-modal-btn');
+        if (shareBtn) {
+            shareBtn.dataset.pubTitle = pub.title || '';
+            shareBtn.dataset.pubUrl = window.location.origin + '/publications?publication=' + (pub.id || id);
+        }
+        
+        const bookmarkBtn = document.getElementById('modalBookmarkBtn');
+        if (bookmarkBtn) {
+            bookmarkBtn.dataset.objectId = pub.id || id;
+            if (typeof updateBookmarkButtonState === 'function') updateBookmarkButtonState('publication', pub.id || id, bookmarkBtn);
+        }
+      } else {
+        window.location.href = window.DASHBOARD_CONFIG.routes.publications + '?publication=' + id;
+      }
+    } catch (e) {
+      console.error(e);
+      window.location.href = window.DASHBOARD_CONFIG.routes.publications + '?publication=' + id;
+    }
+  };
+  
+  window.showInfographicDetail = async function(id) {
+    const modalEl = document.getElementById('infographicModal');
+    if (!modalEl) return;
+    const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+    
+    // Show loading state immediately
+    const modalTitle = document.getElementById('infographicModalTitle');
+    const modalImage = document.getElementById('infographicModalImage');
+    
+    if (modalTitle) modalTitle.textContent = 'Memuat Infografis...';
+    if (modalImage) {
+        modalImage.src = window.DASHBOARD_CONFIG.defaultPlaceholderImg;
+        modalImage.alt = 'Loading...';
+    }
+    
+    modal.show();
+
+    try {
+      const response = await fetch(window.DASHBOARD_CONFIG.apiBase + `/infographics/${encodeURIComponent(id)}`);
+      if (response.ok) {
+        const data = await response.json();
+        const info = data.data || data;
+        
+        if (modalTitle) modalTitle.textContent = info.title || '';
+        
+        if (modalImage) {
+            modalImage.src = info.image || window.DASHBOARD_CONFIG.defaultPlaceholderImg;
+            modalImage.alt = info.title || '';
+        }
+        
+        const downloadBtn = document.getElementById('infographicModalDownload');
+        if (downloadBtn) {
+            downloadBtn.dataset.infographicId = info.id || id;
+            downloadBtn.dataset.infographicTitle = info.title || '';
+        }
+        
+        const shareBtns = document.querySelectorAll('.share-infographic-modal-btn, .share-infographic-btn');
+        shareBtns.forEach(btn => {
+            btn.dataset.pubTitle = info.title || '';
+            btn.dataset.pubUrl = window.location.origin + '/infographics?infographic=' + (info.id || id);
+        });
+        
+        const bookmarkBtn = document.getElementById('modalInfographicBookmarkBtn');
+        if (bookmarkBtn) {
+            bookmarkBtn.dataset.objectId = info.id || id;
+            if (typeof updateBookmarkButtonState === 'function') updateBookmarkButtonState('infographic', info.id || id, bookmarkBtn);
+        }
+      } else {
+        window.location.href = window.DASHBOARD_CONFIG.routes.infographics + '?infographic=' + id;
+      }
+    } catch (e) {
+      console.error(e);
+      window.location.href = window.DASHBOARD_CONFIG.routes.infographics + '?infographic=' + id;
+    }
+  };
 
   // Handle publication download
   function handlePublicationDownload(button) {
@@ -252,23 +450,31 @@ let currentContentType = 'news'; // Default to news
 
       const aggregatedData = summaryResponse.success ? summaryResponse.data : {};
 
-      // Map to the existing variables to keep the rendering logic intact
-      const inflasiRes = { success: !!aggregatedData.inflasi, data: aggregatedData.inflasi };
-      const kemiskinanRes = { success: !!aggregatedData.kemiskinan, data: aggregatedData.kemiskinan };
-      const kependudukanRes = { success: !!aggregatedData.kependudukan, data: aggregatedData.kependudukan };
-      const ketenagakerjaanRes = { success: !!aggregatedData.ketenagakerjaan, data: aggregatedData.ketenagakerjaan };
-      const pdrbPengeluaranRes = { success: !!aggregatedData.pdrbPengeluaran, data: aggregatedData.pdrbPengeluaran };
-      const pdrbLapanganUsahaRes = { success: !!aggregatedData.pdrbLapanganUsaha, data: aggregatedData.pdrbLapanganUsaha };
-      const hotelOccupancyRes = { success: !!aggregatedData.hotelOccupancy, data: aggregatedData.hotelOccupancy };
-      const giniRatioRes = { success: !!aggregatedData.giniRatio, data: aggregatedData.giniRatio };
-      const ipmRes = { success: !!aggregatedData.ipm, data: aggregatedData.ipm };
-      const uhhSpRes = { success: !!aggregatedData.uhhSp, data: aggregatedData.uhhSp };
-      const hlsRes = { success: !!aggregatedData.hls, data: aggregatedData.hls };
-      const rlsRes = { success: !!aggregatedData.rls, data: aggregatedData.rls };
-      const pengeluaranRes = { success: !!aggregatedData.pengeluaran, data: aggregatedData.pengeluaran };
-      const indeksKesehatanRes = { success: !!aggregatedData.indeksKesehatan, data: aggregatedData.indeksKesehatan };
-      const indeksPendidikanRes = { success: !!aggregatedData.indeksPendidikan, data: aggregatedData.indeksPendidikan };
-      const indeksHidupLayakRes = { success: !!aggregatedData.indeksHidupLayak, data: aggregatedData.indeksHidupLayak };
+      // Normalize responses to match the expected { success: true, data: {...} } format
+      const normalize = (res) => {
+        if (!res) return { success: false, data: null };
+        return { 
+          success: res.success === true || res.status === 'success', 
+          data: res.data 
+        };
+      };
+
+      const inflasiRes = normalize(aggregatedData.inflasi);
+      const kemiskinanRes = normalize(aggregatedData.kemiskinan);
+      const kependudukanRes = normalize(aggregatedData.kependudukan);
+      const ketenagakerjaanRes = normalize(aggregatedData.ketenagakerjaan);
+      const pdrbPengeluaranRes = normalize(aggregatedData.pdrbPengeluaran);
+      const pdrbLapanganUsahaRes = normalize(aggregatedData.pdrbLapanganUsaha);
+      const hotelOccupancyRes = normalize(aggregatedData.hotelOccupancy);
+      const giniRatioRes = normalize(aggregatedData.giniRatio);
+      const ipmRes = normalize(aggregatedData.ipm);
+      const uhhSpRes = normalize(aggregatedData.uhhSp);
+      const hlsRes = normalize(aggregatedData.hls);
+      const rlsRes = normalize(aggregatedData.rls);
+      const pengeluaranRes = normalize(aggregatedData.pengeluaran);
+      const indeksKesehatanRes = normalize(aggregatedData.indeksKesehatan);
+      const indeksPendidikanRes = normalize(aggregatedData.indeksPendidikan);
+      const indeksHidupLayakRes = normalize(aggregatedData.indeksHidupLayak);
 
       const cards = [];
 
@@ -313,6 +519,8 @@ let currentContentType = 'news'; // Default to news
             return (numValue / 1000).toFixed(2).replace(/\.?0+$/, '') + ' ribu';
           }
           return numValue.toLocaleString('id-ID');
+        } else if (type === 'raw_locale') {
+          return Number(value).toLocaleString('id-ID');
         } else if (type === 'number') {
           return Number(value).toFixed(2);
         }
@@ -341,9 +549,10 @@ let currentContentType = 'news'; // Default to news
         
         let comparison = null;
         // Calculate comparison if previous data exists
-        if (latest.previous && latest.previous.value !== null && latest.previous.value !== undefined) {
+        const prevValueRaw = latest.previous ? (latest.previous[valueKey] !== undefined ? latest.previous[valueKey] : latest.previous.value) : null;
+        if (latest.previous && prevValueRaw !== null && prevValueRaw !== undefined) {
           const latestVal = parseFloat(latest.value);
-          const prevVal = parseFloat(latest.previous.value);
+          const prevVal = parseFloat(prevValueRaw);
           
           if (!isNaN(latestVal) && !isNaN(prevVal)) {
             const diff = latestVal - prevVal;
@@ -369,37 +578,41 @@ let currentContentType = 'news'; // Default to news
       };
 
       // ========== INFLASI ==========
-      // Endpoint -summary returns: { success: true, data: { latest, previous, m_to_m_change, y_on_y_change } }
+      // Endpoint -summary returns: { status: 'success', data: { latest, previous_month, previous_year, m_to_m_change, y_on_y_change } }
       if (inflasiRes.success && inflasiRes.data) {
         const inflasiData = inflasiRes.data;
         const latest = inflasiData.latest;
-        const previous = inflasiData.previous;
+        const previousMonth = inflasiData.previous_month;
+        const previousYear = inflasiData.previous_year;
         
         if (latest) {
-          // Helper to create card with previous data
-          const createInflasiCard = (field, title) => {
+          // Helper to create card with specific previous data
+          const createInflasiCard = (field, title, previousData, prevLabel) => {
             if (latest[field] !== null && latest[field] !== undefined) {
-              const prevValue = previous && previous[field] !== null && previous[field] !== undefined ? previous[field] : null;
+              const prevValue = previousData && previousData[field] !== null && previousData[field] !== undefined ? previousData[field] : null;
               return createCard({
                 value: latest[field],
                 year: latest.year,
-                previous: prevValue !== null ? { value: prevValue, year: previous.year } : null,
-                previousYear: previous && previous.year ? previous.year : (latest.year - 1)
+                previous: prevValue !== null ? { value: prevValue, year: previousData.year } : null,
+                previousYear: prevLabel || (previousData && previousData.year ? previousData.year : (latest.year - 1))
               }, title, 'percent', '{{ route("inflasi") }}');
             }
             return null;
           };
           
           // Inflasi Bulan ke Bulan (m-to-m) - field: bulanan
-          const card1 = createInflasiCard('bulanan', 'Inflasi Bulan ke Bulan');
+          // Compare with previous month
+          const card1 = createInflasiCard('bulanan', 'Inflasi Bulan ke Bulan', previousMonth, previousMonth ? previousMonth.month + ' ' + previousMonth.year : '');
           if (card1) cards.push(card1);
           
-          // Inflasi Tahun ke Tahun (y-on-y) - field: tahunan
-          const card2 = createInflasiCard('tahunan', 'Inflasi Tahun ke Tahun');
+          // Inflasi Tahun ke Tahun (y-on-y) - field: yoy
+          // Compare with previous year
+          const card2 = createInflasiCard('yoy', 'Inflasi Tahun ke Tahun', previousYear, previousYear ? previousYear.year : '');
           if (card2) cards.push(card2);
           
           // Inflasi Kumulatif
-          const card3 = createInflasiCard('kumulatif', 'Inflasi Kumulatif');
+          // Compare with previous year
+          const card3 = createInflasiCard('kumulatif', 'Inflasi Kumulatif', previousYear, previousYear ? previousYear.year : '');
           if (card3) cards.push(card3);
         }
       }
@@ -583,17 +796,24 @@ let currentContentType = 'news'; // Default to news
         
         if (latest) {
           // Helper to create card with previous data
-          const createHotelCard = (field, title, valueType) => {
+          const createHotelCard = (field, title, valueType, suffix = '') => {
             if (latest[field] !== null && latest[field] !== undefined) {
               const prevValue = previous && previous[field] !== null && previous[field] !== undefined ? previous[field] : null;
               const year = latest.year || latest.date || latest.tanggal;
-              const prevYear = previous ? (previous.year || previous.date || previous.tanggal) : null;
+              
+              const prevLabel = previous && previous.month ? 'bulan ' + previous.month.toLowerCase().substring(0, 3) : null;
+              let yearLabel = year;
+              if (latest.month) {
+                const m = latest.month;
+                yearLabel = m.substring(0, 1).toUpperCase() + m.substring(1, 3).toLowerCase() + ' ' + year;
+              }
+              
               return createCard({
                 value: latest[field],
-                year: year,
-                previous: prevValue !== null ? { value: prevValue, year: prevYear } : null,
-                previousYear: prevYear || (year ? (typeof year === 'number' ? year - 1 : null) : null)
-              }, title, valueType, '{{ route("hotel-occupancy") }}');
+                year: yearLabel,
+                previous: prevValue !== null ? { value: prevValue, year: previous ? previous.year : null } : null,
+                previousYear: prevLabel || (previous ? previous.year : (year ? (typeof year === 'number' ? year - 1 : null) : null))
+              }, title, valueType, '{{ route("hotel-occupancy") }}', 'value', suffix);
             }
             return null;
           };
@@ -603,15 +823,15 @@ let currentContentType = 'news'; // Default to news
           if (card1) cards.push(card1);
           
           // MKTJ
-          const card2 = createHotelCard('mktj', 'MKTJ', 'currency');
+          const card2 = createHotelCard('mktj', 'MKTJ', 'raw_locale', ' ribu');
           if (card2) cards.push(card2);
           
           // RLMT Gabungan
-          const card3 = createHotelCard('rlmtgab', 'RLMT Gabungan', 'number');
+          const card3 = createHotelCard('rlmtgab', 'RLMT Gabungan', 'number', ' malam');
           if (card3) cards.push(card3);
           
           // GPR
-          const card4 = createHotelCard('gpr', 'GPR', 'currency');
+          const card4 = createHotelCard('gpr', 'GPR', 'percent');
           if (card4) cards.push(card4);
         }
       }
@@ -713,13 +933,13 @@ let currentContentType = 'news'; // Default to news
       // Debug: Log cards data
       console.log('Summary cards loaded:', cards.length, cards);
       console.log('API Responses:', {
-        inflasi: inflasiRes.success ? inflasiRes.data?.length : 0,
-        kemiskinan: kemiskinanRes.success ? kemiskinanRes.data?.length : 0,
-        kependudukan: kependudukanRes.success ? kependudukanRes.data?.length : 0,
-        ketenagakerjaan: ketenagakerjaanRes.success ? ketenagakerjaanRes.data?.length : 0,
-        giniRatio: giniRatioRes.success ? giniRatioRes.data?.length : 0,
-        hotelOccupancy: hotelOccupancyRes.success ? hotelOccupancyRes.data?.length : 0,
-        ipm: ipmRes.success ? ipmRes.data?.length : 0
+        inflasi: inflasiRes.success ? 'Loaded' : 'Failed',
+        kemiskinan: kemiskinanRes.success ? 'Loaded' : 'Failed',
+        kependudukan: kependudukanRes.success ? 'Loaded' : 'Failed',
+        ketenagakerjaan: ketenagakerjaanRes.success ? 'Loaded' : 'Failed',
+        giniRatio: giniRatioRes.success ? 'Loaded' : 'Failed',
+        hotelOccupancy: hotelOccupancyRes.success ? 'Loaded' : 'Failed',
+        ipm: ipmRes.success ? 'Loaded' : 'Failed'
       });
 
       // Render cards
@@ -834,10 +1054,10 @@ let currentContentType = 'news'; // Default to news
         const diff = card.comparison.diff;
         
         // Determine format based on card title or value
-        if (card.title.includes('Persentase') || card.title.includes('Inflasi') || card.title.includes('TPT') || card.title.includes('TPAK') || card.title.includes('TPK')) {
+        if (card.title.includes('Persentase') || card.title.includes('Inflasi') || card.title.includes('TPT') || card.title.includes('TPAK') || card.title.includes('TPK') || card.title.includes('GPR')) {
           // Percentage format
           diffFormatted = `${diff >= 0 ? '+' : ''}${Math.abs(diff).toFixed(2)}%`;
-        } else if (card.value.includes('Rp') || card.title.includes('Garis Kemiskinan') || card.title.includes('MKTJ') || card.title.includes('GPR') || card.title.includes('Pengeluaran') || card.title.includes('PDRB')) {
+        } else if (card.value.includes('Rp') || card.title.includes('Garis Kemiskinan') || card.title.includes('Pengeluaran') || card.title.includes('PDRB')) {
           // Currency format
           diffFormatted = `${diff >= 0 ? '+' : ''}Rp ${Math.abs(diff).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         } else if (card.title.includes('Jumlah Penduduk Miskin') || card.title.includes('Total Penduduk') || card.title.includes('Total Laki-laki') || card.title.includes('Total Perempuan')) {
@@ -850,6 +1070,8 @@ let currentContentType = 'news'; // Default to news
           } else {
             diffFormatted = `${diff >= 0 ? '+' : ''}${absDiff.toFixed(2)}`;
           }
+        } else if (card.title.includes('MKTJ')) {
+          diffFormatted = `${diff >= 0 ? '+' : ''}${Math.abs(diff).toLocaleString('id-ID')} ribu`;
         } else {
           // Number format
           diffFormatted = `${diff >= 0 ? '+' : ''}${Math.abs(diff).toFixed(2)}`;
@@ -928,3 +1150,10 @@ let currentContentType = 'news'; // Default to news
       }, 250);
     });
   }
+
+  // Make inline onclick handlers available globally
+  window.scrollIndicators = scrollIndicators;
+  window.showPublicationModal = showPublicationModal;
+  window.showInfographicDetail = showInfographicDetail;
+  window.handlePublicationDownload = handlePublicationDownload;
+  window.handleInfographicDownload = handleInfographicDownload;
