@@ -1061,13 +1061,13 @@
       ws['!cols'] = [{ wch: 10 }, { wch: 30 }, { wch: 30 }];
       XLSX.utils.book_append_sheet(wb, ws, 'Data Chart 1');
       const today = new Date().toISOString().split('T')[0];
-      XLSX.writeFile(wb, `Kemiskinan_Chart1_${today}.xlsx`);
+      XLSX.writeFile(wb, `Tren_Jumlah_dan_Persentase_Penduduk_Miskin_${today}.xlsx`);
     }
 
     function exportChart1ToPNG() {
       const url = chart1.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' });
       const link = document.createElement('a');
-      link.download = `Kemiskinan_Chart1_${new Date().toISOString().split('T')[0]}.png`;
+      link.download = `Tren_Jumlah_dan_Persentase_Penduduk_Miskin_${new Date().toISOString().split('T')[0]}.png`;
       link.href = url;
       link.click();
     }
@@ -1075,10 +1075,10 @@
 
 
     document.getElementById('downloadChart1Excel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportChart1ToExcel, 'data chart kemiskinan 1');
+      window.checkAuthBeforeDownload(exportChart1ToExcel, 'Tren Jumlah dan Persentase Penduduk Miskin');
     });
     document.getElementById('downloadChart1PNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportChart1ToPNG, 'grafik chart kemiskinan 1');
+      window.checkAuthBeforeDownload(exportChart1ToPNG, 'Tren Jumlah dan Persentase Penduduk Miskin');
     });
 
     // Export functions for Chart 2
@@ -1096,22 +1096,22 @@
       ws['!cols'] = [{ wch: 10 }, { wch: 25 }];
       XLSX.utils.book_append_sheet(wb, ws, 'Data Chart 2');
       const today = new Date().toISOString().split('T')[0];
-      XLSX.writeFile(wb, `Kemiskinan_Chart2_${today}.xlsx`);
+      XLSX.writeFile(wb, `Tren_Garis_Kemiskinan_${today}.xlsx`);
     }
 
     function exportChart2ToPNG() {
       const url = chart2.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' });
       const link = document.createElement('a');
-      link.download = `Kemiskinan_Chart2_${new Date().toISOString().split('T')[0]}.png`;
+      link.download = `Tren_Garis_Kemiskinan_${new Date().toISOString().split('T')[0]}.png`;
       link.href = url;
       link.click();
     }
 
     document.getElementById('downloadChart2Excel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportChart2ToExcel, 'data chart kemiskinan 2');
+      window.checkAuthBeforeDownload(exportChart2ToExcel, 'Tren Garis Kemiskinan');
     });
     document.getElementById('downloadChart2PNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportChart2ToPNG, 'grafik chart kemiskinan 2');
+      window.checkAuthBeforeDownload(exportChart2ToPNG, 'Tren Garis Kemiskinan');
     });
 
     // Export functions for Chart 3
@@ -1129,22 +1129,22 @@
       ws['!cols'] = [{ wch: 10 }, { wch: 25 }];
       XLSX.utils.book_append_sheet(wb, ws, 'Data Chart 3');
       const today = new Date().toISOString().split('T')[0];
-      XLSX.writeFile(wb, `Kemiskinan_Chart3_${today}.xlsx`);
+      XLSX.writeFile(wb, `Tren_Indeks_Kedalaman_Kemiskinan_P1_${today}.xlsx`);
     }
 
     function exportChart3ToPNG() {
       const url = chart3.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' });
       const link = document.createElement('a');
-      link.download = `Kemiskinan_Chart3_${new Date().toISOString().split('T')[0]}.png`;
+      link.download = `Tren_Indeks_Kedalaman_Kemiskinan_P1_${new Date().toISOString().split('T')[0]}.png`;
       link.href = url;
       link.click();
     }
 
     document.getElementById('downloadChart3Excel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportChart3ToExcel, 'data chart kemiskinan 3');
+      window.checkAuthBeforeDownload(exportChart3ToExcel, 'Tren Indeks Kedalaman Kemiskinan (P1)');
     });
     document.getElementById('downloadChart3PNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportChart3ToPNG, 'grafik chart kemiskinan 3');
+      window.checkAuthBeforeDownload(exportChart3ToPNG, 'Tren Indeks Kedalaman Kemiskinan (P1)');
     });
 
     // Export functions for Chart 4
@@ -1162,22 +1162,22 @@
       ws['!cols'] = [{ wch: 10 }, { wch: 25 }];
       XLSX.utils.book_append_sheet(wb, ws, 'Data Chart 4');
       const today = new Date().toISOString().split('T')[0];
-      XLSX.writeFile(wb, `Kemiskinan_Chart4_${today}.xlsx`);
+      XLSX.writeFile(wb, `Tren_Indeks_Keparahan_Kemiskinan_P2_${today}.xlsx`);
     }
 
     function exportChart4ToPNG() {
       const url = chart4.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' });
       const link = document.createElement('a');
-      link.download = `Kemiskinan_Chart4_${new Date().toISOString().split('T')[0]}.png`;
+      link.download = `Tren_Indeks_Keparahan_Kemiskinan_P2_${new Date().toISOString().split('T')[0]}.png`;
       link.href = url;
       link.click();
     }
 
     document.getElementById('downloadChart4Excel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportChart4ToExcel, 'data chart kemiskinan 4');
+      window.checkAuthBeforeDownload(exportChart4ToExcel, 'Tren Indeks Keparahan Kemiskinan (P2)');
     });
     document.getElementById('downloadChart4PNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportChart4ToPNG, 'grafik chart kemiskinan 4');
+      window.checkAuthBeforeDownload(exportChart4ToPNG, 'Tren Indeks Keparahan Kemiskinan (P2)');
     });
 
     // Export functions for Comparison Chart

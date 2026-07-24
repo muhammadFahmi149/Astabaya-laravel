@@ -656,10 +656,10 @@
 
 
     document.getElementById('downloadLineChartExcel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportLineChartToExcel, 'data line chart gini ratio');
+      window.checkAuthBeforeDownload(exportLineChartToExcel, 'Tren Gini Ratio');
     });
     document.getElementById('downloadLineChartPNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportLineChartToPNG, 'grafik line chart gini ratio');
+      window.checkAuthBeforeDownload(exportLineChartToPNG, 'Tren Gini Ratio');
     });
 
     // Export functions for Bar Chart
@@ -698,9 +698,9 @@
     }
 
     document.getElementById('downloadBarChartExcel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportBarChartToExcel, 'data bar chart gini ratio');
+      window.checkAuthBeforeDownload(exportBarChartToExcel, 'Distribusi Gini Ratio');
     });
     document.getElementById('downloadBarChartPNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportBarChartToPNG, 'grafik bar chart gini ratio');
+      window.checkAuthBeforeDownload(exportBarChartToPNG, 'Distribusi Gini Ratio');
     });
   });

@@ -308,6 +308,31 @@
             cursor: not-allowed;
             transform: none !important;
         }
+        .password-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-container input {
+            padding-right: 40px !important;
+            margin-bottom: 0 !important;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            transition: color 0.3s ease;
+            z-index: 5;
+        }
+
+        .toggle-password:hover {
+            color: white;
+        }
     </style>
 @endpush
 
@@ -330,9 +355,10 @@
                 <input type="email" name="email" placeholder="Email" required class="form-control form-control-custom">
             </div>
 
-            <div class="text-start">
+            <div class="text-start password-container">
                 <label for="password" class="form-label visually-hidden">Password</label>
-                <input type="password" name="password" placeholder="Password" required class="form-control form-control-custom">
+                <input type="password" name="password" id="password" placeholder="Password" required class="form-control form-control-custom">
+                <i class="bi bi-eye-slash toggle-password" onclick="togglePassword('password', this)"></i>
             </div>
 
             <p id="password-error" class="error-message"></p>
@@ -387,6 +413,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        function togglePassword(inputId, iconElement) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                iconElement.classList.remove('bi-eye-slash');
+                iconElement.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                iconElement.classList.remove('bi-eye');
+                iconElement.classList.add('bi-eye-slash');
+            }
+        }
+
         function signInWithGoogle() {
             window.location.href = "{{ route('google.login') }}";
         }

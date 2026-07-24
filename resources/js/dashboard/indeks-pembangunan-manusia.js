@@ -807,16 +807,16 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         window.checkAuthBeforeDownload(() => {
           exportTrendToExcel();
-        }, 'data trend IPM');
+        }, 'Tren Indeks Pembangunan Manusia');
       });
 
       document.getElementById('downloadTrendPNG')?.addEventListener('click', function(e) {
         e.preventDefault();
         window.checkAuthBeforeDownload(() => {
           if (window.chartInstances && window.chartInstances.trend) {
-            exportChartToPNG(window.chartInstances.trend, `Trend_IPM_Chart_${new Date().toISOString().split('T')[0]}.png`);
+            exportChartToPNG(window.chartInstances.trend, `Tren_IPM_${new Date().toISOString().split('T')[0]}.png`);
           }
-        }, 'grafik trend IPM');
+        }, 'Tren Indeks Pembangunan Manusia');
       });
 
       // Add more download listeners as needed
@@ -833,20 +833,18 @@ document.addEventListener("DOMContentLoaded", () => {
       downloadMappings.forEach(mapping => {
         document.getElementById(mapping.excel)?.addEventListener('click', function(e) {
           e.preventDefault();
-          if (window.chartData && window.chartData[mapping.data]) {
-            window.checkAuthBeforeDownload(() => {
-              exportSingleSeriesToExcel(window.chartData[mapping.data], mapping.name, mapping.unit);
-            }, `data ${mapping.name}`);
-          }
+          window.checkAuthBeforeDownload(() => {
+            exportSingleSeriesToExcel(window.chartData[mapping.data], mapping.name, mapping.unit);
+          }, mapping.name);
         });
 
         document.getElementById(mapping.png)?.addEventListener('click', function(e) {
           e.preventDefault();
           window.checkAuthBeforeDownload(() => {
             if (window.chartInstances && window.chartInstances[mapping.chart]) {
-              exportChartToPNG(window.chartInstances[mapping.chart], `${mapping.name.replace(/\s+/g, '_')}_Chart_${new Date().toISOString().split('T')[0]}.png`);
+              exportChartToPNG(window.chartInstances[mapping.chart], `${mapping.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.png`);
             }
-          }, `grafik ${mapping.name}`);
+          }, mapping.name);
         });
       });
 
@@ -868,16 +866,16 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
             alert('Data komposisi belum tersedia');
           }
-        }, 'data komposisi IPM');
+        }, 'Komposisi IPM');
       });
 
       document.getElementById('downloadCompositionPNG')?.addEventListener('click', function(e) {
         e.preventDefault();
         window.checkAuthBeforeDownload(() => {
           if (window.chartInstances && window.chartInstances.composition) {
-            exportChartToPNG(window.chartInstances.composition, `Komposisi_IPM_Chart_${new Date().toISOString().split('T')[0]}.png`);
+            exportChartToPNG(window.chartInstances.composition, `Komposisi_IPM_${new Date().toISOString().split('T')[0]}.png`);
           }
-        }, 'grafik komposisi IPM');
+        }, 'Komposisi IPM');
       });
     }
 

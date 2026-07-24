@@ -1372,10 +1372,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadComparisonExcel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportComparisonToExcel, 'data perbandingan ketenagakerjaan');
+      window.checkAuthBeforeDownload(exportComparisonToExcel, 'Perbandingan Indikator Ketenagakerjaan');
     });
     document.getElementById('downloadComparisonPNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportComparisonToPNG, 'grafik perbandingan ketenagakerjaan');
+      window.checkAuthBeforeDownload(exportComparisonToPNG, 'Perbandingan Indikator Ketenagakerjaan');
     });
 
     // Export functions for TPT Pie Chart
@@ -1410,10 +1410,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTptPieExcel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTptPieToExcel, 'data TPT pie chart');
+      window.checkAuthBeforeDownload(exportTptPieToExcel, 'Proporsi Tingkat Pengangguran Terbuka (TPT)');
     });
     document.getElementById('downloadTptPiePNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTptPieToPNG, 'grafik TPT pie chart');
+      window.checkAuthBeforeDownload(exportTptPieToPNG, 'Proporsi Tingkat Pengangguran Terbuka (TPT)');
     });
 
     // Export functions for TPT Line Chart
@@ -1443,10 +1443,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTptLineExcel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTptLineToExcel, 'data TPT line chart');
+      window.checkAuthBeforeDownload(exportTptLineToExcel, 'Tren Tingkat Pengangguran Terbuka (TPT)');
     });
     document.getElementById('downloadTptLinePNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTptLineToPNG, 'grafik TPT line chart');
+      window.checkAuthBeforeDownload(exportTptLineToPNG, 'Tren Tingkat Pengangguran Terbuka (TPT)');
     });
 
     // Export functions for TPAK Pie Chart
@@ -1482,10 +1482,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTpakPieExcel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTpakPieToExcel, 'data TPAK pie chart');
+      window.checkAuthBeforeDownload(exportTpakPieToExcel, 'Proporsi Tingkat Partisipasi Angkatan Kerja (TPAK)');
     });
     document.getElementById('downloadTpakPiePNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTpakPieToPNG, 'grafik TPAK pie chart');
+      window.checkAuthBeforeDownload(exportTpakPieToPNG, 'Proporsi Tingkat Partisipasi Angkatan Kerja (TPAK)');
     });
 
     // Export functions for TPAK Line Chart
@@ -1515,10 +1515,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTpakLineExcel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTpakLineToExcel, 'data TPAK line chart');
+      window.checkAuthBeforeDownload(exportTpakLineToExcel, 'Tren Tingkat Partisipasi Angkatan Kerja (TPAK)');
     });
     document.getElementById('downloadTpakLinePNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTpakLineToPNG, 'grafik TPAK line chart');
+      window.checkAuthBeforeDownload(exportTpakLineToPNG, 'Tren Tingkat Partisipasi Angkatan Kerja (TPAK)');
     });
 
     // Listen for transition end on main panel

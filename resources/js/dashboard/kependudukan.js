@@ -935,43 +935,43 @@ document.addEventListener("DOMContentLoaded", () => {
     // Event listeners for download buttons
     document.getElementById('downloadTrendExcel')?.addEventListener('click', function(e) {
       e.preventDefault();
-      window.checkAuthBeforeDownload(exportTrendToExcel, 'data trend kependudukan');
+      window.checkAuthBeforeDownload(exportTrendToExcel, 'Tren Pertumbuhan Penduduk');
     });
     document.getElementById('downloadTrendPNG')?.addEventListener('click', function(e) {
       e.preventDefault();
-      window.checkAuthBeforeDownload(exportTrendToPNG, 'grafik trend kependudukan');
+      window.checkAuthBeforeDownload(exportTrendToPNG, 'Tren Pertumbuhan Penduduk');
     });
     document.getElementById('downloadDistributionExcel')?.addEventListener('click', function(e) {
       e.preventDefault();
-      window.checkAuthBeforeDownload(exportDistributionToExcel, 'data distribusi kependudukan');
+      window.checkAuthBeforeDownload(exportDistributionToExcel, 'Distribusi Kepadatan Penduduk');
     });
     document.getElementById('downloadDistributionPNG')?.addEventListener('click', function(e) {
       e.preventDefault();
-      window.checkAuthBeforeDownload(exportDistributionToPNG, 'grafik distribusi kependudukan');
+      window.checkAuthBeforeDownload(exportDistributionToPNG, 'Distribusi Kepadatan Penduduk');
     });
     document.getElementById('downloadPieExcel')?.addEventListener('click', function(e) {
       e.preventDefault();
-      window.checkAuthBeforeDownload(exportPieToExcel, 'data proporsi kependudukan');
+      window.checkAuthBeforeDownload(exportPieToExcel, 'Proporsi Penduduk Usia Produktif');
     });
     document.getElementById('downloadPiePNG')?.addEventListener('click', function(e) {
       e.preventDefault();
-      window.checkAuthBeforeDownload(exportPieToPNG, 'grafik proporsi kependudukan');
+      window.checkAuthBeforeDownload(exportPieToPNG, 'Proporsi Penduduk Usia Produktif');
     });
     document.getElementById('downloadGenderComparisonExcel')?.addEventListener('click', function(e) {
       e.preventDefault();
-      window.checkAuthBeforeDownload(exportGenderComparisonToExcel, 'data perbandingan gender kependudukan');
+      window.checkAuthBeforeDownload(exportGenderComparisonToExcel, 'Perbandingan Gender');
     });
     document.getElementById('downloadGenderComparisonPNG')?.addEventListener('click', function(e) {
       e.preventDefault();
-      window.checkAuthBeforeDownload(exportGenderComparisonToPNG, 'grafik perbandingan gender kependudukan');
+      window.checkAuthBeforeDownload(exportGenderComparisonToPNG, 'Perbandingan Gender');
     });
     document.getElementById('downloadPyramidExcel')?.addEventListener('click', function(e) {
       e.preventDefault();
-      window.checkAuthBeforeDownload(exportPyramidToExcel, 'data piramida kependudukan');
+      window.checkAuthBeforeDownload(exportPyramidToExcel, 'Piramida Penduduk');
     });
     document.getElementById('downloadPyramidPNG')?.addEventListener('click', function(e) {
       e.preventDefault();
-      window.checkAuthBeforeDownload(exportPyramidToPNG, 'grafik piramida kependudukan');
+      window.checkAuthBeforeDownload(exportPyramidToPNG, 'Piramida Penduduk');
     });
 
     // Initialize: Load all data

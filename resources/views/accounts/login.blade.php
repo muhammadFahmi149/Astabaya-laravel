@@ -146,6 +146,30 @@
             color: #ff6b6b;
             display: none;
         }
+        .password-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-container input {
+            padding-right: 40px;
+            margin-bottom: 0 !important;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .toggle-password:hover {
+            color: white;
+        }
     </style>
 @endpush
 
@@ -154,11 +178,23 @@
         <img src="{{ asset('images/logoastabayav2.png') }}" alt="Logo Astabaya" width="150">
         <h2>Selamat Datang</h2>
         <h3>Masuk ke akun anda</h3>
+        
+        @if($errors->any())
+            <div class="error-message" style="display: block; background: rgba(220, 53, 69, 0.2); border: 1px solid rgba(220, 53, 69, 0.4); border-radius: 8px; padding: 10px; margin-bottom: 15px; width: 100%; box-sizing: border-box; text-align: left;">
+                @foreach($errors->all() as $error)
+                    <p style="margin: 0; color: #ffb3b3; font-size: 13px;">⚠️ {{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+
         <p id="login-error" class="error-message"></p>
         <form id="login-form" method="POST" action="{{ route('login-form') }}">
             @csrf
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
+            <input type="text" name="login" placeholder="Username / Email" required value="{{ old('login') }}">
+            <div class="password-container">
+                <input type="password" name="password" id="password" placeholder="Password" required>
+                <i class="bi bi-eye-slash toggle-password" onclick="togglePassword('password', this)"></i>
+            </div>
             <button type="submit">Masuk</button>
         </form>
 
@@ -184,6 +220,19 @@
     <script>
         function signInWithGoogle() {
             window.location.href = "{{ route('google.login') }}";
+        }
+
+        function togglePassword(inputId, iconElement) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                iconElement.classList.remove('bi-eye-slash');
+                iconElement.classList.add('bi-eye');
+            } else {
+                input.type = 'password';
+                iconElement.classList.remove('bi-eye');
+                iconElement.classList.add('bi-eye-slash');
+            }
         }
     </script>
 @endpush

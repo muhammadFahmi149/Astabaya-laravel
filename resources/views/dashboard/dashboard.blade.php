@@ -1,4 +1,4 @@
-﻿@extends('layouts.main')
+@extends('layouts.main')
 
 @section('title', 'Dashboard')
 
@@ -17,7 +17,7 @@
   <div class="welcome-section">
     <h2>
       @auth
-        Selamat datang {{ auth()->user()->username }}!<br>
+        Selamat datang {{ explode('@', auth()->user()->username)[0] }}!<br>
       @else
         Selamat Datang Pengguna!<br>
       @endauth

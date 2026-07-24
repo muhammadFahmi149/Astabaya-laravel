@@ -1948,7 +1948,7 @@ function exportMtoMToExcel() {
   const ws = XLSX.utils.aoa_to_sheet(exportData);
   ws['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 25 }];
   XLSX.utils.book_append_sheet(wb, ws, 'Data Inflasi MtoM');
-  XLSX.writeFile(wb, `Inflasi_Bulan_ke_Bulan_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.xlsx`);
+  XLSX.writeFile(wb, `Tren_Inflasi_Bulan_ke_Bulan_MoM_ke_Bulan_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.xlsx`);
 }
 
 // Export YoY Chart to Excel
@@ -1975,7 +1975,7 @@ function exportYonYToExcel() {
   const ws = XLSX.utils.aoa_to_sheet(exportData);
   ws['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 25 }];
   XLSX.utils.book_append_sheet(wb, ws, 'Data Inflasi YoY');
-  XLSX.writeFile(wb, `Inflasi_Tahun_ke_Tahun_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.xlsx`);
+  XLSX.writeFile(wb, `Tren_Inflasi_Tahun_ke_Tahun_YoY_ke_Tahun_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.xlsx`);
 }
 
 // Export Komoditas Chart to Excel
@@ -2060,27 +2060,27 @@ function exportChartToPNG(chartInstance, filename) {
 document.addEventListener('DOMContentLoaded', function() {
   // MtoM Chart
   document.getElementById('downloadMtoMExcel')?.addEventListener('click', function() {
-    window.checkAuthBeforeDownload(exportMtoMToExcel, 'data inflasi bulan ke bulan');
+    window.checkAuthBeforeDownload(exportMtoMToExcel, 'Tren Inflasi Bulan ke Bulan (MoM)');
   });
   document.getElementById('downloadMtoMPNG')?.addEventListener('click', function() {
     window.checkAuthBeforeDownload(() => {
-      exportChartToPNG(window.chartInstances.mtoM, `Inflasi_Bulan_ke_Bulan_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.png`);
+      exportChartToPNG(window.chartInstances.mtoM, `Tren_Inflasi_Bulan_ke_Bulan_MoM_ke_Bulan_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.png`);
     }, 'grafik inflasi bulan ke bulan');
   });
   
   // YoY Chart
   document.getElementById('downloadYonYExcel')?.addEventListener('click', function() {
-    window.checkAuthBeforeDownload(exportYonYToExcel, 'data inflasi tahun ke tahun');
+    window.checkAuthBeforeDownload(exportYonYToExcel, 'Tren Inflasi Tahun ke Tahun (YoY)');
   });
   document.getElementById('downloadYonYPNG')?.addEventListener('click', function() {
     window.checkAuthBeforeDownload(() => {
-      exportChartToPNG(window.chartInstances.yonY, `Inflasi_Tahun_ke_Tahun_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.png`);
+      exportChartToPNG(window.chartInstances.yonY, `Tren_Inflasi_Tahun_ke_Tahun_YoY_ke_Tahun_${selectedYear || 'All'}_${new Date().toISOString().split('T')[0]}.png`);
     }, 'grafik inflasi tahun ke tahun');
   });
   
   // Komoditas Chart
   document.getElementById('downloadKomoditasExcel')?.addEventListener('click', function() {
-    window.checkAuthBeforeDownload(exportKomoditasToExcel, 'data inflasi komoditas');
+    window.checkAuthBeforeDownload(exportKomoditasToExcel, 'Andil Inflasi Kelompok Pengeluaran');
   });
   document.getElementById('downloadKomoditasPNG')?.addEventListener('click', function() {
     window.checkAuthBeforeDownload(() => {

@@ -61,10 +61,19 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'username' => 'required|string',
+        $request->validate([
+            'login' => 'required_without:username|string',
+            'username' => 'required_without:login|string',
             'password' => 'required|string',
         ]);
+
+        $loginInput = $request->input('login') ?: $request->input('username');
+        $loginField = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        $credentials = [
+            $loginField => $loginInput,
+            'password' => $request->input('password')
+        ];
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
@@ -81,7 +90,8 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'username' => 'Kredensial yang diberikan tidak cocok dengan data kami.',
+            'login' => 'Kredensial yang diberikan tidak cocok dengan data kami.',
+            'error' => 'Username/Email atau Password salah.'
         ])->withInput($request->except('password'));
     }
 
@@ -243,32 +253,21 @@ class AuthController extends Controller
      */
     public function redirectToGoogle()
     {
-        // Get redirect URI from config
         $redirectUrl = config('services.google.redirect');
         
-        // If redirect URL is not set in config, build it from current request
-        if (!$redirectUrl || $redirectUrl === 'http://127.0.0.1:8000/accounts/google/login/callback') {
-            $scheme = request()->getScheme(); // http or https
-            $host = request()->getHost(); // astabaya.bpskotasurabaya.com or localhost
-            $port = request()->getPort();
-            
-            // Build base URL
-            if ($port && $port != 80 && $port != 443) {
-                $baseUrl = "{$scheme}://{$host}:{$port}";
-            } else {
-                $baseUrl = "{$scheme}://{$host}";
-            }
-            
-            $redirectUrl = $baseUrl . '/accounts/google/login/callback';
-        }
+        $host = request()->getHost();
         
-        // If using .test domain, convert to 127.0.0.1 for Google OAuth
-        if (str_contains($redirectUrl, '.test')) {
+        // Dynamically build URL if not set or if running in local environment (localhost, 127.0.0.1, .test)
+        if (!$redirectUrl || str_contains($redirectUrl, '.test') || $host === '127.0.0.1' || $host === 'localhost') {
+            $scheme = request()->getScheme();
             $port = request()->getPort();
-            $baseUrl = $port && $port != 80 && $port != 443 
-                ? "http://127.0.0.1:{$port}" 
-                : 'http://127.0.0.1:8000';
-            $redirectUrl = $baseUrl . '/accounts/google/login/callback';
+            
+            $baseUrl = ($port && $port != 80 && $port != 443) 
+                ? "{$scheme}://{$host}:{$port}" 
+                : "{$scheme}://{$host}";
+            
+            // Add trailing slash to match Google Console configuration
+            $redirectUrl = $baseUrl . '/accounts/google/login/callback/';
         }
         
         return Socialite::driver('google')
@@ -282,32 +281,21 @@ class AuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
         try {
-            // Get redirect URI from config
             $redirectUrl = config('services.google.redirect');
             
-            // If redirect URL is not set in config, build it from current request
-            if (!$redirectUrl || $redirectUrl === 'http://127.0.0.1:8000/accounts/google/login/callback') {
-                $scheme = request()->getScheme(); // http or https
-                $host = request()->getHost(); // astabaya.bpskotasurabaya.com or localhost
-                $port = request()->getPort();
-                
-                // Build base URL
-                if ($port && $port != 80 && $port != 443) {
-                    $baseUrl = "{$scheme}://{$host}:{$port}";
-                } else {
-                    $baseUrl = "{$scheme}://{$host}";
-                }
-                
-                $redirectUrl = $baseUrl . '/accounts/google/login/callback';
-            }
+            $host = request()->getHost();
             
-            // If using .test domain, convert to 127.0.0.1 for Google OAuth
-            if (str_contains($redirectUrl, '.test')) {
+            // Dynamically build URL if not set or if running in local environment (localhost, 127.0.0.1, .test)
+            if (!$redirectUrl || str_contains($redirectUrl, '.test') || $host === '127.0.0.1' || $host === 'localhost') {
+                $scheme = request()->getScheme();
                 $port = request()->getPort();
-                $baseUrl = $port && $port != 80 && $port != 443 
-                    ? "http://127.0.0.1:{$port}" 
-                    : 'http://127.0.0.1:8000';
-                $redirectUrl = $baseUrl . '/accounts/google/login/callback';
+                
+                $baseUrl = ($port && $port != 80 && $port != 443) 
+                    ? "{$scheme}://{$host}:{$port}" 
+                    : "{$scheme}://{$host}";
+                
+                // Add trailing slash to match Google Console configuration
+                $redirectUrl = $baseUrl . '/accounts/google/login/callback/';
             }
             
             $googleUser = Socialite::driver('google')

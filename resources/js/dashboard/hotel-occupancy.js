@@ -1201,10 +1201,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
     document.getElementById('downloadTpkLineExcel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTpkLineToExcel, 'data TPK line hotel');
+      window.checkAuthBeforeDownload(exportTpkLineToExcel, 'Tren TPK Bulanan');
     });
     document.getElementById('downloadTpkLinePNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTpkLineToPNG, 'grafik TPK line hotel');
+      window.checkAuthBeforeDownload(exportTpkLineToPNG, 'Tren TPK Bulanan');
     });
 
     // Export functions for TPK Comparison Chart
@@ -1265,10 +1265,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTpkComparisonExcel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTpkComparisonToExcel, 'data perbandingan TPK hotel');
+      window.checkAuthBeforeDownload(exportTpkComparisonToExcel, 'Perbandingan TPK Bintang vs Non Bintang');
     });
     document.getElementById('downloadTpkComparisonPNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTpkComparisonToPNG, 'grafik perbandingan TPK hotel');
+      window.checkAuthBeforeDownload(exportTpkComparisonToPNG, 'Perbandingan TPK Bintang vs Non Bintang');
     });
 
     // Export functions for TPK Yearly Chart
@@ -1301,9 +1301,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     document.getElementById('downloadTpkYearlyExcel').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTpkYearlyToExcel, 'data TPK tahunan hotel');
+      window.checkAuthBeforeDownload(exportTpkYearlyToExcel, 'Tren TPK Tahunan');
     });
     document.getElementById('downloadTpkYearlyPNG').addEventListener('click', function() {
-      window.checkAuthBeforeDownload(exportTpkYearlyToPNG, 'grafik TPK tahunan hotel');
+      window.checkAuthBeforeDownload(exportTpkYearlyToPNG, 'Tren TPK Tahunan');
     });
   });
