@@ -1,59 +1,94 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="200" alt="Laravel Logo">
 </p>
 
-## About Laravel
+# 📊 ASTABAYA (Aplikasi Statistik Surabaya)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**ASTABAYA** adalah portal dasbor statistik pintar tingkat *Enterprise* yang dirancang khusus untuk memvisualisasikan data BPS (Badan Pusat Statistik) Kota Surabaya. Aplikasi ini memadukan arsitektur *Backend* berbasis Laravel dan *Frontend* modern berbasis *Single Page Application* (SPA) untuk memberikan pengalaman interaktif yang secepat kilat tanpa *refresh* halaman.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Aplikasi ini menyajikan visualisasi memukau (grafik interaktif ECharts & Chart.js) yang menarik datanya secara otomatis dari **API BPS Pusat** dan **Google Sheets API**.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🚀 Fitur Unggulan (Core Features)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 1. Arsitektur SPA (Single Page Application) - Hotwire Turbo
+Astabaya menggunakan **Hotwire Turbo Drive** untuk mengubah navigasi web tradisional menjadi SPA. Perpindahan antardasbor, grafik, dan halaman publikasi terjadi seketika (*flicker-free*) layaknya aplikasi seluler modern.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. BFF (Backend For Frontend) API Aggregator
+Alih-alih memaksa peramban (*browser*) pengguna untuk melakukan belasan *HTTP Requests* untuk memuat dasbor utama, Astabaya memiliki *Aggregator Controller* di server. Server akan merakit 16 sumber data yang berbeda di latar belakang dan mengirimkannya kembali ke pengguna hanya dalam **1 respons JSON tunggal**. Ini memangkas *Server Load Spike* dan mempercepat *Time-to-Interactive*.
 
-## Laravel Sponsors
+### 3. API Versioning (v1)
+Infrastruktur backend dilengkapi dengan *API Versioning* (saat ini aktif di jalur `/api/v1/`). Hal ini dirancang agar aplikasi atau *deploy* lawas yang mengakses `/api/...` tidak rusak *(Backward Compatible)* saat server di-*update*, memberikan standar 0% *Downtime*.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 4. Enterprise-Grade Cron Scheduler (Anti Rate-Limit)
+Sinkronisasi harian dengan API BPS dan Google Sheets tidak dilakukan secara serentak yang berisiko DDoS. Astabaya menggunakan penjadwalan cerdas *(Staggered Cron Job)*.
+- **Blok Jam 02:00:** Publikasi, Berita, Infografis (API BPS)
+- **Blok Jam 03:00:** Gini Ratio, IPM, Kemiskinan, Kependudukan (Google Sheets)
+- **Blok Jam 03:20:** Inflasi, PDRB (Data Berat)
+*(Terdapat jeda micro-delay 2-5 menit antarservis untuk mencegah pemblokiran Rate-Limit 429).*
 
-### Premium Partners
+### 5. Google OAuth 2.0 & Keamanan Anti-Spam
+- Terintegrasi dengan SSO (Single Sign-On) Google untuk pendaftaran dan *login* instan.
+- **Debounce & Race-Condition Protection:** Fitur aksi pengguna seperti *Bookmark* dilindungi oleh lapisan *debounce JS* untuk menahan *spam click* yang membebani database.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 6. Memory Leak Protection (Garbage Collector)
+Menanamkan *Garbage Collector* otomatis di `app.js` yang memanfaatkan pemicu `turbo:before-cache` untuk menghancurkan (dispose) semua sisa pemrosesan ECharts/Chart.js sebelum berpindah halaman. Hal ini memastikan RAM *browser* pengguna tidak bocor saat menjelajahi web berjam-jam.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🛠️ Stack Teknologi
 
-## Code of Conduct
+- **Backend:** Laravel 10/11 (PHP 8.2+)
+- **Frontend SPA Engine:** Hotwire Turbo (`@hotwired/turbo`)
+- **UI & Styling:** Blade Templates, Bootstrap/Custom CSS, Vite Asset Bundler
+- **Data Visualization:** Apache ECharts, Chart.js
+- **Database:** MySQL / MariaDB
+- **Third-Party APIs:** API Web BPS Resmi & Google Sheets (GCP Service Account)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## ⚙️ Panduan Instalasi (Development Setup)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. **Kloning Repositori & Instalasi Dependensi**
+   ```bash
+   git clone https://github.com/muhammadFahmi149/Astabaya-laravel.git
+   cd astabaya
+   composer install
+   npm install
+   ```
 
-## License
+2. **Konfigurasi Environment**
+   Salin `.env.example` menjadi `.env` lalu sesuaikan konfigurasi *Database* dan Google API Anda:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   **Wajib Diisi (Google Services):**
+   - `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET` (Untuk *Login* SSO)
+   - *File Service Account* di `storage/app/google/credentials.json` (Untuk Google Sheets API)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3. **Migrasi Database**
+   ```bash
+   php artisan migrate
+   ```
+
+4. **Jalankan Server Lokal**
+   Buka 2 terminal terpisah dan jalankan:
+   ```bash
+   php artisan serve
+   ```
+   ```bash
+   npm run dev
+   ```
+
+## 📅 Penjadwalan Tugas Server (Production Cron Job)
+
+Jika di-*deploy* di *Production* (misal: Hostinger, cPanel, atau VPS), Anda hanya perlu menjalankan satu buah *Cron Job* setiap menit:
+```bash
+* * * * * cd /path-ke-folder-aplikasi && php artisan schedule:run >> /dev/null 2>&1
+```
+*Scheduler* Laravel akan otomatis menangani penundaan (*staggering*) dan sinkronisasi harian sesuai `app/Console/Kernel.php`.
+
+---
+*Dikembangkan secara eksklusif untuk BPS Kota Surabaya.*
