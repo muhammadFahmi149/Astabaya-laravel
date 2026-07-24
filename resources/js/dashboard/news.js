@@ -69,7 +69,7 @@ document.addEventListener('turbo:load', function() {
                 const newsIdToFetch = item.news_id || item.id;
                 const baseUrl = window.ASTABAYA ? window.ASTABAYA.baseUrl : '';
                 
-                fetch(baseUrl + '/api/news/' + newsIdToFetch)
+                fetch(baseUrl + '/api/v1/news/' + newsIdToFetch)
                     .then(res => res.json())
                     .then(res => {
                         if (res && res.data && res.data.content) {
@@ -316,7 +316,7 @@ document.addEventListener('turbo:load', function() {
         } else {
             // Fallback: fetch from API
             const baseUrl = window.ASTABAYA ? window.ASTABAYA.baseUrl : '';
-            fetch(baseUrl + '/api/news/' + newsId)
+            fetch(baseUrl + '/api/v1/news/' + newsId)
                 .then(response => {
                     if (!response.ok) throw new Error('News not found');
                     return response.json();

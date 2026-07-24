@@ -5,7 +5,7 @@ document.addEventListener("turbo:load", async () => {
       return;
     }
     
-    const API_BASE = window.APP_CONFIG ? window.APP_CONFIG.apiUrl : '/api';
+    const API_BASE = window.APP_CONFIG ? window.APP_CONFIG.apiUrl : '/api/v1';
     
     // Initialize data variables
     let occupancyData = [];

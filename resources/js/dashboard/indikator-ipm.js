@@ -11,7 +11,7 @@ document.addEventListener("turbo:load", () => {
         isCurrency = false
     } = window.IPM_CONFIG;
 
-    const API_BASE = window.APP_CONFIG ? window.APP_CONFIG.apiUrl : '/api';
+    const API_BASE = window.APP_CONFIG ? window.APP_CONFIG.apiUrl : '/api/v1';
     let surabayaData = [];
     let jatimData = [];
     let comparisonChart = null;

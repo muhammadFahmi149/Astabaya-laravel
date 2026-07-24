@@ -1,5 +1,5 @@
 document.addEventListener("turbo:load", () => {
-    const API_BASE = window.APP_CONFIG ? window.APP_CONFIG.apiUrl : '/api';
+    const API_BASE = window.APP_CONFIG ? window.APP_CONFIG.apiUrl : '/api/v1';
     
     // ========== Load all IPM data from APIs ==========
     async function loadAllIPMData() {

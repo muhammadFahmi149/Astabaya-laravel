@@ -374,7 +374,7 @@
 @push('scripts')
 <script>
 window.APP_CONFIG = {
-  apiUrl: '{{ url("/api") }}',
+  apiUrl: '{{ url("/api/v1") }}',
   isAuthenticated: @auth true @else false @endauth,
   loginUrl: '{{ route("login") }}'
 };

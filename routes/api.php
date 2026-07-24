@@ -29,6 +29,9 @@ use App\Http\Controllers\AuthController;
 |
 */
 
+// API Versioning Wrapper: Closure
+$apiRoutes = function () {
+
 // Public API endpoints
 Route::get('/dashboard-summary', [DashboardApiController::class, 'getSummary'])->name('api.dashboard-summary');
 Route::get('/hotel-occupancy', [ApiDataController::class, 'getHotelOccupancy'])->name('api.hotel-occupancy');
@@ -169,3 +172,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/sync/inflasi', [ApiDataController::class, 'syncInflasi'])->name('api.sync.inflasi');
 });
 
+};
+
+// 1. V1 Routes for the new frontend (to protect legacy deploy)
+Route::prefix('v1')->group($apiRoutes);
+
+// 2. Legacy Routes (so old mobile apps/cache don't break)
+$apiRoutes();

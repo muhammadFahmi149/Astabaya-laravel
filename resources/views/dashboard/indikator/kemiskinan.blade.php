@@ -270,7 +270,7 @@
 @push('scripts')
 <script>
 window.APP_CONFIG = {
-  apiBase: '{{ url("/api") }}'
+  apiBase: '{{ url("/api/v1") }}'
 };
 </script>
 @vite(['resources/css/dashboard/kemiskinan.css', 'resources/js/dashboard/kemiskinan.js', 'resources/js/dashboard/chart-modal.js'])

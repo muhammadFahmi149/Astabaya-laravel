@@ -1031,7 +1031,7 @@
     let selectedYearLajuCtoC = null;
 
     // ========== API Base URL ==========
-    const API_BASE_URL = '/api';
+    const API_BASE_URL = '/api/v1';
 
     // ========== Helper function to group data by category ==========
     function groupDataByCategory(dataArray) {

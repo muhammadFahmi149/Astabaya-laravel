@@ -1,5 +1,5 @@
 window.ASTABAYA = window.ASTABAYA || {};
-    const API_BASE = window.ASTABAYA ? window.ASTABAYA.apiBase : '/api';
+    const API_BASE = window.ASTABAYA ? window.ASTABAYA.apiBase : '/api/v1';
     const isAuthenticated = window.ASTABAYA ? window.ASTABAYA.isAuthenticated : false;
     let infographics = [];
     let allInfographics = []; // Store all infographics for modal

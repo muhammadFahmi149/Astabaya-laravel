@@ -357,7 +357,7 @@ window.DASHBOARD_CONFIG = {
         publications: @json($carouselPublications ?? []),
         infographics: @json($carouselInfographics ?? [])
     },
-    apiBase: '{{ url("/api") }}',
+    apiBase: '{{ url("/api/v1") }}',
     isAuthenticated: @auth true @else false @endauth,
     defaultPlaceholderImg: '{{ asset("images/default-placeholder.jpg") }}'
 };

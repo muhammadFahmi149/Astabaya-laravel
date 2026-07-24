@@ -11,7 +11,7 @@
     window.ASTABAYA = window.ASTABAYA || {};
     window.ASTABAYA.isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
     window.ASTABAYA.baseUrl = '{{ url("/") }}';
-    window.ASTABAYA.apiBase = '{{ url("/api") }}';
+    window.ASTABAYA.apiBase = '{{ url("/api/v1") }}';
 </script>
 @vite('resources/js/dashboard/infographics.js')
 @endpush

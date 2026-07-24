@@ -543,7 +543,7 @@ const tempImg = new Image();
     const modalDownloadBtn = document.getElementById("modalDownload");
     modalDownloadBtn.setAttribute('data-pub-id', pub.pubId || pub.id || '');
     modalDownloadBtn.setAttribute('data-pub-title', pub.title || 'Publikasi');
-    modalDownloadBtn.href = window.ASTABAYA.baseUrl + "/api/publications/" + encodeURIComponent(pub.pubId || pub.id || "") + "/download";
+    modalDownloadBtn.href = window.ASTABAYA.baseUrl + "/api/v1/publications/" + encodeURIComponent(pub.pubId || pub.id || "") + "/download";
 
     const modal = new bootstrap.Modal(document.getElementById("publicationModal"));
     modal.show();

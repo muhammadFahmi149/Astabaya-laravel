@@ -1,6 +1,6 @@
 document.addEventListener("turbo:load", () => {
     // API Base URL
-    const API_BASE_URL = '/api';
+    const API_BASE_URL = '/api/v1';
     
     // CSRF Token for Laravel
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');

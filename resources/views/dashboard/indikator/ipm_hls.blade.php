@@ -9,7 +9,7 @@
 @push('scripts')
 <script>
 window.APP_CONFIG = {
-  apiUrl: '{{ url("/api") }}',
+  apiUrl: '{{ url("/api/v1") }}',
   isAuthenticated: @auth true @else false @endauth,
   loginUrl: '{{ route("login") }}'
 };
@@ -110,14 +110,14 @@ window.APP_CONFIG = {
 @push('scripts')
 <script>
 window.APP_CONFIG = {
-  apiUrl: '{{ url("/api") }}',
+  apiUrl: '{{ url("/api/v1") }}',
   isAuthenticated: @auth true @else false @endauth,
   loginUrl: '{{ route("login") }}'
 };
 </script>
 
     <script>
-        window.API_BASE = '{{ url("/api") }}';
+        window.API_BASE = '{{ url("/api/v1") }}';
         window.AUTH_CHECK = @json(auth()->check());
         window.LOGIN_ROUTE = '{{ route("login") }}';
         

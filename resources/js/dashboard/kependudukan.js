@@ -1,5 +1,5 @@
 document.addEventListener("turbo:load", () => {
-    const API_BASE_URL = '/api';
+    const API_BASE_URL = '/api/v1';
             let currentYear = null;
     let trendData = [];
     let ageDistribution = [];
