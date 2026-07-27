@@ -250,3 +250,20 @@ Merapikan publications.blade.php dengan cara mencabut ribuan baris <style> dan <
 - **Restrukturisasi *Laravel Scheduler*:** Menata ulang urutan eksekusi tugas sinkronisasi *backend* (Tugas BPS dan Google Sheets) pada `app/Console/Kernel.php`. 
 - **Penerapan Jeda Strategis (*Staggering*):** Menguraikan tumpukan 10+ layanan sinkronisasi menjadi 3 kloter blok jam (02:00, 03:00, 03:20). Memberikan rentang waktu *(jitter)* jeda yang logis dan spesifik (sekitar 2 hingga 5 menit) antarservis untuk mencegah beban lonjakan CPU di server Hostinger.
 - **Menghindari Pemblokiran API:** Mekanisme antrean cerdas ini (*ditambah fungsi `withoutOverlapping()`*) secara ampuh melindungi server Hostinger Anda dari risiko terblokir *Error 429 Too Many Requests* oleh pertahanan BPS maupun Google Sheets API.
+
+### Sesi 13: Rollback ke Arsitektur MPA Standar & Stabilisasi Hosting
+*Tanggal: 27 Juli 2026*
+
+**Perubahan dan Perbaikan:**
+- **Rollback Arsitektur ke MPA:** Mengembalikan struktur front-end dari Hotwire Turbo SPA kembali ke arsitektur standar Multi-Page Application (MPA) berbasis Laravel & Vite. Hal ini dilakukan demi mengutamakan stabilitas maksimal dan kecepatan rilis untuk naik hosting (*production ready*).
+- **Eliminasi Konflik DOM & Memory Leak:** Dengan mengembalikan mekanisme pemuatan halaman ke *fresh load*, seluruh bentrok ID DOM (seperti grafik PDRB Pengeluaran yang tertimpa Lapangan Usaha) serta penumpukan *event listener* pada sidebar responsif berhasil diatasi 100%.
+- **Proteksi Page Guards:** Tetap mempertahankan validasi keberadaan elemen DOM (*Page Guards*) di seluruh 14 file modul indikator. Setiap skrip hanya akan menginisialisasi grafik apabila elemen target benar-benar ada pada halaman yang aktif, memastikan bundle produksi super bersih, cepat, dan tangguh.
+
+### Sesi 14: Perbaikan Pemotongan Kolom Kosong (Merged Cells Truncation) pada Sinkronisasi Google Sheets
+*Tanggal: 27 Juli 2026*
+
+**Perubahan dan Perbaikan:**
+- **Perbaikan Logika Parsing Kolom Inflasi & Kependudukan:** Memperbaiki bug pada [InflasiService.php](file:///d:/laragon/www/astabaya/app/Services/InflasiService.php) dan [KependudukanService.php](file:///d:/laragon/www/astabaya/app/Services/KependudukanService.php) di mana data tahun baru (seperti tahun 2026 pada Inflasi) hanya menyimpan data *Bulanan* saja, sedangkan data *Kumulatif* dan *YoY* bernilai `NULL`.
+- **Analisis Akar Masalah (Root Cause):** Pada Google Sheets, penggabungan sel (*merged cells*) untuk judul tahun (misal: kolom BD1:BF1 untuk tahun 2026) menyisakan sel kosong di kolom BE1 dan BF1. Saat API Google Sheets mengambil baris pertama (`$rawData[0]`), sel kosong di ujung kanan baris akan dipotong otomatis oleh API sehingga panjang baris tahun lebih pendek dibanding baris sub-header (`$rawData[1]`). Logika perulangan lawas yang hanya mengacu pada `count($yearRow)` menyebabkan iterasi terhenti sebelum mencapai kolom *Kumulatif* dan *YoY*.
+- **Solusi Tuntas:** Mengubah batas perulangan kolom menjadi `max(count($yearRow), count($subheaderRow))`. Kini seluruh kolom, baik *Bulanan*, *Kumulatif*, maupun *YoY* (serta sub-kategori kependudukan), tersinkronisasi sempurna dan akurat 100% ke dalam database.
+- **Upgrade Caching SessionStorage (v3):** Meningkatkan prefix cache JavaScript di sisi klien dari `v2` ke `v3` pada [utilities.js](file:///d:/laragon/www/astabaya/resources/js/utilities.js) dan seluruh modul indikator, sekaligus menambahkan mekanisme pembersihan otomatis cache lawas (`v1`/`v2`). Ini memastikan peramban pengguna langsung memuat data terbaru dari database setelah pembaruan skema tanpa terjebak *stale memory cache*.

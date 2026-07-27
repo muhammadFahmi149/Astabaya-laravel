@@ -66,7 +66,8 @@ class InflasiService
         $currentYear = null;
         $currentType = null;
 
-        for ($colIdx = 0; $colIdx < count($yearRow); $colIdx++) {
+        $maxCols = max(count($yearRow), count($subheaderRow));
+        for ($colIdx = 0; $colIdx < $maxCols; $colIdx++) {
             $yearVal = trim($yearRow[$colIdx] ?? '');
             $subheaderVal = trim(strtoupper($subheaderRow[$colIdx] ?? ''));
 

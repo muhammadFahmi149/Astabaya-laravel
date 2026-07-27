@@ -4,7 +4,7 @@
 
 # 📊 ASTABAYA (Aplikasi Statistik Surabaya)
 
-**ASTABAYA** adalah portal dasbor statistik pintar tingkat *Enterprise* yang dirancang khusus untuk memvisualisasikan data BPS (Badan Pusat Statistik) Kota Surabaya. Aplikasi ini memadukan arsitektur *Backend* berbasis Laravel dan *Frontend* modern berbasis *Single Page Application* (SPA) untuk memberikan pengalaman interaktif yang secepat kilat tanpa *refresh* halaman.
+**ASTABAYA** adalah portal dasbor statistik pintar tingkat *Enterprise* yang dirancang khusus untuk memvisualisasikan data BPS (Badan Pusat Statistik) Kota Surabaya. Aplikasi ini memadukan arsitektur *Backend* berbasis Laravel dan *Frontend* modern berbasis *Multi-Page Application* (MPA) yang stabil, tangguh, dan sangat cepat untuk memberikan visualisasi data yang akurat tanpa konflik antar-modul.
 
 Aplikasi ini menyajikan visualisasi memukau (grafik interaktif ECharts & Chart.js) yang menarik datanya secara otomatis dari **API BPS Pusat** dan **Google Sheets API**.
 
@@ -12,8 +12,8 @@ Aplikasi ini menyajikan visualisasi memukau (grafik interaktif ECharts & Chart.j
 
 ## 🚀 Fitur Unggulan (Core Features)
 
-### 1. Arsitektur SPA (Single Page Application) - Hotwire Turbo
-Astabaya menggunakan **Hotwire Turbo Drive** untuk mengubah navigasi web tradisional menjadi SPA. Perpindahan antardasbor, grafik, dan halaman publikasi terjadi seketika (*flicker-free*) layaknya aplikasi seluler modern.
+### 1. Arsitektur MPA (Multi-Page Application) Standar Enterprise
+Astabaya menggunakan arsitektur web standar enterprise berbasis **Laravel & Vite** di mana setiap modul indikator dieksekusi dalam ruang lingkup yang bersih dan terisolasi (*fresh load*). Hal ini mengeliminasi 100% kebocoran memori (*memory leak*), mencegah bentrok DOM antar-grafik, serta memastikan UI responsif bekerja secepat kilat di berbagai perangkat.
 
 ### 2. BFF (Backend For Frontend) API Aggregator
 Alih-alih memaksa peramban (*browser*) pengguna untuk melakukan belasan *HTTP Requests* untuk memuat dasbor utama, Astabaya memiliki *Aggregator Controller* di server. Server akan merakit 16 sumber data yang berbeda di latar belakang dan mengirimkannya kembali ke pengguna hanya dalam **1 respons JSON tunggal**. Ini memangkas *Server Load Spike* dan mempercepat *Time-to-Interactive*.
@@ -32,18 +32,18 @@ Sinkronisasi harian dengan API BPS dan Google Sheets tidak dilakukan secara sere
 - Terintegrasi dengan SSO (Single Sign-On) Google untuk pendaftaran dan *login* instan.
 - **Debounce & Race-Condition Protection:** Fitur aksi pengguna seperti *Bookmark* dilindungi oleh lapisan *debounce JS* untuk menahan *spam click* yang membebani database.
 
-### 6. Memory Leak Protection (Garbage Collector)
-Menanamkan *Garbage Collector* otomatis di `app.js` yang memanfaatkan pemicu `turbo:before-cache` untuk menghancurkan (dispose) semua sisa pemrosesan ECharts/Chart.js sebelum berpindah halaman. Hal ini memastikan RAM *browser* pengguna tidak bocor saat menjelajahi web berjam-jam.
+### 6. Isolasi Modul & Halaman Terproteksi
+Setiap file skrip indikator dilengkapi dengan *Page Guards* yang memastikan eksekusi JavaScript dan inisialisasi grafik interaktif hanya berjalan pada halaman yang bersesuaian, menjaga kestabilan penuh saat navigasi dan pengunduhan laporan.
 
 ---
 
 ## 🛠️ Stack Teknologi
 
-- **Backend:** Laravel 10/11 (PHP 8.2+)
-- **Frontend SPA Engine:** Hotwire Turbo (`@hotwired/turbo`)
+- **Backend:** Laravel 12 (PHP 8.2+)
+- **Frontend Architecture:** Multi-Page Application (MPA) dengan Vanilla JS & ES Modules
 - **UI & Styling:** Blade Templates, Bootstrap/Custom CSS, Vite Asset Bundler
 - **Data Visualization:** Apache ECharts, Chart.js
-- **Database:** MySQL / MariaDB
+- **Database:** MySQL
 - **Third-Party APIs:** API Web BPS Resmi & Google Sheets (GCP Service Account)
 
 ---

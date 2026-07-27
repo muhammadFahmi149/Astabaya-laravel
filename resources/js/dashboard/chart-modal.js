@@ -1,4 +1,4 @@
-document.addEventListener('turbo:load', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const modalEl = document.getElementById('globalChartModal');
     if (!modalEl) return;
 

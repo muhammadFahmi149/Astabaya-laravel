@@ -200,8 +200,11 @@
         @forelse($latestNews as $news)
         <div class="content-card" onclick="showNewsModal({{ $news->news_id ?? $news->id }})">
           @if($news->picture_url)
-          <img src="{{ $news->picture_url }}" alt="{{ $news->title }}" 
-               onerror="this.onerror=null; this.src='{{ asset('images/default-placeholder.jpg') }}';">
+          <div class="news-image-wrapper">
+            <img src="{{ $news->picture_url }}" alt="{{ $news->title }}"
+                 class="news-image"
+                 onerror="this.onerror=null; this.src='{{ asset('images/default-placeholder.jpg') }}';">
+          </div>
           @else
           <div style="width: 100%; height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
             <i class="bi bi-file-earmark-text" style="font-size: 3rem; color: #ccc;"></i>

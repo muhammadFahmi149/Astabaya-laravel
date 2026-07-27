@@ -1,6 +1,7 @@
 // resources/js/dashboard/news.js
 
-document.addEventListener('turbo:load', function() {
+document.addEventListener('DOMContentLoaded', function() {
+    if (!document.getElementById('newsCardModal') && !document.querySelector('.news-card') && !window.location.pathname.includes('/news')) return;
     // Generate slug from title
     function generateSlug(title) {
         if (!title) return '';

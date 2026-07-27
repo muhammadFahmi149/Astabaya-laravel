@@ -369,12 +369,19 @@
       });
 
       // Publication, Infographic & News Modal Functionality
-      const publicationsData = [];
-      const infographicCardsData = [];
-      const newsCardsData = [];
+      var publicationsData = window.publicationsData || [];
+      var infographicCardsData = window.infographicCardsData || [];
+      var newsCardsData = window.newsCardsData || [];
+      window.publicationsData = publicationsData;
+      window.infographicCardsData = infographicCardsData;
+      window.newsCardsData = newsCardsData;
 
-      // Load publication data from HTML attributes
-      document.addEventListener("DOMContentLoaded", function () {
+      function initModalData() {
+        publicationsData.length = 0;
+        infographicCardsData.length = 0;
+        newsCardsData.length = 0;
+        window.publicationsDataMap = {};
+
         const publicationElements = document.querySelectorAll(".publication-data");
         publicationElements.forEach((el) => {
           // Get image URL - try to decode if needed
@@ -413,13 +420,6 @@
           // Get image URL directly from data attribute (don't use dataset.image as it may convert to camelCase)
           let imageUrl = el.getAttribute('data-image') || '';
           
-          // Log for debugging
-          console.log('Loading infographic data:', {
-            title: el.dataset.title,
-            image: imageUrl,
-            download: el.dataset.download
-          });
-          
           infographicCardsData.push({
             title: el.dataset.title || '',
             image: imageUrl, // Use URL as-is
@@ -427,8 +427,6 @@
           });
         });
         
-        console.log('Total infographics loaded:', infographicCardsData.length);
-
         const newsCardElements = document.querySelectorAll(".news-card-data");
         newsCardElements.forEach((el) => {
           // Get image URL - try to decode if needed
@@ -530,7 +528,8 @@
             img.src = img.dataset.src;
           });
         }
-      });
+      }
+      document.addEventListener("DOMContentLoaded", initModalData);
 
       function showPublicationModal(pubId, index) {
         // Try to find publication by pubId first (more reliable)
@@ -2634,7 +2633,7 @@
     </div>
     
     <script src="{{ asset('js/share-utils.js') }}"></script>
-    @vite('resources/js/utilities.js')
+    @vite(['resources/js/app.js', 'resources/js/utilities.js'])
     @stack('scripts')
   </body>
 </html>

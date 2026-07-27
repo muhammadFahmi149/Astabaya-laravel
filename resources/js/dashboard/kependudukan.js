@@ -1,4 +1,5 @@
-document.addEventListener("turbo:load", () => {
+document.addEventListener("DOMContentLoaded", () => {
+    if (!document.querySelector('.total-population-value') && !document.getElementById('trendChart')) return;
     const API_BASE_URL = '/api/v1';
             let currentYear = null;
     let trendData = [];

@@ -141,13 +141,39 @@ document.addEventListener('click', function(e) {
     }
   }
 }, true); // Use capture phase to blur before Bootstrap sets aria-hidden
-// Helper to fetch API with SessionStorage Caching
+// Clean up old session storage cache versions (v1, v2)
+try {
+  Object.keys(sessionStorage).forEach(key => {
+    if (key.startsWith('astabaya_v1_') || key.startsWith('astabaya_v2_')) {
+      sessionStorage.removeItem(key);
+    }
+  });
+} catch (e) {}
+
+// Helper to fetch API with SessionStorage Caching (v3 prevents empty data caching and forces fresh data after schema/sync update)
 window.fetchAPIWithCache = async function(url, options = {}) {
-  const cacheKey = 'astabaya_cache_' + url.replace(/[^a-zA-Z0-9]/g, '_');
+  const cacheKey = 'astabaya_v3_cache_' + url.replace(/[^a-zA-Z0-9]/g, '_');
   const cachedData = sessionStorage.getItem(cacheKey);
   
+  const isCacheValid = (item) => {
+    if (!item) return false;
+    if (item.success === false || item.status === 'error') return false;
+    if (item.data !== undefined && item.data !== null) {
+      if (Array.isArray(item.data) && item.data.length === 0) return false;
+      if (typeof item.data === 'object' && !Array.isArray(item.data) && Object.keys(item.data).length === 0) return false;
+    }
+    return true;
+  };
+  
   if (cachedData) {
-    return JSON.parse(cachedData);
+    try {
+      const parsed = JSON.parse(cachedData);
+      if (isCacheValid(parsed)) {
+        return parsed;
+      }
+    } catch (e) {
+      sessionStorage.removeItem(cacheKey);
+    }
   }
   
   const response = await fetch(url, options);
@@ -156,7 +182,9 @@ window.fetchAPIWithCache = async function(url, options = {}) {
   }
   
   const data = await response.json();
-  sessionStorage.setItem(cacheKey, JSON.stringify(data));
+  if (isCacheValid(data)) {
+    sessionStorage.setItem(cacheKey, JSON.stringify(data));
+  }
   return data;
 };
 

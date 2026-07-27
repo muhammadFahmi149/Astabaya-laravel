@@ -14,6 +14,8 @@ let currentContentType = 'news'; // Default to news
 
   // Switch content type (news/publication/infographic)
   function switchContentType(type) {
+    const activeBtn = document.querySelector(`.category-btn[data-type="${type}"]`);
+    if (!activeBtn || !document.getElementById('newsCards') || !window.DASHBOARD_CONFIG) return;
     currentContentType = type;
     
     // Update active button
@@ -168,6 +170,8 @@ let currentContentType = 'news'; // Default to news
     const container = document.getElementById('indicatorCardsContainer');
     const prevBtn = document.querySelector('.indicator-scroll-btn.prev');
     const nextBtn = document.querySelector('.indicator-scroll-btn.next');
+    
+    if (!container || !prevBtn || !nextBtn) return;
     
     prevBtn.disabled = container.scrollLeft <= 0;
     nextBtn.disabled = container.scrollLeft >= container.scrollWidth - container.clientWidth;
@@ -421,15 +425,19 @@ let currentContentType = 'news'; // Default to news
   window.handleInfographicDownload = handleInfographicDownload;
 
   // Initialize on page load
-  document.addEventListener('turbo:load', function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('indicatorCardsContainer');
+    if (!container) return; // Only run dashboard initialization on dashboard page
+
     updateScrollButtons();
     
     // Update scroll buttons on scroll
-    const container = document.getElementById('indicatorCardsContainer');
     container.addEventListener('scroll', updateScrollButtons);
     
     // Set default to news
-    switchContentType('news');
+    if (document.getElementById('newsCards')) {
+      switchContentType('news');
+    }
     
     // Initialize summary cards carousel
     initSummaryCardsCarousel();
@@ -437,10 +445,10 @@ let currentContentType = 'news'; // Default to news
 
   // ========== Summary Cards Carousel ==========
   async function initSummaryCardsCarousel() {
+    const carousel = document.getElementById('summaryCardsCarousel');
+    if (!carousel || !window.DASHBOARD_CONFIG) return;
     const API_BASE = window.DASHBOARD_CONFIG.apiBase;
     const location = 'Kota Surabaya';
-    const carousel = document.getElementById('summaryCardsCarousel');
-    if (!carousel) return;
 
     try {
       // Fetch aggregated data from BFF endpoint
@@ -595,7 +603,7 @@ let currentContentType = 'news'; // Default to news
                 year: latest.year,
                 previous: prevValue !== null ? { value: prevValue, year: previousData.year } : null,
                 previousYear: prevLabel || (previousData && previousData.year ? previousData.year : (latest.year - 1))
-              }, title, 'percent', '{{ route("inflasi") }}');
+              }, title, 'percent', '/inflasi');
             }
             return null;
           };
@@ -634,7 +642,7 @@ let currentContentType = 'news'; // Default to news
                 year: latest.year,
                 previous: prevValue !== null ? { value: prevValue, year: previous.year } : null,
                 previousYear: previous && previous.year ? previous.year : (latest.year - 1)
-              }, title, valueType, '{{ route("kemiskinan") }}', 'value', suffix);
+              }, title, valueType, '/kemiskinan', 'value', suffix);
             }
             return null;
           };
@@ -690,7 +698,7 @@ let currentContentType = 'news'; // Default to news
               year: year,
               previous: prevValue !== null ? { value: prevValue, year: previousYear } : null,
               previousYear: previousYear
-            }, title, valueType, '{{ route("kependudukan") }}');
+            }, title, valueType, '/kependudukan');
           }
           return null;
         };
@@ -716,7 +724,7 @@ let currentContentType = 'news'; // Default to news
             year: year,
             previous: prevRatio !== null && prevRatio !== undefined ? { value: prevRatio, year: previousYear } : null,
             previousYear: previousYear
-          }, 'Rasio Jenis Kelamin', 'number', '{{ route("kependudukan") }}');
+          }, 'Rasio Jenis Kelamin', 'number', '/kependudukan');
           if (card) cards.push(card);
         }
       }
@@ -738,7 +746,7 @@ let currentContentType = 'news'; // Default to news
             year: tptLatest.year,
             previous: prevValue !== null ? { value: prevValue, year: tptPrevious.year } : null,
             previousYear: tptPrevious && tptPrevious.year ? tptPrevious.year : (tptLatest.year - 1)
-          }, 'TPT Total', 'percent', '{{ route("ketenagakerjaan") }}');
+          }, 'TPT Total', 'percent', '/ketenagakerjaan');
           if (card) cards.push(card);
         }
         // TPAK Total
@@ -749,7 +757,7 @@ let currentContentType = 'news'; // Default to news
             year: tpakLatest.year,
             previous: prevValue !== null ? { value: prevValue, year: tpakPrevious.year } : null,
             previousYear: tpakPrevious && tpakPrevious.year ? tpakPrevious.year : (tpakLatest.year - 1)
-          }, 'TPAK Total', 'percent', '{{ route("ketenagakerjaan") }}');
+          }, 'TPAK Total', 'percent', '/ketenagakerjaan');
           if (card) cards.push(card);
         }
       }
@@ -771,7 +779,7 @@ let currentContentType = 'news'; // Default to news
             year: surabayaLatest.year,
             previous: prevValue !== null ? { value: prevValue, year: surabayaPrevious.year } : null,
             previousYear: surabayaPrevious && surabayaPrevious.year ? surabayaPrevious.year : (surabayaLatest.year - 1)
-          }, 'Gini Ratio Surabaya', 'number', '{{ route("gini-ratio") }}');
+          }, 'Gini Ratio Surabaya', 'number', '/gini-ratio');
           if (card) cards.push(card);
         }
         // Gini Ratio Jawa Timur
@@ -782,7 +790,7 @@ let currentContentType = 'news'; // Default to news
             year: jatimLatest.year,
             previous: prevValue !== null ? { value: prevValue, year: jatimPrevious.year } : null,
             previousYear: jatimPrevious && jatimPrevious.year ? jatimPrevious.year : (jatimLatest.year - 1)
-          }, 'Gini Ratio Jawa Timur', 'number', '{{ route("gini-ratio") }}');
+          }, 'Gini Ratio Jawa Timur', 'number', '/gini-ratio');
           if (card) cards.push(card);
         }
       }
@@ -813,7 +821,7 @@ let currentContentType = 'news'; // Default to news
                 year: yearLabel,
                 previous: prevValue !== null ? { value: prevValue, year: previous ? previous.year : null } : null,
                 previousYear: prevLabel || (previous ? previous.year : (year ? (typeof year === 'number' ? year - 1 : null) : null))
-              }, title, valueType, '{{ route("hotel-occupancy") }}', 'value', suffix);
+              }, title, valueType, '/hotel-occupancy', 'value', suffix);
             }
             return null;
           };
@@ -857,7 +865,7 @@ let currentContentType = 'news'; // Default to news
               year: sheetData.year,
               previous: previousData,
               previousYear: previousYear
-            }, `PDRB Pengeluaran - ${sheetName}`, 'currency', '{{ route("pdrb-pengeluaran") }}');
+            }, `PDRB Pengeluaran - ${sheetName}`, 'currency', '/pdrb-pengeluaran');
             if (card) cards.push(card);
           }
         });
@@ -884,7 +892,7 @@ let currentContentType = 'news'; // Default to news
               year: sheetData.year,
               previous: previousData,
               previousYear: previousYear
-            }, `PDRB Lapangan Usaha - ${sheetName}`, 'currency', '{{ route("pdrb-lapangan-usaha") }}');
+            }, `PDRB Lapangan Usaha - ${sheetName}`, 'currency', '/pdrb-lapangan-usaha');
             if (card) cards.push(card);
           }
         });
@@ -892,42 +900,42 @@ let currentContentType = 'news'; // Default to news
 
       // IPM
       const ipmData = ipmRes.success ? ipmRes.data : [];
-      const ipmCard = createCard(getLatest(ipmData, 'ipm_value'), 'Indeks Pembangunan Manusia', 'number', '{{ route("indeks-pembangunan-manusia") }}', 'ipm_value');
+      const ipmCard = createCard(getLatest(ipmData, 'ipm_value'), 'Indeks Pembangunan Manusia', 'number', '/indeks-pembangunan-manusia', 'ipm_value');
       if (ipmCard) cards.push(ipmCard);
 
       // UHH SP
       const uhhSpData = uhhSpRes.success ? uhhSpRes.data : [];
-      const uhhSpCard = createCard(getLatest(uhhSpData), 'Usia Harapan Hidup saat Lahir', 'number', '{{ route("ipm-uhh-sp") }}');
+      const uhhSpCard = createCard(getLatest(uhhSpData), 'Usia Harapan Hidup saat Lahir', 'number', '/ipm-uhh-sp');
       if (uhhSpCard) cards.push(uhhSpCard);
 
       // HLS
       const hlsData = hlsRes.success ? hlsRes.data : [];
-      const hlsCard = createCard(getLatest(hlsData), 'Harapan Lama Sekolah', 'number', '{{ route("ipm-hls") }}');
+      const hlsCard = createCard(getLatest(hlsData), 'Harapan Lama Sekolah', 'number', '/ipm-hls');
       if (hlsCard) cards.push(hlsCard);
 
       // RLS
       const rlsData = rlsRes.success ? rlsRes.data : [];
-      const rlsCard = createCard(getLatest(rlsData), 'Rata-rata Lama Sekolah', 'number', '{{ route("ipm-rls") }}');
+      const rlsCard = createCard(getLatest(rlsData), 'Rata-rata Lama Sekolah', 'number', '/ipm-rls');
       if (rlsCard) cards.push(rlsCard);
 
       // Pengeluaran per Kapita
       const pengeluaranData = pengeluaranRes.success ? pengeluaranRes.data : [];
-      const pengeluaranCard = createCard(getLatest(pengeluaranData), 'Pengeluaran per Kapita', 'currency', '{{ route("ipm-pengeluaran-per-kapita") }}');
+      const pengeluaranCard = createCard(getLatest(pengeluaranData), 'Pengeluaran per Kapita', 'currency', '/ipm-pengeluaran-per-kapita');
       if (pengeluaranCard) cards.push(pengeluaranCard);
 
       // Indeks Kesehatan
       const indeksKesehatanData = indeksKesehatanRes.success ? indeksKesehatanRes.data : [];
-      const indeksKesehatanCard = createCard(getLatest(indeksKesehatanData), 'Indeks Kesehatan', 'number', '{{ route("ipm-indeks-kesehatan") }}');
+      const indeksKesehatanCard = createCard(getLatest(indeksKesehatanData), 'Indeks Kesehatan', 'number', '/ipm-indeks-kesehatan');
       if (indeksKesehatanCard) cards.push(indeksKesehatanCard);
 
       // Indeks Pendidikan
       const indeksPendidikanData = indeksPendidikanRes.success ? indeksPendidikanRes.data : [];
-      const indeksPendidikanCard = createCard(getLatest(indeksPendidikanData), 'Indeks Pendidikan', 'number', '{{ route("ipm-indeks-pendidikan") }}');
+      const indeksPendidikanCard = createCard(getLatest(indeksPendidikanData), 'Indeks Pendidikan', 'number', '/ipm-indeks-pendidikan');
       if (indeksPendidikanCard) cards.push(indeksPendidikanCard);
 
       // Indeks Hidup Layak
       const indeksHidupLayakData = indeksHidupLayakRes.success ? indeksHidupLayakRes.data : [];
-      const indeksHidupLayakCard = createCard(getLatest(indeksHidupLayakData), 'Indeks Hidup Layak', 'number', '{{ route("ipm-indeks-hidup-layak") }}');
+      const indeksHidupLayakCard = createCard(getLatest(indeksHidupLayakData), 'Indeks Hidup Layak', 'number', '/ipm-indeks-hidup-layak');
       if (indeksHidupLayakCard) cards.push(indeksHidupLayakCard);
 
       // Debug: Log cards data

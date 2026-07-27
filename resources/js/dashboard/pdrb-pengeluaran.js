@@ -1,4 +1,5 @@
-document.addEventListener("turbo:load", () => {
+document.addEventListener("DOMContentLoaded", () => {
+    if (!window.location.pathname.includes('pdrb-pengeluaran') && !document.getElementById('cardsTahunan')) return;
     // API Base URL
     const API_BASE_URL = '/api/v1';
     
@@ -8,10 +9,15 @@ document.addEventListener("turbo:load", () => {
     // Helper function to fetch API data
     async function fetchAPI(url) {
       try {
-        const cacheKey = 'astabaya_pdrb_' + url.replace(/[^a-zA-Z0-9]/g, '_');
+        const cacheKey = 'astabaya_v3_pdrb_' + url.replace(/[^a-zA-Z0-9]/g, '_');
         const cachedData = sessionStorage.getItem(cacheKey);
         if (cachedData) {
-          return JSON.parse(cachedData);
+          try {
+            const parsed = JSON.parse(cachedData);
+            if (parsed && (Array.isArray(parsed) ? parsed.length > 0 : Object.keys(parsed).length > 0)) {
+              return parsed;
+            }
+          } catch(e) {}
         }
         
         const response = await fetch(url, {
@@ -29,7 +35,7 @@ document.addEventListener("turbo:load", () => {
         const data = await response.json();
         const result = data.success ? data.data : null;
         
-        if (result) {
+        if (result && (Array.isArray(result) ? result.length > 0 : Object.keys(result).length > 0)) {
           sessionStorage.setItem(cacheKey, JSON.stringify(result));
         }
         

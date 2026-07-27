@@ -48,7 +48,8 @@ class KependudukanService
         $yearGenderCols = []; // ['year_gender' => column_index]
         $currentYear = null;
         
-        for ($colIdx = 1; $colIdx < count($yearRow); $colIdx++) {
+        $maxCols = max(count($yearRow), count($subheaderRow));
+        for ($colIdx = 1; $colIdx < $maxCols; $colIdx++) {
             $yearVal = trim($yearRow[$colIdx] ?? '');
             $subheaderVal = trim(strtoupper($subheaderRow[$colIdx] ?? ''));
             

@@ -1,4 +1,5 @@
-document.addEventListener("turbo:load", () => {
+document.addEventListener("DOMContentLoaded", () => {
+    if (!document.getElementById('uhh-sp-value') && !document.getElementById('surabaya-ipm-value')) return;
     const API_BASE = window.APP_CONFIG ? window.APP_CONFIG.apiUrl : '/api/v1';
     
     // ========== Load all IPM data from APIs ==========

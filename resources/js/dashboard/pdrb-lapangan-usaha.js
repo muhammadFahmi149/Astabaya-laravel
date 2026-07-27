@@ -1,4 +1,5 @@
-  document.addEventListener("turbo:load", () => {
+  document.addEventListener("DOMContentLoaded", () => {
+    if (!window.location.pathname.includes('pdrb-lapangan-usaha') && !document.getElementById('cardsTahunan')) return;
     // ========== Toggle Button Functionality ==========
     const btnTahunan = document.getElementById('btnTahunan');
     const btnTriwulanan = document.getElementById('btnTriwulanan');
@@ -2675,7 +2676,7 @@
     // ========== Initialize on Page Load ==========
     // Load all data when page is ready
     if (document.readyState === 'loading') {
-      document.addEventListener('turbo:load', function() {
+      document.addEventListener('DOMContentLoaded', function() {
         loadAllData();
       });
     } else {

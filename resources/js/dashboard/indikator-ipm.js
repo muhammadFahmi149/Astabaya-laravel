@@ -1,5 +1,5 @@
-document.addEventListener("turbo:load", () => {
-    if (!window.IPM_CONFIG) return;
+document.addEventListener("DOMContentLoaded", () => {
+    if (!window.IPM_CONFIG || !document.getElementById('comparisonChart')) return;
 
     const {
         apiEndpoint,
@@ -30,19 +30,25 @@ document.addEventListener("turbo:load", () => {
 
     async function loadSummaryData() {
         // Cache Key
-        const CACHE_KEY = 'astabaya_ipm_' + apiEndpoint.replace(/[^a-zA-Z0-9]/g, '_');
+        const CACHE_KEY = 'astabaya_v3_ipm_' + apiEndpoint.replace(/[^a-zA-Z0-9]/g, '_');
         let result = null;
 
         try {
             const cachedData = sessionStorage.getItem(CACHE_KEY);
             if (cachedData) {
-                result = JSON.parse(cachedData);
-                console.log('Loaded IPM data from sessionStorage cache');
-            } else {
+                try {
+                    const parsed = JSON.parse(cachedData);
+                    if (parsed && parsed.success && parsed.data && (Array.isArray(parsed.data) ? parsed.data.length > 0 : Object.keys(parsed.data).length > 0)) {
+                        result = parsed;
+                        console.log('Loaded IPM data from sessionStorage cache');
+                    }
+                } catch(e) {}
+            }
+            if (!result) {
                 const response = await fetch(`${API_BASE}${apiEndpoint}`);
                 result = await response.json();
                 
-                if (result && result.success) {
+                if (result && result.success && result.data && (Array.isArray(result.data) ? result.data.length > 0 : Object.keys(result.data).length > 0)) {
                     sessionStorage.setItem(CACHE_KEY, JSON.stringify(result));
                 }
             }

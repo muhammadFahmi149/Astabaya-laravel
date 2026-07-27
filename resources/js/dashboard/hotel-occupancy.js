@@ -1,4 +1,5 @@
-document.addEventListener("turbo:load", async () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    if (!document.getElementById('tpkLineChart') && !document.getElementById('tpk-value')) return;
     // Wait for ECharts to be loaded
     if (typeof echarts === 'undefined') {
       console.error('ECharts library not loaded! Please check if the script is included.');
@@ -102,16 +103,22 @@ document.addEventListener("turbo:load", async () => {
     }
 
     // Cache Key
-    const CACHE_KEY = 'astabaya_hotel_occupancy_summary';
+    const CACHE_KEY = 'astabaya_v3_hotel_occupancy_summary';
     let result = null;
 
     // Load summary data from API or Cache
     try {
       const cachedData = sessionStorage.getItem(CACHE_KEY);
       if (cachedData) {
-        result = JSON.parse(cachedData);
-        console.log('Loaded hotel occupancy data from sessionStorage cache');
-      } else {
+        try {
+          const parsed = JSON.parse(cachedData);
+          if (parsed && parsed.success && parsed.data && (Array.isArray(parsed.data) ? parsed.data.length > 0 : Object.keys(parsed.data).length > 0)) {
+            result = parsed;
+            console.log('Loaded hotel occupancy data from sessionStorage cache');
+          }
+        } catch(e) {}
+      }
+      if (!result) {
         const response = await fetch(`${API_BASE}/hotel-occupancy-summary`);
         
         // Validate response
@@ -121,8 +128,8 @@ document.addEventListener("turbo:load", async () => {
         
         result = await response.json();
         
-        // Save to cache if successful
-        if (result && result.success) {
+        // Save to cache if successful and not empty
+        if (result && result.success && result.data && (Array.isArray(result.data) ? result.data.length > 0 : Object.keys(result.data).length > 0)) {
           sessionStorage.setItem(CACHE_KEY, JSON.stringify(result));
         }
       }

@@ -76,6 +76,9 @@ class SyncGoogleSheetsData extends Command
                 $this->syncAllServices();
             }
 
+            // Bersihkan cache agar data baru langsung muncul di API dan web
+            \Illuminate\Support\Facades\Cache::flush();
+            $this->info('Cache cleared. New data is now live!');
             $this->info('Data synchronization completed successfully!');
             return Command::SUCCESS;
         } catch (\Exception $e) {

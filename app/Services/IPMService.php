@@ -258,6 +258,7 @@ class IPMService
         
         $totalRowsProcessed = 0;
         $rowsWithValidData = 0;
+        $seenBaseNames = [];
         
         foreach ($processedData as $row) {
             $locationName = $row[$locationKey] ?? null;
@@ -268,6 +269,43 @@ class IPMService
             
             // Clean location name (remove newlines, extra spaces)
             $locationName = trim(preg_replace('/\s+/', ' ', $locationName));
+            
+            // Normalize base name
+            $baseName = trim(str_ireplace(['Kabupaten ', 'Kab. ', 'Kota '], '', $locationName));
+            $baseNameLower = strtolower($baseName);
+            $locationType = 'REGENCY';
+            $finalLocationName = $locationName;
+
+            if ($baseNameLower === 'jawa timur' || strcasecmp($locationName, 'jawa timur') === 0) {
+                $locationType = 'REGENCY';
+                $finalLocationName = 'Jawa Timur';
+            } elseif (in_array($baseNameLower, ['surabaya', 'batu'])) {
+                $locationType = 'MUNICIPALITY';
+                $finalLocationName = 'Kota ' . ucwords($baseNameLower);
+            } elseif (in_array($baseNameLower, ['kediri', 'blitar', 'malang', 'probolinggo', 'pasuruan', 'mojokerto', 'madiun'])) {
+                if (stripos($locationName, 'Kota') !== false) {
+                    $locationType = 'MUNICIPALITY';
+                    $finalLocationName = 'Kota ' . ucwords($baseNameLower);
+                } elseif (stripos($locationName, 'Kab') !== false) {
+                    $locationType = 'REGENCY';
+                    $finalLocationName = ucwords($baseNameLower);
+                } elseif (isset($seenBaseNames[$baseNameLower])) {
+                    // Second occurrence without prefix -> it's Municipality!
+                    $locationType = 'MUNICIPALITY';
+                    $finalLocationName = 'Kota ' . ucwords($baseNameLower);
+                } else {
+                    // First occurrence without prefix -> it's Regency!
+                    $locationType = 'REGENCY';
+                    $finalLocationName = ucwords($baseNameLower);
+                }
+            } elseif (stripos($locationName, 'Kota') !== false) {
+                $locationType = 'MUNICIPALITY';
+            } elseif (stripos($locationName, 'Kab') !== false) {
+                $locationType = 'REGENCY';
+                $finalLocationName = ucwords($baseNameLower);
+            }
+
+            $seenBaseNames[$baseNameLower] = true;
             
             // Loop through all keys to find year columns
             foreach ($row as $key => $value) {
@@ -299,17 +337,8 @@ class IPMService
                         continue;
                     }
                     
-                    // Determine location type based on location name
-                    // If location name contains "Kota" or is a known city, use MUNICIPALITY, otherwise REGENCY
-                    $locationType = 'REGENCY'; // Default
-                    $locationLower = strtolower($locationName);
-                    if (stripos($locationName, 'Kota') !== false || 
-                        in_array($locationName, ['Surabaya', 'Malang', 'Kediri', 'Blitar', 'Probolinggo', 'Pasuruan', 'Mojokerto', 'Madiun', 'Batu'])) {
-                        $locationType = 'MUNICIPALITY';
-                    }
-                    
                     $transformed[] = [
-                        'location_name' => $locationName,
+                        'location_name' => $finalLocationName,
                         'location_type' => $locationType,
                         'year' => $year,
                         'value' => $parsedValue,
