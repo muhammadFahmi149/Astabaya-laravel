@@ -175,7 +175,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 };
 
 // 1. V1 Routes for the new frontend (to protect legacy deploy)
-Route::prefix('v1')->group($apiRoutes);
+Route::prefix('v1')->name('v1.')->group($apiRoutes);
 
 // 2. Legacy Routes (so old mobile apps/cache don't break)
 $apiRoutes();
