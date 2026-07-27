@@ -45,10 +45,13 @@ class SpreadsheetService
                     throw new Exception('Invalid GOOGLE_CREDENTIALS_JSON format');
                 }
             } else {
-                // Fallback: try to use default path
+                // Fallback: try to use default paths
                 $defaultPath = storage_path('app/google-credentials.json');
+                $altPath = storage_path('app/google/credentials.json');
                 if (file_exists($defaultPath)) {
                     $this->client->setAuthConfig($defaultPath);
+                } elseif (file_exists($altPath)) {
+                    $this->client->setAuthConfig($altPath);
                 } else {
                     throw new Exception('Google credentials not configured. Please set GOOGLE_CREDENTIALS_PATH or GOOGLE_CREDENTIALS_JSON in .env');
                 }
