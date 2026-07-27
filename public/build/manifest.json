@@ -1,0 +1,250 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-C3nN8_Uc.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/css/dashboard/dashboard.css": {
+    "file": "assets/dashboard-C040ge4t.css",
+    "src": "resources/css/dashboard/dashboard.css",
+    "isEntry": true,
+    "name": "dashboard",
+    "names": [
+      "dashboard.css"
+    ]
+  },
+  "resources/css/dashboard/gini-ratio.css": {
+    "file": "assets/gini-ratio-DDcnYbke.css",
+    "src": "resources/css/dashboard/gini-ratio.css",
+    "isEntry": true,
+    "name": "gini-ratio",
+    "names": [
+      "gini-ratio.css"
+    ]
+  },
+  "resources/css/dashboard/hotel-occupancy.css": {
+    "file": "assets/hotel-occupancy-DMkS13bw.css",
+    "src": "resources/css/dashboard/hotel-occupancy.css",
+    "isEntry": true,
+    "name": "hotel-occupancy",
+    "names": [
+      "hotel-occupancy.css"
+    ]
+  },
+  "resources/css/dashboard/indeks-pembangunan-manusia.css": {
+    "file": "assets/indeks-pembangunan-manusia-DWDLGqtE.css",
+    "src": "resources/css/dashboard/indeks-pembangunan-manusia.css",
+    "isEntry": true,
+    "name": "indeks-pembangunan-manusia",
+    "names": [
+      "indeks-pembangunan-manusia.css"
+    ]
+  },
+  "resources/css/dashboard/indikator-ipm.css": {
+    "file": "assets/indikator-ipm-TEPyvZ0-.css",
+    "src": "resources/css/dashboard/indikator-ipm.css",
+    "isEntry": true,
+    "name": "indikator-ipm",
+    "names": [
+      "indikator-ipm.css"
+    ]
+  },
+  "resources/css/dashboard/inflasi.css": {
+    "file": "assets/inflasi-CJF24Cv-.css",
+    "src": "resources/css/dashboard/inflasi.css",
+    "isEntry": true,
+    "name": "inflasi",
+    "names": [
+      "inflasi.css"
+    ]
+  },
+  "resources/css/dashboard/infographics.css": {
+    "file": "assets/infographics-BfEWLHYh.css",
+    "src": "resources/css/dashboard/infographics.css",
+    "isEntry": true,
+    "name": "infographics",
+    "names": [
+      "infographics.css"
+    ]
+  },
+  "resources/css/dashboard/kemiskinan.css": {
+    "file": "assets/kemiskinan-DrGYvu2H.css",
+    "src": "resources/css/dashboard/kemiskinan.css",
+    "isEntry": true,
+    "name": "kemiskinan",
+    "names": [
+      "kemiskinan.css"
+    ]
+  },
+  "resources/css/dashboard/kependudukan.css": {
+    "file": "assets/kependudukan-B_hHHJoP.css",
+    "src": "resources/css/dashboard/kependudukan.css",
+    "isEntry": true,
+    "name": "kependudukan",
+    "names": [
+      "kependudukan.css"
+    ]
+  },
+  "resources/css/dashboard/ketenagakerjaan.css": {
+    "file": "assets/ketenagakerjaan-o3eIIdm-.css",
+    "src": "resources/css/dashboard/ketenagakerjaan.css",
+    "isEntry": true,
+    "name": "ketenagakerjaan",
+    "names": [
+      "ketenagakerjaan.css"
+    ]
+  },
+  "resources/css/dashboard/news.css": {
+    "file": "assets/news-BxHaVTKk.css",
+    "src": "resources/css/dashboard/news.css",
+    "isEntry": true,
+    "name": "news",
+    "names": [
+      "news.css"
+    ]
+  },
+  "resources/css/dashboard/pdrb-lapangan-usaha.css": {
+    "file": "assets/pdrb-lapangan-usaha-BBfWLE0q.css",
+    "src": "resources/css/dashboard/pdrb-lapangan-usaha.css",
+    "isEntry": true,
+    "name": "pdrb-pengeluaran",
+    "names": [
+      "pdrb-lapangan-usaha.css",
+      "pdrb-pengeluaran.css"
+    ]
+  },
+  "resources/css/dashboard/pdrb-pengeluaran.css": {
+    "file": "assets/pdrb-lapangan-usaha-BBfWLE0q.css",
+    "src": "resources/css/dashboard/pdrb-lapangan-usaha.css",
+    "isEntry": true,
+    "name": "pdrb-pengeluaran",
+    "names": [
+      "pdrb-lapangan-usaha.css",
+      "pdrb-pengeluaran.css"
+    ]
+  },
+  "resources/css/dashboard/publications.css": {
+    "file": "assets/publications-B_EV3AZ5.css",
+    "src": "resources/css/dashboard/publications.css",
+    "isEntry": true,
+    "name": "publications",
+    "names": [
+      "publications.css"
+    ]
+  },
+  "resources/css/layout-main.css": {
+    "file": "assets/layout-main-Ln7WgedJ.css",
+    "src": "resources/css/layout-main.css",
+    "isEntry": true,
+    "name": "layout-main",
+    "names": [
+      "layout-main.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-CIomGrQN.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/chart-modal.js": {
+    "file": "assets/chart-modal-CcuBNfnb.js",
+    "name": "chart-modal",
+    "src": "resources/js/dashboard/chart-modal.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/dashboard.js": {
+    "file": "assets/dashboard-rkjA2dfR.js",
+    "name": "dashboard",
+    "src": "resources/js/dashboard/dashboard.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/gini-ratio.js": {
+    "file": "assets/gini-ratio-XOBfIxLZ.js",
+    "name": "gini-ratio",
+    "src": "resources/js/dashboard/gini-ratio.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/hotel-occupancy.js": {
+    "file": "assets/hotel-occupancy-BEXxrmgc.js",
+    "name": "hotel-occupancy",
+    "src": "resources/js/dashboard/hotel-occupancy.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/indeks-pembangunan-manusia.js": {
+    "file": "assets/indeks-pembangunan-manusia-fbsl8p1_.js",
+    "name": "indeks-pembangunan-manusia",
+    "src": "resources/js/dashboard/indeks-pembangunan-manusia.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/indikator-ipm.js": {
+    "file": "assets/indikator-ipm-DeaFC7qT.js",
+    "name": "indikator-ipm",
+    "src": "resources/js/dashboard/indikator-ipm.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/inflasi.js": {
+    "file": "assets/inflasi-DRNj7T_0.js",
+    "name": "inflasi",
+    "src": "resources/js/dashboard/inflasi.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/infographics.js": {
+    "file": "assets/infographics-N4zEpMwc.js",
+    "name": "infographics",
+    "src": "resources/js/dashboard/infographics.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/kemiskinan.js": {
+    "file": "assets/kemiskinan-SQWYMOsP.js",
+    "name": "kemiskinan",
+    "src": "resources/js/dashboard/kemiskinan.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/kependudukan.js": {
+    "file": "assets/kependudukan-BKJJqyis.js",
+    "name": "kependudukan",
+    "src": "resources/js/dashboard/kependudukan.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/ketenagakerjaan.js": {
+    "file": "assets/ketenagakerjaan-ZdlXsMzC.js",
+    "name": "ketenagakerjaan",
+    "src": "resources/js/dashboard/ketenagakerjaan.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/news.js": {
+    "file": "assets/news-BBHhEs54.js",
+    "name": "news",
+    "src": "resources/js/dashboard/news.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/pdrb-lapangan-usaha.js": {
+    "file": "assets/pdrb-lapangan-usaha-n9WQPjkW.js",
+    "name": "pdrb-lapangan-usaha",
+    "src": "resources/js/dashboard/pdrb-lapangan-usaha.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/pdrb-pengeluaran.js": {
+    "file": "assets/pdrb-pengeluaran-DDLiDxRN.js",
+    "name": "pdrb-pengeluaran",
+    "src": "resources/js/dashboard/pdrb-pengeluaran.js",
+    "isEntry": true
+  },
+  "resources/js/dashboard/publications.js": {
+    "file": "assets/publications-dSVrq8gl.js",
+    "name": "publications",
+    "src": "resources/js/dashboard/publications.js",
+    "isEntry": true
+  },
+  "resources/js/utilities.js": {
+    "file": "assets/utilities-Ddyw6gG9.js",
+    "name": "utilities",
+    "src": "resources/js/utilities.js",
+    "isEntry": true
+  }
+}
