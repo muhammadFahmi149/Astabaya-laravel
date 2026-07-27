@@ -1,35 +1,51 @@
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
+        Options -MultiViews -Indexes +FollowSymLinks
     </IfModule>
 
     RewriteEngine On
 
-    # Set DirectoryIndex to index.php only (prevent index.html from being served)
+    # 1. Force SSL / HTTPS (Wajib di Production, otomatis nonaktif di localhost & Laragon .test/.local)
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP_HOST} !^localhost$ [NC]
+    RewriteCond %{HTTP_HOST} !^127\.0\.0\.1$
+    RewriteCond %{HTTP_HOST} !\.test$ [NC]
+    RewriteCond %{HTTP_HOST} !\.local$ [NC]
+    RewriteCond %{HTTP_HOST} !^astabaya [NC]
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # 2. Set DirectoryIndex ke index.php
     DirectoryIndex index.php
 
-    # Handle Authorization Header
+    # 3. Handle Authorization Header (Untuk API v1 & Sanctum/OAuth)
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    # Handle X-XSRF-Token Header
+    # 4. Handle X-XSRF-Token Header
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # Redirect asset requests (CSS, JS, images, etc.) to Laravel public folder
+    # 5. Redirect asset requests (Vite build, CSS, JS, images, storage) ke folder public
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} ^/(build|css|js|images|templatemo_562_space_dynamic|assets|vendor|favicon\.ico|robots\.txt|storage)(.*)$
     RewriteRule ^(.*)$ public/$1 [L]
 
-    # Redirect Trailing Slashes If Not A Folder...
+    # 6. Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # Send Requests To Front Controller...
+    # 7. Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# 8. Caching statis untuk aset Vite (agar SPA super cepat di Hostinger)
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js|css|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
 </IfModule>
 

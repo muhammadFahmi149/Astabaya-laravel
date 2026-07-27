@@ -1,11 +1,11 @@
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
+        Options -MultiViews -Indexes +FollowSymLinks
     </IfModule>
 
     RewriteEngine On
 
-    # Set DirectoryIndex to index.php only (prevent index.html from being served)
+    # Set DirectoryIndex to index.php only
     DirectoryIndex index.php
 
     # Handle Authorization Header
@@ -16,12 +16,6 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # Redirect asset requests (CSS, JS, images, etc.) to Laravel public folder
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} ^/(css|js|images|templatemo_562_space_dynamic|assets|vendor|favicon\.ico|robots\.txt)(.*)$
-    RewriteRule ^(.*)$ /public/$1 [L]
-
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
@@ -31,5 +25,12 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# Caching statis untuk aset Vite
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js|css|svg|png|jpg|jpeg|gif|ico|woff|woff2|ttf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
 </IfModule>
 
