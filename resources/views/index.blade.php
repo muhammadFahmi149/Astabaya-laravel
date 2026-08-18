@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Aastabaya')
+@section('title', 'Astabaya')
 
 @push('styles')
     <!-- Bootstrap core CSS -->
@@ -66,9 +66,9 @@
                         <!-- KOLOM KIRI -->
                         <div class="col-lg-6 d-flex flex-column order-2 order-lg-1">
                             <div class="left-content header-text wow fadeInLeft" data-wow-duration="1s" data-wow-delay="1s">
-                                <h2>Selamat Datang di <em>Aastabaya</em></h2>
+                                <h2>Selamat Datang di <em>Astabaya</em></h2>
                                 <h6 class="mt-3">Aplikasi Statistik Kota Surabaya</h6>
-                                <p>Aastabaya merupakan platform yang menyajikan data dan indikator strategis Kota Surabaya, meliputi inflasi, IPM, kemiskinan, gini ratio, ketenagakerjaan, PDRB, dan ekonomi daerah secara akurat dan terkini.</p>
+                                <p>Astabaya merupakan platform yang menyajikan data dan indikator strategis Kota Surabaya, meliputi inflasi, IPM, kemiskinan, gini ratio, ketenagakerjaan, PDRB, dan ekonomi daerah secara akurat dan terkini.</p>
                             </div>
                             <a class="start-btn align-self-start mt-3" href="{{ route('dashboard') }}" style="background-color: #234C6A; display: inline-block;">Lihat Selengkapnya</a>
                         </div>
@@ -196,7 +196,7 @@
                 <div class="col-lg-6 align-self-center wow fadeInLeft" data-wow-duration="0.5s" data-wow-delay="0.25s">
                     <div class="section-heading">
                         <h2>Hubungi Kami Terkait Informasi Statistik Kota Surabaya</h2>
-                        <p>Formulir ini dapat digunakan untuk permintaan data, klarifikasi indikator, atau penyampaian masukan terkait pelayanan informasi statistik melalui Aastabaya.</p>
+                        <p>Formulir ini dapat digunakan untuk permintaan data, klarifikasi indikator, atau penyampaian masukan terkait pelayanan informasi statistik melalui Astabaya.</p>
                         <div class="phone-info">
                             <h4>
                                 Layanan informasi:
